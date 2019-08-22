@@ -1,0 +1,82 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project ToolsVersion="15.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <Import Project="$(MSBuildExtensionsPath)\$(MSBuildToolsVersion)\Microsoft.Common.props" Condition="Exists('$(MSBuildExtensionsPath)\$(MSBuildToolsVersion)\Microsoft.Common.props')" />
+  <PropertyGroup>
+    <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
+    <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
+    <ProjectGuid>{3308B4C4-2740-49FC-B021-1CA7CA59A4D6}</ProjectGuid>
+    <OutputType>Library</OutputType>
+    <AppDesignerFolder>Properties</AppDesignerFolder>
+    <RootNamespace>Sisfarma.Sincronizador.Infrastructure</RootNamespace>
+    <AssemblyName>Sisfarma.Sincronizador.Infrastructure</AssemblyName>
+    <TargetFrameworkVersion>v4.6.1</TargetFrameworkVersion>
+    <FileAlignment>512</FileAlignment>
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
+    <DebugSymbols>true</DebugSymbols>
+    <DebugType>full</DebugType>
+    <Optimize>false</Optimize>
+    <OutputPath>bin\Debug\</OutputPath>
+    <DefineConstants>DEBUG;TRACE</DefineConstants>
+    <ErrorReport>prompt</ErrorReport>
+    <WarningLevel>4</WarningLevel>
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
+    <DebugType>pdbonly</DebugType>
+    <Optimize>true</Optimize>
+    <OutputPath>bin\Release\</OutputPath>
+    <DefineConstants>TRACE</DefineConstants>
+    <ErrorReport>prompt</ErrorReport>
+    <WarningLevel>4</WarningLevel>
+  </PropertyGroup>
+  <ItemGroup>
+    <Reference Include="System" />
+    <Reference Include="System.Core" />
+    <Reference Include="System.Xml.Linq" />
+    <Reference Include="System.Data.DataSetExtensions" />
+    <Reference Include="Microsoft.CSharp" />
+    <Reference Include="System.Data" />
+    <Reference Include="System.Net.Http" />
+    <Reference Include="System.Xml" />
+  </ItemGroup>
+  <ItemGroup>
+    <Compile Include="ExternalService\RestClientServices\Fisiotes\FisiotesConfig.cs" />
+    <Compile Include="ExternalService\RestClientServices\Fisiotes\CategoriasExternalService.cs" />
+    <Compile Include="ExternalService\RestClientServices\Fisiotes\ClientesExternalService.cs" />
+    <Compile Include="ExternalService\RestClientServices\Fisiotes\ConfiguracionesExternalService.cs" />
+    <Compile Include="ExternalService\RestClientServices\Fisiotes\EncargosExternalService.cs" />
+    <Compile Include="ExternalService\RestClientServices\Fisiotes\EntregasExternalService.cs" />
+    <Compile Include="ExternalService\RestClientServices\Fisiotes\FaltasExternalService.cs" />
+    <Compile Include="ExternalService\RestClientServices\Fisiotes\FamiliasExternalService.cs" />
+    <Compile Include="ExternalService\RestClientServices\Fisiotes\FisiotesExternalService.cs" />
+    <Compile Include="ExternalService\RestClientServices\Fisiotes\HuecosExternalService.cs" />
+    <Compile Include="ExternalService\RestClientServices\Fisiotes\ListasArticulosExternalService.cs" />
+    <Compile Include="ExternalService\RestClientServices\Fisiotes\ListasExternalService.cs" />
+    <Compile Include="ExternalService\RestClientServices\Fisiotes\MedicamentosExternalService.cs" />
+    <Compile Include="ExternalService\RestClientServices\Fisiotes\PedidosExternalService.cs" />
+    <Compile Include="ExternalService\RestClientServices\Fisiotes\ProgramacionExternalService.cs" />
+    <Compile Include="ExternalService\RestClientServices\Fisiotes\ProveedoresExternalService.cs" />
+    <Compile Include="ExternalService\RestClientServices\Fisiotes\PuntosPendientesExternalService.cs" />
+    <Compile Include="ExternalService\RestClientServices\Fisiotes\SinonimosExternalService.cs" />
+    <Compile Include="Properties\AssemblyInfo.cs" />
+  </ItemGroup>
+  <ItemGroup>
+    <ProjectReference Include="..\Sisfarma.RestClient\Sisfarma.RestClient.csproj">
+      <Project>{496093B9-667B-4041-8581-462771FC68FC}</Project>
+      <Name>Sisfarma.RestClient</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\Sisfarma.Sincronizador.Core\Sisfarma.Sincronizador.Core.csproj">
+      <Project>{2E7A3E8F-959C-4C3A-9D86-7C2B61FE0724}</Project>
+      <Name>Sisfarma.Sincronizador.Core</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\Sisfarma.Sincronizador.Domain.Core\Sisfarma.Sincronizador.Domain.Core.csproj">
+      <Project>{1F2269EE-5AAB-4F0B-BDE5-CE3E863BE613}</Project>
+      <Name>Sisfarma.Sincronizador.Domain.Core</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\Sisfarma.Sincronizador.Domain.Entities\Sisfarma.Sincronizador.Domain.Entities.csproj">
+      <Project>{E3C4EEFD-3134-458C-8141-15CCDA19300B}</Project>
+      <Name>Sisfarma.Sincronizador.Domain.Entities</Name>
+    </ProjectReference>
+  </ItemGroup>
+  <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
+</Project>
