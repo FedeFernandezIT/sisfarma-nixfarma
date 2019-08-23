@@ -7,19 +7,33 @@ namespace Sisfarma.Sincronizador.Domain.Core.Services
     public interface ISisfarmaService
     {
         ICategoriasExternalService Categorias { get; set; }
+
         IClientesExternalService Clientes { get; }
+
         IConfiguracionesExternalService Configuraciones { get; }
+
         IEncargosExternalService Encargos { get; set; }
+
         IEntregasExternalService Entregas { get; }
+
         IFaltasExternalService Faltas { get; set; }
+
         IFamiliasExternalService Familias { get; set; }
+
         IHuecosExternalService Huecos { get; }
+
         IListasExternalService Listas { get; }
+
         IMedicamentosExternalService Medicamentos { get; }
+
         IPedidosExternalService Pedidos { get; }
+
         IProgramacionExternalService Programacion { get; set; }
+
         IProveedoresExternalService Proveedores { get; set; }
+
         IPuntosPendientesExternalService PuntosPendientes { get; }
+
         ISinonimosExternalService Sinonimos { get; }
     }
 
@@ -55,21 +69,25 @@ namespace Sisfarma.Sincronizador.Domain.Core.Services
 
         public IProgramacionExternalService Programacion { get; set; }
 
+        public SisfarmaService()
+        {
+        }
+
         public SisfarmaService(
-            IClientesExternalService clientes, 
-            IHuecosExternalService huecos, 
-            IPuntosPendientesExternalService puntosPendientes, 
+            IClientesExternalService clientes,
+            IHuecosExternalService huecos,
+            IPuntosPendientesExternalService puntosPendientes,
             IConfiguracionesExternalService configuraciones,
-            //IEntregasExternalService entregas, 
-            IMedicamentosExternalService medicamentos, 
-            ISinonimosExternalService sinonimos, 
-            IPedidosExternalService pedidos, 
-            IListasExternalService listas, 
-            ICategoriasExternalService categorias, 
-            IEncargosExternalService encargos, 
-            IFamiliasExternalService familias, 
-            IFaltasExternalService faltas, 
-            IProveedoresExternalService proveedores, 
+            //IEntregasExternalService entregas,
+            IMedicamentosExternalService medicamentos,
+            ISinonimosExternalService sinonimos,
+            IPedidosExternalService pedidos,
+            IListasExternalService listas,
+            ICategoriasExternalService categorias,
+            IEncargosExternalService encargos,
+            IFamiliasExternalService familias,
+            IFaltasExternalService faltas,
+            IProveedoresExternalService proveedores,
             IProgramacionExternalService programacion)
         {
             Clientes = clientes ?? throw new ArgumentNullException(nameof(clientes));

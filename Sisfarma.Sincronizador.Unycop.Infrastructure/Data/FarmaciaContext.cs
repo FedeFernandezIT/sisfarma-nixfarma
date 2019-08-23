@@ -10,7 +10,8 @@ namespace Sisfarma.Sincronizador.Unycop.Infrastructure.Data
     public class FarmaciaContext : DbContext
     {
         public FarmaciaContext(string server, string database, string username, string password)
-            : base($@"providerName=""Oracle.ManagedDataAccess.Client"" connectionString=""User Id = oracle_user; Password=oracle_user_password;Data Source = oracle""")
+            : base("OracleDbContext")
+        //: base($@"providerName=""Oracle.ManagedDataAccess.Client"" connectionString=""User Id ={username}; Password={password};Data Source ={server}/{database}""")
         { }
 
         public static FarmaciaContext Create(LocalConfig config)
@@ -45,10 +46,10 @@ namespace Sisfarma.Sincronizador.Unycop.Infrastructure.Data
 
         public static FarmaciaContext Default()
             => new FarmaciaContext(
-                server: _server,
-                database: $@"{_path}\Tablas.accdb",
-                username: "",
-                password: _password);
+                server: "nixfarma",
+                database: "nixfarma",
+                username: "consu",
+                password: "consu");
 
         //public static FarmaciaContext Ventas(int year)
         //{

@@ -34,16 +34,16 @@ namespace Sisfarma.Sincronizador.Unycop
             var clickOnce = new ClickOnceHelper(Globals.PublisherName, Globals.ProductName);
             clickOnce.UpdateUninstallParameters();
 
-            Initialize();
+            //Initialize();
 
             //SisfarmaFactory.Create().Configuraciones.Update("versionSincronizador", $"{ApplicationDeployment.CurrentDeployment.CurrentVersion}");
             //SisfarmaFactory.Create().Configuraciones.Update("versionSincronizador", "1.0");
 
-            SincronizadorTaskManager.TaskSincronizadores
-            .AddSincronizador(new Domain.Core.Sincronizadores.PuntoPendienteSincronizador(
-                farmacia: FarmaciaFactory.Create(),
-                fisiotes: SisfarmaFactory.Create()),
-                delay: SincronizadorTaskManager.DelayPuntosPendiente);
+            //SincronizadorTaskManager.TaskSincronizadores
+            //.AddSincronizador(new Domain.Core.Sincronizadores.PuntoPendienteSincronizador(
+            //    farmacia: FarmaciaFactory.Create(),
+            //    fisiotes: SisfarmaFactory.Create()),
+            //    delay: SincronizadorTaskManager.DelayPuntosPendiente);
             //.AddSincronizador(new Domain.Core.Sincronizadores.ClienteSincronizador(
             //        farmacia: FarmaciaFactory.Create(),
             //        fisiotes: SisfarmaFactory.Create())
@@ -124,7 +124,7 @@ namespace Sisfarma.Sincronizador.Unycop
             //        listaDeArticulo: FarmaciaContext.ListaDeArticulo),
             //        delay: SincronizadorTaskManager.DelayVentaMensual);
 
-            Task.Factory.StartNew(() => new Domain.Core.Sincronizadores.SinonimoSincronizador(FarmaciaFactory.Create(), SisfarmaFactory.Create())
+            Task.Factory.StartNew(() => new Domain.Core.Sincronizadores.SinonimoSincronizador(new Sincronizador.Domain.Core.Services.FarmaciaService(), new Sincronizador.Domain.Core.Services.SisfarmaService())
                 .SetHorarioVaciamientos("1000", "1230", "1730", "1930")
                     .SincronizarAsync(Updater.GetCancellationToken(), delayLoop: 1));
             //Task.Factory.StartNew(() => new PowerSwitchProgramado(SisfarmaFactory.Create()).SincronizarAsync(Updater.GetCancellationToken(), delayLoop: 60000));
@@ -151,8 +151,8 @@ namespace Sisfarma.Sincronizador.Unycop
         private static ContextMenuStrip GetSincronizadorMenuStrip()
         {
             var cms = new ContextMenuStrip();
-            cms.Items.Add($"Salir {ApplicationDeployment.CurrentDeployment.CurrentVersion}", null, (sender, @event) => Application.Exit());
-            //cms.Items.Add($"Salir", null, (sender, @event) => Application.Exit());
+            //cms.Items.Add($"Salir {ApplicationDeployment.CurrentDeployment.CurrentVersion}", null, (sender, @event) => Application.Exit());
+            cms.Items.Add($"Salir", null, (sender, @event) => Application.Exit());
             return cms;
         }
 
@@ -170,7 +170,7 @@ namespace Sisfarma.Sincronizador.Unycop
 
                 var local = GetConnexionLocal(remoteServer, remoteToken);
 
-                FarmaciaContext.Setup(local.pathFicheros, local.password, local.marketCodeList);
+                //FarmaciaContext.Setup(local.pathFicheros, local.password, local.marketCodeList);
             }
             catch (IOException)
             {
