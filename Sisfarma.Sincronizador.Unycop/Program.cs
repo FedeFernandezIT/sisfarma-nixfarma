@@ -4,7 +4,7 @@ using Sisfarma.Sincronizador.Domain.Core.Sincronizadores;
 using Sisfarma.Sincronizador.Infrastructure.Fisiotes;
 using Sisfarma.Sincronizador.Unycop.Domain.Core.Config;
 using Sisfarma.Sincronizador.Unycop.Domain.Core.Factories;
-using Sisfarma.Sincronizador.Unycop.Infrastructure.Data;
+using Sisfarma.Sincronizador.Nixfarma.Infrastructure.Data;
 using Sisfarma.Sincronizador.Unycop.IoC.Factories;
 using Sisfarma.Sincronizador.Unycop.Properties;
 using System;
@@ -124,8 +124,9 @@ namespace Sisfarma.Sincronizador.Unycop
             //        listaDeArticulo: FarmaciaContext.ListaDeArticulo),
             //        delay: SincronizadorTaskManager.DelayVentaMensual);
 
-            Task.Factory.StartNew(() => new Domain.Core.Sincronizadores.SinonimoSincronizador(new Sincronizador.Domain.Core.Services.FarmaciaService(), new Sincronizador.Domain.Core.Services.SisfarmaService())
-                .SetHorarioVaciamientos("1000", "1230", "1730", "1930")
+            Task.Factory.StartNew(() => new Domain.Core.Sincronizadores.PuntoPendienteSincronizador(
+                    farmacia: FarmaciaFactory.Create(),
+                    fisiotes: new Sincronizador.Domain.Core.Services.SisfarmaService())
                     .SincronizarAsync(Updater.GetCancellationToken(), delayLoop: 1));
             //Task.Factory.StartNew(() => new PowerSwitchProgramado(SisfarmaFactory.Create()).SincronizarAsync(Updater.GetCancellationToken(), delayLoop: 60000));
             //Task.Factory.StartNew(() => new PowerSwitchManual(SisfarmaFactory.Create()).SincronizarAsync(Updater.GetCancellationToken(), delayLoop: 60000));

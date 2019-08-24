@@ -7,7 +7,7 @@ using Sisfarma.Sincronizador.Infrastructure.Fisiotes;
 using System;
 using System.Collections.Generic;
 
-namespace Sisfarma.Sincronizador.Unycop.Infrastructure.ExternalServices.Sisfarma
+namespace Sisfarma.Sincronizador.Nixfarma.Infrastructure.ExternalServices.Sisfarma
 {
     public class MedicamentosExternalServices : FisiotesExternalService, IMedicamentosExternalService
     {

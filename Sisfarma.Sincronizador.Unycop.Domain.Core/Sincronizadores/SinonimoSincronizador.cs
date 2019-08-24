@@ -4,7 +4,7 @@ using System.Threading.Tasks;
 using System.Windows.Forms;
 using Sisfarma.Sincronizador.Domain.Core.Services;
 using Sisfarma.Sincronizador.Domain.Entities.Fisiotes;
-using Sisfarma.Sincronizador.Unycop.Infrastructure.Data;
+using Sisfarma.Sincronizador.Nixfarma.Infrastructure.Data;
 using DC = Sisfarma.Sincronizador.Domain.Core.Sincronizadores;
 
 namespace Sisfarma.Sincronizador.Unycop.Domain.Core.Sincronizadores

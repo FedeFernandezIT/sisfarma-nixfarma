@@ -3,7 +3,7 @@ using System.Threading.Tasks;
 using Sisfarma.Sincronizador.Domain.Core.Services;
 using Sisfarma.Sincronizador.Domain.Entities.Farmacia;
 using Sisfarma.Sincronizador.Domain.Entities.Fisiotes;
-using Sisfarma.Sincronizador.Unycop.Infrastructure.Repositories.Farmacia;
+using Sisfarma.Sincronizador.Nixfarma.Infrastructure.Repositories.Farmacia;
 using DC = Sisfarma.Sincronizador.Domain.Core.Sincronizadores;
 
 namespace Sisfarma.Sincronizador.Unycop.Domain.Core.Sincronizadores
@@ -18,7 +18,7 @@ namespace Sisfarma.Sincronizador.Unycop.Domain.Core.Sincronizadores
 
         private string _clasificacion;
 
-        public ControlStockFechaSalidaSincronizador(IFarmaciaService farmacia, ISisfarmaService fisiotes) 
+        public ControlStockFechaSalidaSincronizador(IFarmaciaService farmacia, ISisfarmaService fisiotes)
             : base(farmacia, fisiotes)
         { }
 
@@ -87,6 +87,6 @@ namespace Sisfarma.Sincronizador.Unycop.Domain.Core.Sincronizadores
                 fechaUltimaVenta = farmaco.FechaUltimaVenta,
                 baja = farmaco.Baja
             };
-        }        
+        }
     }
 }

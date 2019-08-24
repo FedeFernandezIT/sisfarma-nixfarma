@@ -4,7 +4,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace Sisfarma.Sincronizador.Unycop.Infrastructure.Repositories.Farmacia.DTO
+namespace Sisfarma.Sincronizador.Nixfarma.Infrastructure.Repositories.Farmacia.DTO
 {
     public class Recepcion
     {

@@ -3,7 +3,7 @@ using Sisfarma.Sincronizador.Domain.Core.Services;
 using Sisfarma.Sincronizador.Domain.Core.Sincronizadores.SuperTypes;
 using Sisfarma.Sincronizador.Domain.Entities.Farmacia;
 using Sisfarma.Sincronizador.Domain.Entities.Fisiotes;
-using Sisfarma.Sincronizador.Unycop.Infrastructure.Repositories.Farmacia;
+using Sisfarma.Sincronizador.Nixfarma.Infrastructure.Repositories.Farmacia;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -36,7 +36,7 @@ namespace Sisfarma.Sincronizador.Unycop.Domain.Core.Sincronizadores
 
         private long _ultimaVenta;
 
-        public PagoPendienteActualizarSincronizador(IFarmaciaService farmacia, ISisfarmaService fisiotes) 
+        public PagoPendienteActualizarSincronizador(IFarmaciaService farmacia, ISisfarmaService fisiotes)
             : base(farmacia, fisiotes)
         {
             _ticketRepository = new TicketRepository();
@@ -65,7 +65,7 @@ namespace Sisfarma.Sincronizador.Unycop.Domain.Core.Sincronizadores
                 ? valorConfiguracion.ToLongOrDefault()
                 : 20130L;
 
-            _ultimaVenta = venta;            
+            _ultimaVenta = venta;
         }
 
         public override void Process()
@@ -74,13 +74,12 @@ namespace Sisfarma.Sincronizador.Unycop.Domain.Core.Sincronizadores
             {
                 var year = int.Parse($"{_ultimaVenta}".Substring(0, 4));
                 var ventaId = int.Parse($"{_ultimaVenta}".Substring(4));
-                
+
                 _aniosProcesados.Add(year);
 
                 var ventas = _farmacia.Ventas.GetAllByIdGreaterOrEqual(year, ventaId);
-                
-                                                
-                if(!ventas.Any())
+
+                if (!ventas.Any())
                 {
                     if (year < DateTime.Now.Year)
                     {
@@ -95,7 +94,7 @@ namespace Sisfarma.Sincronizador.Unycop.Domain.Core.Sincronizadores
                 {
                     Task.Delay(5).Wait();
                     _cancellationToken.ThrowIfCancellationRequested();
-                    
+
                     if (venta.ClienteId > 0)
                         venta.Cliente = _farmacia.Clientes.GetOneOrDefaultById(venta.ClienteId);
 
@@ -112,21 +111,19 @@ namespace Sisfarma.Sincronizador.Unycop.Domain.Core.Sincronizadores
                     venta.VendedorNombre = _farmacia.Vendedores.GetOneOrDefaultById(venta.VendedorId)?.Nombre;
                     venta.Detalle = _farmacia.Ventas.GetDetalleDeVentaByVentaId($"{venta.FechaHora.Year}{venta.Id}".ToIntegerOrDefault());
 
-
                     if (venta.HasCliente())
                     {
                         InsertOrUpdateCliente(venta.Cliente);
                     }
 
-
                     var puntosPendientes = GenerarPuntosPendientes(venta);
                     foreach (var puntoPendiente in puntosPendientes)
-                    {                     
+                    {
                         _sisfarma.PuntosPendientes.Sincronizar(puntoPendiente);
                         _ultimaVenta = puntoPendiente.VentaId;
-                    }                    
-                }                                
-            }            
+                    }
+                }
+            }
         }
 
         private IEnumerable<PuntosPendientes> GenerarPuntosPendientes(Venta venta)
@@ -186,7 +183,7 @@ namespace Sisfarma.Sincronizador.Unycop.Domain.Core.Sincronizadores
             }
 
             return puntosPendientes;
-        }        
+        }
 
         private void InsertOrUpdateCliente(FAR.Cliente cliente)
         {

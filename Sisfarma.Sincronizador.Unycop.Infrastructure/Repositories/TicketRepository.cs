@@ -1,10 +1,10 @@
 ﻿using Sisfarma.Sincronizador.Core.Config;
-using Sisfarma.Sincronizador.Unycop.Infrastructure.Data;
-using Sisfarma.Sincronizador.Unycop.Infrastructure.Repositories.Farmacia.DTO;
+using Sisfarma.Sincronizador.Nixfarma.Infrastructure.Data;
+using Sisfarma.Sincronizador.Nixfarma.Infrastructure.Repositories.Farmacia.DTO;
 using System.Data.OleDb;
 using System.Linq;
 
-namespace Sisfarma.Sincronizador.Unycop.Infrastructure.Repositories.Farmacia
+namespace Sisfarma.Sincronizador.Nixfarma.Infrastructure.Repositories.Farmacia
 {
     public interface ITicketRepository
     {

@@ -1,14 +1,15 @@
-﻿using Sisfarma.Sincronizador.Core.Config;
+﻿using Oracle.DataAccess.Client;
+using Sisfarma.Sincronizador.Core.Config;
 using Sisfarma.Sincronizador.Core.Extensions;
 using Sisfarma.Sincronizador.Domain.Core.Repositories.Farmacia;
 using Sisfarma.Sincronizador.Domain.Entities.Farmacia;
-using Sisfarma.Sincronizador.Unycop.Infrastructure.Data;
+using Sisfarma.Sincronizador.Nixfarma.Infrastructure.Data;
 using System;
 using System.Collections.Generic;
 using System.Data.OleDb;
 using System.Linq;
 
-namespace Sisfarma.Sincronizador.Unycop.Infrastructure.Repositories.Farmacia
+namespace Sisfarma.Sincronizador.Nixfarma.Infrastructure.Repositories.Farmacia
 {
     public class VentasRepository : FarmaciaRepository, IVentasRepository
     {
@@ -105,7 +106,6 @@ namespace Sisfarma.Sincronizador.Unycop.Infrastructure.Repositories.Farmacia
                 Importe = ventaAccess.Importe * _factorCentecimal,
             };
 
-
             if (ventaAccess.Cliente > 0)
                 venta.Cliente = _clientesRepository.GetOneOrDefaultById(ventaAccess.Cliente);
 
@@ -128,28 +128,47 @@ namespace Sisfarma.Sincronizador.Unycop.Infrastructure.Repositories.Farmacia
         public List<Venta> GetAllByIdGreaterOrEqual(int year, long value)
         {
             // Access no handlea long
-            var valueInteger = (int)value;            
+            var valueInteger = (int)value;
 
             try
             {
-                using (var db = FarmaciaContext.VentasByYear(year))
-                {
-                    var sql = @"SELECT TOP 999 ID_VENTA as Id, Fecha, NPuesto as Puesto, Cliente, Vendedor, Descuento, Pago, Tipo, Importe FROM ventas WHERE year(fecha) >= @year AND ID_VENTA >= @value ORDER BY ID_VENTA ASC";
+                var sql1 = @"SELECT * FROM appul.ah_ventas
+                                WHERE ROWNUM <= 999
+                                    AND emp_codigo = 'EMP1'
+                                    AND situacion = 'N'
+                                    AND fecha_venta >= to_date('01/01/2018', 'DD/MM/YYYY')
+                                    AND fecha_venta >= to_date('01/01/2018 00:00:00', 'DD/MM/YYYY HH24:MI:SS')
+                                    ORDER BY fecha_venta ASC";
 
-                    return db.Database.SqlQuery<DTO.Venta>(sql,
-                        new OleDbParameter("year", year),
-                        new OleDbParameter("value", valueInteger))
-                        .Select(GenerarVentaEncabezado)
-                            .ToList();
+                string connectionString = @"User Id=""CONSU""; Password=""consu"";" +
+                @"Data Source=(DESCRIPTION=(ADDRESS_LIST=(ADDRESS=(PROTOCOL=IPC)(KEY=DP9))" +
+                    "(ADDRESS=(PROTOCOL=TCP)(HOST=192.168.0.30)(PORT=1521)))(CONNECT_DATA=(INSTANCE_NAME=DP9)(SERVICE_NAME=ORACLE9)))";
+
+                var conn = new OracleConnection(connectionString);
+                conn.Open();
+                var cmd = conn.CreateCommand();
+                cmd.CommandText = sql1;
+                var reader = cmd.ExecuteReader();
+
+                var ventas = new List<Venta>();
+                while (reader.Read())
+                {
+                    ventas.Add(new Venta
+                    {
+                        ClienteCodigo = reader["CLI_CODIGO"] as string
+                    });
                 }
+
+                conn.Close();
+                return ventas;
             }
-            catch (FarmaciaContextException)
+            catch (Exception ex)
             {
                 return new List<Venta>();
-            }            
+            }
         }
 
-        private Venta GenerarVentaEncabezado(DTO.Venta venta) 
+        private Venta GenerarVentaEncabezado(DTO.Venta venta)
             => new Venta
             {
                 Id = venta.Id,
@@ -163,9 +182,8 @@ namespace Sisfarma.Sincronizador.Unycop.Infrastructure.Repositories.Farmacia
                 Importe = venta.Importe * _factorCentecimal,
             };
 
-
         public List<Venta> GetAllByIdGreaterOrEqual(long id, DateTime fecha)
-        {            
+        {
             var rs = new List<DTO.Venta>();
             try
             {
@@ -178,7 +196,7 @@ namespace Sisfarma.Sincronizador.Unycop.Infrastructure.Repositories.Farmacia
 
                     rs = db.Database.SqlQuery<DTO.Venta>(sql,
                         new OleDbParameter("id", (int)id),
-                        new OleDbParameter("year", year))                            
+                        new OleDbParameter("year", year))
                             .ToList();
                 }
             }
@@ -186,7 +204,6 @@ namespace Sisfarma.Sincronizador.Unycop.Infrastructure.Repositories.Farmacia
             {
                 return new List<Venta>();
             }
-            
 
             var ventas = new List<Venta>();
             foreach (var ventaRegistrada in rs)
@@ -203,7 +220,6 @@ namespace Sisfarma.Sincronizador.Unycop.Infrastructure.Repositories.Farmacia
                     TotalBruto = ventaRegistrada.Pago * _factorCentecimal,
                     Importe = ventaRegistrada.Importe * _factorCentecimal,
                 };
-
 
                 if (ventaRegistrada.Cliente > 0)
                     venta.Cliente = _clientesRepository.GetOneOrDefaultById(ventaRegistrada.Cliente);
@@ -226,7 +242,6 @@ namespace Sisfarma.Sincronizador.Unycop.Infrastructure.Repositories.Farmacia
 
             return ventas;
         }
-
 
         public List<VentaDetalle> GetDetalleDeVentaByVentaId(long venta)
         {
@@ -311,7 +326,7 @@ namespace Sisfarma.Sincronizador.Unycop.Infrastructure.Repositories.Farmacia
             catch (FarmaciaContextException)
             {
                 return new List<VentaDetalle>();
-            }            
+            }
         }
 
         public Ticket GetOneOrDefaultTicketByVentaId(long id)
@@ -320,7 +335,7 @@ namespace Sisfarma.Sincronizador.Unycop.Infrastructure.Repositories.Farmacia
             var ventaId = int.Parse($"{id}".Substring(4));
 
             using (var db = FarmaciaContext.VentasByYear(year))
-            {                
+            {
                 var sql = @"SELECT Id_Ticket as Numero, Serie FROM Tickets_D WHERE Id_Venta = @venta";
                 var rs = db.Database.SqlQuery<DTO.Ticket>(sql,
                     new OleDbParameter("venta", ventaId))
@@ -328,6 +343,6 @@ namespace Sisfarma.Sincronizador.Unycop.Infrastructure.Repositories.Farmacia
 
                 return rs != null ? new Ticket { Numero = rs.Numero, Serie = rs.Serie } : null;
             }
-        }        
+        }
     }
 }

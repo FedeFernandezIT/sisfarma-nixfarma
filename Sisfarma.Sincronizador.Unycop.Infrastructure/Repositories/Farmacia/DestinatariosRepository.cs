@@ -1,7 +1,7 @@
 ﻿using Sisfarma.Sincronizador.Core.Config;
 using Sisfarma.Sincronizador.Farmatic.Models;
-using Sisfarma.Sincronizador.Unycop.Infrastructure.Data;
-using Sisfarma.Sincronizador.Unycop.Infrastructure.Repositories.Farmacia;
+using Sisfarma.Sincronizador.Nixfarma.Infrastructure.Data;
+using Sisfarma.Sincronizador.Nixfarma.Infrastructure.Repositories.Farmacia;
 using System.Collections.Generic;
 using System.Data.SqlClient;
 using System.Linq;

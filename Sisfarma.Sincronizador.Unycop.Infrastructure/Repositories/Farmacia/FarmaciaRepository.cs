@@ -1,7 +1,7 @@
 ﻿using Sisfarma.Sincronizador.Core.Config;
 using System;
 
-namespace Sisfarma.Sincronizador.Unycop.Infrastructure.Repositories.Farmacia
+namespace Sisfarma.Sincronizador.Nixfarma.Infrastructure.Repositories.Farmacia
 {
     public abstract class FarmaciaRepository
     {        

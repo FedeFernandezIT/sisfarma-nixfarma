@@ -3,7 +3,7 @@ using Sisfarma.Sincronizador.Core.Extensions;
 using Sisfarma.Sincronizador.Domain.Core.Repositories.Farmacia;
 using Sisfarma.Sincronizador.Domain.Entities.Farmacia;
 using Sisfarma.Sincronizador.Farmatic.Models;
-using Sisfarma.Sincronizador.Unycop.Infrastructure.Data;
+using Sisfarma.Sincronizador.Nixfarma.Infrastructure.Data;
 using System;
 using System.Collections.Generic;
 using System.Data;
@@ -11,7 +11,7 @@ using System.Data.OleDb;
 using System.Data.SqlClient;
 using System.Linq;
 
-namespace Sisfarma.Sincronizador.Unycop.Infrastructure.Repositories.Farmacia
+namespace Sisfarma.Sincronizador.Nixfarma.Infrastructure.Repositories.Farmacia
 {
     public class ClientesRepository : FarmaciaRepository, IClientesRepository
     {

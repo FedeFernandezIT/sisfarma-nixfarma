@@ -1,14 +1,17 @@
-﻿using Sisfarma.Sincronizador.Core.Config;
+﻿using Oracle.DataAccess.Client;
+using Sisfarma.Sincronizador.Core.Config;
 using System;
 using System.Collections.Generic;
 using System.Data.Entity;
 using System.IO;
 using System.Linq;
 
-namespace Sisfarma.Sincronizador.Unycop.Infrastructure.Data
+namespace Sisfarma.Sincronizador.Nixfarma.Infrastructure.Data
 {
     public class FarmaciaContext : DbContext
     {
+        private OracleConnection OracleConnection { get; set; }
+
         public FarmaciaContext(string server, string database, string username, string password)
             : base("OracleDbContext")
         //: base($@"providerName=""Oracle.ManagedDataAccess.Client"" connectionString=""User Id ={username}; Password={password};Data Source ={server}/{database}""")
@@ -30,6 +33,10 @@ namespace Sisfarma.Sincronizador.Unycop.Infrastructure.Data
         private static ICollection<int> _historicos;
         private static string _path = "";
         private static string _password = "";
+
+        public FarmaciaContext()
+        {
+        }
 
         public static int ListaDeArticulo { get; set; }
 

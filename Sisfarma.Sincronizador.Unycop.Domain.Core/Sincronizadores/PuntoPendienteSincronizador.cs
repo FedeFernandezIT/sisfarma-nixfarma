@@ -2,12 +2,13 @@
 using Sisfarma.Sincronizador.Domain.Core.Services;
 using Sisfarma.Sincronizador.Domain.Entities.Farmacia;
 using Sisfarma.Sincronizador.Domain.Entities.Fisiotes;
-using Sisfarma.Sincronizador.Unycop.Infrastructure.Repositories.Farmacia;
+using Sisfarma.Sincronizador.Nixfarma.Infrastructure.Repositories.Farmacia;
 using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 using DC = Sisfarma.Sincronizador.Domain.Core.Sincronizadores;
+
 using FAR = Sisfarma.Sincronizador.Domain.Entities.Farmacia;
 
 namespace Sisfarma.Sincronizador.Unycop.Domain.Core.Sincronizadores
@@ -26,7 +27,7 @@ namespace Sisfarma.Sincronizador.Unycop.Domain.Core.Sincronizadores
         private string _copiarClientes;
         private ICollection<int> _aniosProcesados;
 
-        public PuntoPendienteSincronizador(IFarmaciaService farmacia, ISisfarmaService fisiotes) 
+        public PuntoPendienteSincronizador(IFarmaciaService farmacia, ISisfarmaService fisiotes)
             : base(farmacia, fisiotes)
         {
             _ticketRepository = new TicketRepository();
@@ -35,28 +36,29 @@ namespace Sisfarma.Sincronizador.Unycop.Domain.Core.Sincronizadores
 
         public override void LoadConfiguration()
         {
-            base.LoadConfiguration();
-            _clasificacion = !string.IsNullOrWhiteSpace(ConfiguracionPredefinida[Configuracion.FIELD_TIPO_CLASIFICACION])
-                ? ConfiguracionPredefinida[Configuracion.FIELD_TIPO_CLASIFICACION]
-                : TIPO_CLASIFICACION_DEFAULT;
+            //base.LoadConfiguration();
+            //_clasificacion = !string.IsNullOrWhiteSpace(ConfiguracionPredefinida[Configuracion.FIELD_TIPO_CLASIFICACION])
+            //    ? ConfiguracionPredefinida[Configuracion.FIELD_TIPO_CLASIFICACION]
+            //    : TIPO_CLASIFICACION_DEFAULT;
 
-            _copiarClientes = ConfiguracionPredefinida[Configuracion.FIELD_COPIAS_CLIENTES];
-            _debeCopiarClientes = _copiarClientes.ToLower().Equals("si") || string.IsNullOrWhiteSpace(_copiarClientes);
+            //_copiarClientes = ConfiguracionPredefinida[Configuracion.FIELD_COPIAS_CLIENTES];
+            //_debeCopiarClientes = _copiarClientes.ToLower().Equals("si") || string.IsNullOrWhiteSpace(_copiarClientes);
         }
 
         public override void PreSincronizacion()
         {
             base.PreSincronizacion();
-            if (_ultimaVenta == 0 || _ultimaVenta == 1)
-                _ultimaVenta = $"{_anioInicio}{_ultimaVenta}".ToIntegerOrDefault();
+            //if (_ultimaVenta == 0 || _ultimaVenta == 1)
+            //    _ultimaVenta = $"{_anioInicio}{_ultimaVenta}".ToIntegerOrDefault();
         }
 
         public override void Process()
         {
-            var anioProcesando = _aniosProcesados.Any() ? _aniosProcesados.Last() : $"{_ultimaVenta}".Substring(0, 4).ToIntegerOrDefault();
-            
-            var ventaId = int.Parse($"{_ultimaVenta}".Substring(4));
-            
+            //var anioProcesando = _aniosProcesados.Any() ? _aniosProcesados.Last() : $"{_ultimaVenta}".Substring(0, 4).ToIntegerOrDefault();
+
+            //var ventaId = int.Parse($"{_ultimaVenta}".Substring(4));
+            var anioProcesando = 2018;
+            var ventaId = 1;
             var ventas = _farmacia.Ventas.GetAllByIdGreaterOrEqual(anioProcesando, ventaId);
             if (!ventas.Any())
             {
@@ -68,13 +70,11 @@ namespace Sisfarma.Sincronizador.Unycop.Domain.Core.Sincronizadores
                 return;
             }
 
-
-
             foreach (var venta in ventas)
             {
                 Task.Delay(5).Wait();
                 _cancellationToken.ThrowIfCancellationRequested();
-                
+
                 if (venta.ClienteId > 0)
                     venta.Cliente = _farmacia.Clientes.GetOneOrDefaultById(venta.ClienteId);
 
@@ -91,16 +91,14 @@ namespace Sisfarma.Sincronizador.Unycop.Domain.Core.Sincronizadores
                 venta.VendedorNombre = _farmacia.Vendedores.GetOneOrDefaultById(venta.VendedorId)?.Nombre;
                 venta.Detalle = _farmacia.Ventas.GetDetalleDeVentaByVentaId($"{venta.FechaHora.Year}{venta.Id}".ToIntegerOrDefault());
 
-
                 if (venta.HasCliente() && _debeCopiarClientes)
                 {
                     InsertOrUpdateCliente(venta.Cliente);
                 }
-                    
 
                 var puntosPendientes = GenerarPuntosPendientes(venta);
                 foreach (var puntoPendiente in puntosPendientes)
-                {                    
+                {
                     _sisfarma.PuntosPendientes.Sincronizar(puntoPendiente);
                 }
 
@@ -112,7 +110,7 @@ namespace Sisfarma.Sincronizador.Unycop.Domain.Core.Sincronizadores
             {
                 _aniosProcesados.Add(anioProcesando + 1);
                 _ultimaVenta = $"{anioProcesando + 1 }{0}".ToIntegerOrDefault();
-            }                                        
+            }
         }
 
         private IEnumerable<PuntosPendientes> GenerarPuntosPendientes(Venta venta)
@@ -158,7 +156,7 @@ namespace Sisfarma.Sincronizador.Unycop.Domain.Core.Sincronizadores
                     Laboratorio = item.Farmaco.Laboratorio?.Nombre ?? LABORATORIO_DEFAULT,
                     Proveedor = item.Farmaco.Proveedor?.Nombre ?? string.Empty,
                     Receta = item.Receta,
-                    FechaVenta = venta.FechaHora,                    
+                    FechaVenta = venta.FechaHora,
                     PVP = item.PVP,
                     PUC = item.Farmaco?.PrecioCoste ?? 0,
                     Categoria = item.Farmaco.Categoria?.Nombre ?? string.Empty,
@@ -167,25 +165,25 @@ namespace Sisfarma.Sincronizador.Unycop.Domain.Core.Sincronizadores
                     LineaDescuento = item.Descuento,
                     TicketNumero = venta.Ticket?.Numero,
                     Serie = venta.Ticket?.Serie ?? string.Empty,
-                    Sistema = SISTEMA_UNYCOP                    
+                    Sistema = SISTEMA_UNYCOP
                 };
 
                 puntosPendientes.Add(puntoPendiente);
             }
 
-            return puntosPendientes;            
+            return puntosPendientes;
         }
 
         private PuntosPendientes GenerarPuntoPendienteVentaSinDetalle(Venta venta)
-        {            
+        {
             return new PuntosPendientes
             {
                 VentaId = $"{venta.FechaHora.Year}{venta.Id}".ToLongOrDefault(),
                 LineaNumero = 1,
                 CodigoBarra = string.Empty,
-                CodigoNacional = "9999999",                
+                CodigoNacional = "9999999",
                 Descripcion = "Pago Deposito",
-                
+
                 Familia = FAMILIA_DEFAULT,
                 SuperFamilia = _clasificacion == TIPO_CLASIFICACION_CATEGORIA
                     ? FAMILIA_DEFAULT
@@ -221,15 +219,15 @@ namespace Sisfarma.Sincronizador.Unycop.Domain.Core.Sincronizadores
         }
 
         private void InsertOrUpdateCliente(FAR.Cliente cliente)
-        {                        
+        {
             var debeCargarPuntos = _puntosDeSisfarma.ToLower().Equals("no") || string.IsNullOrWhiteSpace(_puntosDeSisfarma);
 
             if (_perteneceFarmazul)
-            {                
+            {
                 var beBlue = _farmacia.Clientes.EsBeBlue($"{cliente.Id}");
-                _sisfarma.Clientes.Sincronizar(cliente, beBlue, debeCargarPuntos);                
+                _sisfarma.Clientes.Sincronizar(cliente, beBlue, debeCargarPuntos);
             }
-            else _sisfarma.Clientes.Sincronizar(cliente, debeCargarPuntos);            
-        }        
+            else _sisfarma.Clientes.Sincronizar(cliente, debeCargarPuntos);
+        }
     }
 }

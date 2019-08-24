@@ -3,15 +3,15 @@ using System.Linq;
 using System.Threading.Tasks;
 using Sisfarma.Sincronizador.Domain.Core.Services;
 using Sisfarma.Sincronizador.Domain.Entities.Farmacia;
-using Sisfarma.Sincronizador.Unycop.Infrastructure.Repositories.Farmacia;
+using Sisfarma.Sincronizador.Nixfarma.Infrastructure.Repositories.Farmacia;
 using CORE = Sisfarma.Sincronizador.Domain.Core.Sincronizadores;
-using DTO = Sisfarma.Sincronizador.Unycop.Infrastructure.Repositories.Farmacia.DTO;
+using DTO = Sisfarma.Sincronizador.Nixfarma.Infrastructure.Repositories.Farmacia.DTO;
 
 namespace Sisfarma.Sincronizador.Unycop.Domain.Core.Sincronizadores
 {
     public class ClienteSincronizador : CORE.ClienteSincronizador
     {
-        public ClienteSincronizador(IFarmaciaService farmacia, ISisfarmaService fisiotes) 
+        public ClienteSincronizador(IFarmaciaService farmacia, ISisfarmaService fisiotes)
             : base(farmacia, fisiotes)
         { }
 
@@ -73,9 +73,8 @@ namespace Sisfarma.Sincronizador.Unycop.Domain.Core.Sincronizadores
             }
         }
 
-
         private void InsertOrUpdateCliente(Cliente cliente)
-        {            
+        {
             if (_perteneceFarmazul)
             {
                 var beBlue = _farmacia.Clientes.EsBeBlue($"{cliente.Id}");
@@ -84,6 +83,6 @@ namespace Sisfarma.Sincronizador.Unycop.Domain.Core.Sincronizadores
             else _sisfarma.Clientes.Sincronizar(cliente, _debeCargarPuntos);
 
             _ultimoClienteSincronizado = cliente.Id;
-        }            
+        }
     }
 }

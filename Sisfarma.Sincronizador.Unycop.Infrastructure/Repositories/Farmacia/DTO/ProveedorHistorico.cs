@@ -1,6 +1,6 @@
 ﻿using System;
 
-namespace Sisfarma.Sincronizador.Unycop.Infrastructure.Repositories.Farmacia.DTO
+namespace Sisfarma.Sincronizador.Nixfarma.Infrastructure.Repositories.Farmacia.DTO
 {
     public class ProveedorHistorico
     {

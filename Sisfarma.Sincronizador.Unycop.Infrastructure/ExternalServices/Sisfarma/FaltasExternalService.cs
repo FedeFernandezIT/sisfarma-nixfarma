@@ -5,7 +5,7 @@ using Sisfarma.Sincronizador.Domain.Core.ExternalServices.Fisiotes;
 using Sisfarma.Sincronizador.Domain.Entities.Fisiotes;
 using Sisfarma.Sincronizador.Infrastructure.Fisiotes;
 
-namespace Sisfarma.Sincronizador.Unycop.Infrastructure.ExternalServices.Sisfarma
+namespace Sisfarma.Sincronizador.Nixfarma.Infrastructure.ExternalServices.Sisfarma
 {
     public class FaltasExternalService : FisiotesExternalService, IFaltasExternalService
     {

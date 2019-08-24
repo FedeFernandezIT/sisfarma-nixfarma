@@ -1,7 +1,7 @@
 ﻿using Sisfarma.Sincronizador.Core.Config;
 using Sisfarma.Sincronizador.Core.Extensions;
 using Sisfarma.Sincronizador.Domain.Entities.Farmacia;
-using Sisfarma.Sincronizador.Unycop.Infrastructure.Data;
+using Sisfarma.Sincronizador.Nixfarma.Infrastructure.Data;
 using System;
 using System.Collections.Generic;
 using System.Data.OleDb;
@@ -9,7 +9,7 @@ using System.Linq;
 
 using DC = Sisfarma.Sincronizador.Domain.Core.Repositories.Farmacia;
 
-namespace Sisfarma.Sincronizador.Unycop.Infrastructure.Repositories.Farmacia
+namespace Sisfarma.Sincronizador.Nixfarma.Infrastructure.Repositories.Farmacia
 {
     public interface IFarmacoRepository
     {

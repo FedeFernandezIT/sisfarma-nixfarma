@@ -6,7 +6,7 @@ using Sisfarma.Sincronizador.Domain.Entities.Fisiotes;
 using Sisfarma.Sincronizador.Infrastructure.Fisiotes;
 using System;
 
-namespace Sisfarma.Sincronizador.Unycop.Infrastructure.ExternalServices
+namespace Sisfarma.Sincronizador.Nixfarma.Infrastructure.ExternalServices
 {
     public class PedidosExternalService : FisiotesExternalService, IPedidosExternalService
     {

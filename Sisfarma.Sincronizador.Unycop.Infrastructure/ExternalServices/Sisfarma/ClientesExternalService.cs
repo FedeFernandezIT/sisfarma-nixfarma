@@ -7,13 +7,13 @@ using Sisfarma.Sincronizador.Infrastructure.Fisiotes.DTO;
 using System;
 using FAR = Sisfarma.Sincronizador.Domain.Entities.Farmacia;
 
-namespace Sisfarma.Sincronizador.Unycop.Infrastructure.ExternalServices.Sisfarma
+namespace Sisfarma.Sincronizador.Nixfarma.Infrastructure.ExternalServices.Sisfarma
 {
     public class ClientesExternalService : FisiotesExternalService, IClientesExternalService, IClientesExternalServiceNew
     {
-        public ClientesExternalService(IRestClient restClient, FisiotesConfig config) 
+        public ClientesExternalService(IRestClient restClient, FisiotesConfig config)
             : base(restClient, config)
-        {}
+        { }
 
         public bool AnyWithDni(string dni)
         {
@@ -91,7 +91,6 @@ namespace Sisfarma.Sincronizador.Unycop.Infrastructure.ExternalServices.Sisfarma
             Sincronizar(cliente, beBlue, cargarPuntos, resource);
         }
 
-
         private void Sincronizar(FAR.Cliente cliente, bool cargarPuntos, string resource)
         {
             var clienteToSend = (cargarPuntos) ?
@@ -118,7 +117,7 @@ namespace Sisfarma.Sincronizador.Unycop.Infrastructure.ExternalServices.Sisfarma
         {
             return new
             {
-                dni_tra = "0",                
+                dni_tra = "0",
                 tarjeta = cliente.Tarjeta,
                 dniCliente = cliente.NumeroIdentificacion,
                 apellidos = cliente.NombreCompleto.Strip(),
@@ -132,7 +131,7 @@ namespace Sisfarma.Sincronizador.Unycop.Infrastructure.ExternalServices.Sisfarma
                 fechaAlta = cliente.FechaAlta.ToIsoString(),
                 baja = cliente.Baja.ToInteger(),
                 estado_civil = cliente.EstadoCivil,
-                lopd = cliente.LOPD.ToInteger()                
+                lopd = cliente.LOPD.ToInteger()
             };
         }
 
@@ -171,7 +170,7 @@ namespace Sisfarma.Sincronizador.Unycop.Infrastructure.ExternalServices.Sisfarma
                 direccion = cliente.Direccion.Strip(),
                 movil = cliente.Celular,
                 email = cliente.Email,
-                fecha_nacimiento = cliente.FechaNacimiento.ToDateInteger(),                
+                fecha_nacimiento = cliente.FechaNacimiento.ToDateInteger(),
                 sexo = cliente.Sexo,
                 fechaAlta = cliente.FechaAlta.ToIsoString(),
                 baja = cliente.Baja.ToInteger(),
@@ -200,7 +199,7 @@ namespace Sisfarma.Sincronizador.Unycop.Infrastructure.ExternalServices.Sisfarma
                 lopd = cliente.LOPD.ToInteger(),
                 beBlue = beBlue.ToInteger()
             };
-        }        
+        }
 
         public void Update(string trabajador, string tarjeta, string nombre, string telefono, string direccion, string movil, string email, decimal puntos, long fechaNacimiento, string sexo, DateTime? fechaAlta, int baja, int lopd, string idCliente, bool withTrack = false)
         {

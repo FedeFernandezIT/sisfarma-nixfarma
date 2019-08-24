@@ -1,4 +1,4 @@
-﻿namespace Sisfarma.Sincronizador.Unycop.Infrastructure.ExternalServices.Sisfarma.DTO
+﻿namespace Sisfarma.Sincronizador.Nixfarma.Infrastructure.ExternalServices.Sisfarma.DTO
 {
     public class PuntosPendientes
     {

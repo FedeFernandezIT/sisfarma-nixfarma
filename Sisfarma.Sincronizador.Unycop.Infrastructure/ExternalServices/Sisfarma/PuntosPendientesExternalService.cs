@@ -9,7 +9,7 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 
-namespace Sisfarma.Sincronizador.Unycop.Infrastructure.ExternalServices.Sisfarma
+namespace Sisfarma.Sincronizador.Nixfarma.Infrastructure.ExternalServices.Sisfarma
 {
     public class PuntosPendientesExternalService : FisiotesExternalService, IPuntosPendientesExternalService
     {

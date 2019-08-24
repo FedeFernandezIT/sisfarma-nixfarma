@@ -3,7 +3,7 @@ using System.Threading.Tasks;
 using Sisfarma.Sincronizador.Domain.Core.Services;
 using Sisfarma.Sincronizador.Domain.Entities.Farmacia;
 using Sisfarma.Sincronizador.Domain.Entities.Fisiotes;
-using Sisfarma.Sincronizador.Unycop.Infrastructure.Repositories.Farmacia;
+using Sisfarma.Sincronizador.Nixfarma.Infrastructure.Repositories.Farmacia;
 using DC = Sisfarma.Sincronizador.Domain.Core.Sincronizadores;
 
 namespace Sisfarma.Sincronizador.Unycop.Domain.Core.Sincronizadores
@@ -18,7 +18,7 @@ namespace Sisfarma.Sincronizador.Unycop.Domain.Core.Sincronizadores
 
         private string _clasificacion;
 
-        public ControlStockSincronizador(IFarmaciaService farmacia, ISisfarmaService fisiotes) 
+        public ControlStockSincronizador(IFarmaciaService farmacia, ISisfarmaService fisiotes)
             : base(farmacia, fisiotes)
         { }
 
@@ -51,7 +51,7 @@ namespace Sisfarma.Sincronizador.Unycop.Domain.Core.Sincronizadores
             {
                 Task.Delay(5).Wait();
 
-                _cancellationToken.ThrowIfCancellationRequested();                
+                _cancellationToken.ThrowIfCancellationRequested();
                 var medicamento = GenerarMedicamento(repository.GenerarFarmaco(farmaco));
                 _sisfarma.Medicamentos.Sincronizar(medicamento);
                 _ultimoMedicamentoSincronizado = medicamento.cod_nacional;
@@ -76,7 +76,7 @@ namespace Sisfarma.Sincronizador.Unycop.Domain.Core.Sincronizadores
                 nombre = farmaco.Denominacion,
                 familia = familia,
                 precio = (float)farmaco.Precio,
-                descripcion = farmaco.Denominacion,                
+                descripcion = farmaco.Denominacion,
                 laboratorio = farmaco.Laboratorio?.Codigo ?? "0",
                 nombre_laboratorio = farmaco.Laboratorio?.Nombre ?? LABORATORIO_DEFAULT,
                 proveedor = farmaco.Proveedor?.Nombre ?? string.Empty,
