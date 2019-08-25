@@ -98,7 +98,7 @@ namespace Sisfarma.Sincronizador.Nixfarma.Infrastructure.Repositories.Farmacia
                 Id = ventaAccess.Id,
                 Tipo = ventaAccess.Tipo.ToString(),
                 FechaHora = ventaAccess.Fecha,
-                Puesto = ventaAccess.Puesto,
+                Puesto = ventaAccess.Puesto.ToString(),
                 ClienteId = ventaAccess.Cliente,
                 VendedorId = ventaAccess.Vendedor,
                 TotalDescuento = ventaAccess.Descuento * _factorCentecimal,
@@ -132,7 +132,9 @@ namespace Sisfarma.Sincronizador.Nixfarma.Infrastructure.Repositories.Farmacia
 
             try
             {
-                var sql1 = @"SELECT * FROM appul.ah_ventas
+                var sql1 = @"SELECT
+                                FECHA_VENTA, FECHA_FIN, CLI_CODIGO, TIPO_OPERACION, OPERACION, PUESTO, USR_CODIGO, IMPORTE_VTA_E, EMP_CODIGO
+                                FROM appul.ah_ventas
                                 WHERE ROWNUM <= 999
                                     AND emp_codigo = 'EMP1'
                                     AND situacion = 'N'
@@ -153,9 +155,26 @@ namespace Sisfarma.Sincronizador.Nixfarma.Infrastructure.Repositories.Farmacia
                 var ventas = new List<Venta>();
                 while (reader.Read())
                 {
+                    var cliCodigo = reader["CLI_CODIGO"] != null ? (long?)Convert.ToInt32(reader["CLI_CODIGO"]) : null;
+                    var fechaVenta = Convert.ToDateTime(reader["FECHA_VENTA"]);
+                    var fechaFin = Convert.ToDateTime(reader["FECHA_FIN"]);
+                    var tipoOperacion = Convert.ToString(reader["TIPO_OPERACION"]);
+                    var operacion = Convert.ToInt64(reader["OPERACION"]);
+                    var puesto = Convert.ToString(reader["PUESTO"]);
+                    var usrCodigo = Convert.ToString(reader["USR_CODIGO"]);
+                    var importeVentaE = reader["IMPORTE_VTA_E"] != null ? Convert.ToDecimal(reader["IMPORTE_VTA_E"]) : default(decimal);
+                    var empCodigo = Convert.ToString(reader["EMP_CODIGO"]);
                     ventas.Add(new Venta
                     {
-                        ClienteCodigo = reader["CLI_CODIGO"] as string
+                        ClienteId = cliCodigo,
+                        FechaFin = fechaFin,
+                        FechaHora = fechaVenta,
+                        TipoOperacion = tipoOperacion,
+                        Operacion = operacion,
+                        Puesto = puesto,
+                        VendedorCodigo = usrCodigo,
+                        Importe = importeVentaE,
+                        EmpresaCodigo = empCodigo
                     });
                 }
 
@@ -174,7 +193,7 @@ namespace Sisfarma.Sincronizador.Nixfarma.Infrastructure.Repositories.Farmacia
                 Id = venta.Id,
                 Tipo = venta.Tipo.ToString(),
                 FechaHora = venta.Fecha,
-                Puesto = venta.Puesto,
+                Puesto = venta.Puesto.ToString(),
                 ClienteId = venta.Cliente,
                 VendedorId = venta.Vendedor,
                 TotalDescuento = venta.Descuento * _factorCentecimal,
@@ -213,7 +232,7 @@ namespace Sisfarma.Sincronizador.Nixfarma.Infrastructure.Repositories.Farmacia
                     Id = ventaRegistrada.Id,
                     Tipo = ventaRegistrada.Tipo.ToString(),
                     FechaHora = ventaRegistrada.Fecha,
-                    Puesto = ventaRegistrada.Puesto,
+                    Puesto = ventaRegistrada.Puesto.ToString(),
                     ClienteId = ventaRegistrada.Cliente,
                     VendedorId = ventaRegistrada.Vendedor,
                     TotalDescuento = ventaRegistrada.Descuento * _factorCentecimal,

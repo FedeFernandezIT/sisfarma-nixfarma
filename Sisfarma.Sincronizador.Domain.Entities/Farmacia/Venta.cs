@@ -3,16 +3,18 @@ using System.Collections;
 using System.Collections.Generic;
 
 namespace Sisfarma.Sincronizador.Domain.Entities.Farmacia
-{    
+{
     public class Venta
     {
         public long Id { get; set; }
 
         public DateTime FechaHora { get; set; }
 
-        public int Puesto { get; set; }
+        public DateTime FechaFin { get; set; }
 
-        public long ClienteId { get; set; }
+        public string Puesto { get; set; }
+
+        public long? ClienteId { get; set; }
 
         public string ClienteCodigo { get; set; }
 
@@ -30,17 +32,23 @@ namespace Sisfarma.Sincronizador.Domain.Entities.Farmacia
 
         public string Tipo { get; set; }
 
+        public string TipoOperacion { get; set; }
+
+        public long Operacion { get; set; }
+
         public decimal Importe { get; set; }
-        
+
         public Ticket Ticket { get; set; }
+
+        public string EmpresaCodigo { get; set; }
 
         public ICollection<VentaDetalle> Detalle { get; set; }
 
-        public Venta() 
+        public Venta()
             => Detalle = new HashSet<VentaDetalle>();
 
         public bool HasDetalle() => Detalle != null && Detalle.Count > 0;
-        
+
         public bool HasCliente() => this.Cliente != null;
     }
 
@@ -64,7 +72,7 @@ namespace Sisfarma.Sincronizador.Domain.Entities.Farmacia
 
         public decimal PVP { get; set; }
 
-        public decimal Descuento { get; set; }        
+        public decimal Descuento { get; set; }
 
         //public string TipoAportacion { get; set; }
 
@@ -86,7 +94,7 @@ namespace Sisfarma.Sincronizador.Domain.Entities.Farmacia
 
         public Farmaco Farmaco { get; set; }
 
-        public bool HasFarmaco() => Farmaco != null;        
+        public bool HasFarmaco() => Farmaco != null;
     }
 
     public class Ticket

@@ -47,7 +47,7 @@ namespace Sisfarma.Sincronizador.Unycop.Domain.Core.Sincronizadores
 
         public override void PreSincronizacion()
         {
-            base.PreSincronizacion();
+            //base.PreSincronizacion();
             //if (_ultimaVenta == 0 || _ultimaVenta == 1)
             //    _ultimaVenta = $"{_anioInicio}{_ultimaVenta}".ToIntegerOrDefault();
         }
@@ -76,7 +76,7 @@ namespace Sisfarma.Sincronizador.Unycop.Domain.Core.Sincronizadores
                 _cancellationToken.ThrowIfCancellationRequested();
 
                 if (venta.ClienteId > 0)
-                    venta.Cliente = _farmacia.Clientes.GetOneOrDefaultById(venta.ClienteId);
+                    venta.Cliente = _farmacia.Clientes.GetOneOrDefaultById(venta.ClienteId.Value);
 
                 var ticket = _ticketRepository.GetOneOrdefaultByVentaId(venta.Id, venta.FechaHora.Year);
                 if (ticket != null)
