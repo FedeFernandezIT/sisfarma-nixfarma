@@ -13,7 +13,7 @@ namespace Sisfarma.Sincronizador.Domain.Core.Repositories.Farmacia
 
         List<Cliente> GetGreatThanId(long id);
 
-        Cliente GetOneOrDefaultById(long id);
+        Cliente GetOneOrDefaultById(long id, bool cargarPuntosSisfarma);
 
         decimal GetTotalPuntosById(string idCliente);
 

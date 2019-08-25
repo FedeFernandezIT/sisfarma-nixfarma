@@ -96,7 +96,7 @@ namespace Sisfarma.Sincronizador.Unycop.Domain.Core.Sincronizadores
                     _cancellationToken.ThrowIfCancellationRequested();
 
                     if (venta.ClienteId > 0)
-                        venta.Cliente = _farmacia.Clientes.GetOneOrDefaultById(venta.ClienteId);
+                        venta.Cliente = _farmacia.Clientes.GetOneOrDefaultById(venta.ClienteId, false); // TODO verificar hacer
 
                     var ticket = _ticketRepository.GetOneOrdefaultByVentaId(venta.Id, venta.FechaHora.Year);
                     if (ticket != null)

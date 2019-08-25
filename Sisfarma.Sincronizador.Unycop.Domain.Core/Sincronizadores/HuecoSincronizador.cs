@@ -12,7 +12,7 @@ namespace Sisfarma.Sincronizador.Unycop.Domain.Core.Sincronizadores
 {
     public class HuecoSincronizador : CORE.HuecoSincronizador
     {
-        public HuecoSincronizador(IFarmaciaService farmacia, ISisfarmaService fisiotes) 
+        public HuecoSincronizador(IFarmaciaService farmacia, ISisfarmaService fisiotes)
             : base(farmacia, fisiotes)
         { }
 
@@ -36,12 +36,11 @@ namespace Sisfarma.Sincronizador.Unycop.Domain.Core.Sincronizadores
 
                 _cancellationToken.ThrowIfCancellationRequested();
 
-                var cliente = _farmacia.Clientes.GetOneOrDefaultById(hueco.ToLongOrDefault());
+                var cliente = _farmacia.Clientes.GetOneOrDefaultById(hueco.ToLongOrDefault(), false); // TODO check false
                 if (cliente != null)
                     InsertOrUpdateCliente(cliente);
             }
         }
-
 
         private void InsertOrUpdateCliente(Cliente cliente)
         {
@@ -50,7 +49,7 @@ namespace Sisfarma.Sincronizador.Unycop.Domain.Core.Sincronizadores
                 var beBlue = _farmacia.Clientes.EsBeBlue($"{cliente.Id}");
                 _sisfarma.Clientes.SincronizarHueco(cliente, beBlue, _debeCargarPuntos);
             }
-            else _sisfarma.Clientes.SincronizarHueco(cliente, _debeCargarPuntos);            
+            else _sisfarma.Clientes.SincronizarHueco(cliente, _debeCargarPuntos);
         }
     }
 }

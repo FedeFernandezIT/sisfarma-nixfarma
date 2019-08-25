@@ -107,7 +107,7 @@ namespace Sisfarma.Sincronizador.Nixfarma.Infrastructure.Repositories.Farmacia
             };
 
             if (ventaAccess.Cliente > 0)
-                venta.Cliente = _clientesRepository.GetOneOrDefaultById(ventaAccess.Cliente);
+                venta.Cliente = _clientesRepository.GetOneOrDefaultById(ventaAccess.Cliente, false); // TODO verifca hacer
 
             var ticket = _ticketRepository.GetOneOrdefaultByVentaId(ventaAccess.Id, year);
             if (ticket != null)
@@ -238,7 +238,7 @@ namespace Sisfarma.Sincronizador.Nixfarma.Infrastructure.Repositories.Farmacia
                 };
 
                 if (ventaRegistrada.Cliente > 0)
-                    venta.Cliente = _clientesRepository.GetOneOrDefaultById(ventaRegistrada.Cliente);
+                    venta.Cliente = _clientesRepository.GetOneOrDefaultById(ventaRegistrada.Cliente, false); // TODO verficar hacer
 
                 var ticket = _ticketRepository.GetOneOrdefaultByVentaId(ventaRegistrada.Id, fecha.Year);
                 if (ticket != null)

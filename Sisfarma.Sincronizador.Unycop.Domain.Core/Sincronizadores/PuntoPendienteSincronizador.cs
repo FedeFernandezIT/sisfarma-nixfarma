@@ -59,6 +59,7 @@ namespace Sisfarma.Sincronizador.Unycop.Domain.Core.Sincronizadores
             //var ventaId = int.Parse($"{_ultimaVenta}".Substring(4));
             var anioProcesando = 2018;
             var ventaId = 1;
+            var cargarPuntosSisfarma = true;
             var ventas = _farmacia.Ventas.GetAllByIdGreaterOrEqual(anioProcesando, ventaId);
             if (!ventas.Any())
             {
@@ -76,7 +77,7 @@ namespace Sisfarma.Sincronizador.Unycop.Domain.Core.Sincronizadores
                 _cancellationToken.ThrowIfCancellationRequested();
 
                 if (venta.ClienteId > 0)
-                    venta.Cliente = _farmacia.Clientes.GetOneOrDefaultById(venta.ClienteId);
+                    venta.Cliente = _farmacia.Clientes.GetOneOrDefaultById(venta.ClienteId, cargarPuntosSisfarma);
 
                 //var ticket = _ticketRepository.GetOneOrdefaultByVentaId(venta.Id, venta.FechaHora.Year);
                 //if (ticket != null)
@@ -111,6 +112,10 @@ namespace Sisfarma.Sincronizador.Unycop.Domain.Core.Sincronizadores
                 _aniosProcesados.Add(anioProcesando + 1);
                 _ultimaVenta = $"{anioProcesando + 1 }{0}".ToIntegerOrDefault();
             }
+
+            var clientesConPuntos = ventas.Where(venta => venta.HasCliente())
+                .Select(venta => venta.Cliente)
+                .Where(cliente => cliente.Puntos > 0);
         }
 
         private IEnumerable<PuntosPendientes> GenerarPuntosPendientes(Venta venta)

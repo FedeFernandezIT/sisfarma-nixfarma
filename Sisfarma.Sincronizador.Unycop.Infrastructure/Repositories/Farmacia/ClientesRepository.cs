@@ -113,14 +113,14 @@ namespace Sisfarma.Sincronizador.Nixfarma.Infrastructure.Repositories.Farmacia
             }
         }
 
-        public Cliente GetOneOrDefaultById(long id)
+        public Cliente GetOneOrDefaultById(long id, bool cargarPuntosSisfarma)
         {
             try
             {
                 var sql = $@"SELECT
                                 APELLIDOS, NOMBRE, NIF, SEXO,
                                 DIRECCION, CODIGO_POSTAL, POBLACION,
-                                TEL_MOVIL, TELEFONO_1, TELEFONO_2, E_EMAIL, DTO_PUNTOS_E,
+                                TEL_MOVIL, TELEFONO_1, TELEFONO_2, E_MAIL, DTO_PUNTOS_E,
                                 FECHA_ALTA, FECHA_BAJA, FECHA_NTO,
                                 OPE_APLICA, TIP_CODIGO, DES_CODIGO, AUTORIZA_COMERCIAL
                                 FROM appul.ag_clientes WHERE codigo = {id}";
@@ -148,10 +148,10 @@ namespace Sisfarma.Sincronizador.Nixfarma.Infrastructure.Repositories.Farmacia
                 var poblacion = Convert.ToString(reader["POBLACION"]);
 
                 var telMovil = Convert.ToString(reader["TEL_MOVIL"]);
-                var telefono1 = Convert.ToString(reader["TELEFONO1"]);
-                var telefono2 = Convert.ToString(reader["TELEFONO2"]);
-                var eEmail = Convert.ToString(reader["E_EMAIL"]);
-                var dtoPuntosE = !Convert.IsDBNull(reader["DTO_PUNTOS_E"]) ? (decimal?)Convert.ToDecimal(reader["DTO_PUNTOS_E"]) : null;
+                var telefono1 = Convert.ToString(reader["TELEFONO_1"]);
+                var telefono2 = Convert.ToString(reader["TELEFONO_2"]);
+                var eEmail = Convert.ToString(reader["E_MAIL"]);
+                var dtoPuntosE = !Convert.IsDBNull(reader["DTO_PUNTOS_E"]) ? (decimal)Convert.ToDecimal(reader["DTO_PUNTOS_E"]) : 0;
 
                 var fechaAlta = !Convert.IsDBNull(reader["FECHA_ALTA"]) ? (DateTime?)Convert.ToDateTime(reader["FECHA_ALTA"]) : null;
                 var fechaBaja = !Convert.IsDBNull(reader["FECHA_BAJA"]) ? (DateTime?)Convert.ToDateTime(reader["FECHA_BAJA"]) : null;
@@ -180,7 +180,6 @@ namespace Sisfarma.Sincronizador.Nixfarma.Infrastructure.Repositories.Farmacia
 
                     Celular = !string.IsNullOrWhiteSpace(telMovil) ? telMovil.Trim() : string.Empty,
                     Email = !string.IsNullOrWhiteSpace(eEmail) ? eEmail.Trim() : string.Empty,
-                    Puntos = 0, // TODO calcular puntos
 
                     FechaAlta = fechaAlta,
                     Baja = fechaBaja.HasValue,
@@ -188,8 +187,36 @@ namespace Sisfarma.Sincronizador.Nixfarma.Infrastructure.Repositories.Farmacia
                     Trabajador = !string.IsNullOrWhiteSpace(opeAplica) ? opeAplica.Trim() : string.Empty,
                     CodigoCliente = tipCodigo ?? 0,
                     CodigoDes = desCodigo ?? 0,
-                    LOPD = autorizaComercial == "A"
+                    LOPD = autorizaComercial == "A",
+
+                    Tarjeta = string.Empty,
+                    Puntos = 0,
                 };
+
+                // cargamos puntos
+                if (cargarPuntosSisfarma)
+                {
+                    sql = $@"SELECT NVL(SUM(imp_acumulado),0) as PUNTOS FROM appul.ag_reg_vta_fidel WHERE cod_cliente = {id}";
+                    cmd.CommandText = sql;
+                    reader = cmd.ExecuteReader();
+
+                    if (!reader.Read())
+                    {
+                        var puntosAcumulados = Convert.ToDecimal(reader["PUNTOS"]);
+                        cliente.Puntos = puntosAcumulados - dtoPuntosE;
+                    }
+                }
+
+                // buscamos tarjeta asociada
+                sql = $@"SELECT CODIGO_ID FROM appul.ag_tarjetas WHERE ROW cod_cliente = {id}";
+                cmd.CommandText = sql;
+                reader = cmd.ExecuteReader();
+
+                if (!reader.Read())
+                {
+                    var tarjeta = Convert.ToString(reader["CODIGO_ID"]);
+                    cliente.Tarjeta = !string.IsNullOrWhiteSpace(tarjeta) ? tarjeta.Trim() : string.Empty;
+                }
 
                 conn.Close();
                 return cliente;
@@ -213,7 +240,7 @@ namespace Sisfarma.Sincronizador.Nixfarma.Infrastructure.Repositories.Farmacia
         }
 
         public bool Exists(int id)
-            => GetOneOrDefaultById(id) != null;
+            => GetOneOrDefaultById(id, false) != null;
 
         public bool EsBeBlue(string cliente)
         {

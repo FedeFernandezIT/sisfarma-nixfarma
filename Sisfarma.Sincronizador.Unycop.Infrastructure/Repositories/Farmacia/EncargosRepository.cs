@@ -28,10 +28,10 @@ namespace Sisfarma.Sincronizador.Nixfarma.Infrastructure.Repositories.Farmacia
 
         public EncargosRepository(
             IClientesRepository clientesRepository,
-            IProveedorRepository proveedorRepository, 
-            IFarmacoRepository farmacoRepository, 
-            ICategoriaRepository categoriaRepository, 
-            IFamiliaRepository familiaRepository, 
+            IProveedorRepository proveedorRepository,
+            IFarmacoRepository farmacoRepository,
+            ICategoriaRepository categoriaRepository,
+            IFamiliaRepository familiaRepository,
             ILaboratorioRepository laboratorioRepository,
             IVendedoresRepository vendedoresRepository)
         {
@@ -64,17 +64,17 @@ namespace Sisfarma.Sincronizador.Nixfarma.Infrastructure.Repositories.Farmacia
                 var sql = @"SELECT ID_Encargo as Id, ID_Farmaco as Farmaco, ID_Cliente as Cliente, ID_Vendedor as Vendedor, Fecha_Hora as FechaHora, Fecha_Hora_Entrega as FechaHoraEntrega, Cantidad, Observaciones From Encargos WHERE year(Fecha_Hora) >= @year AND Id_Encargo >= @encargo Order by Id_Encargo ASC";
                 rs = db.Database.SqlQuery<DTO.Encargo>(sql,
                     new OleDbParameter("year", year),
-                    new OleDbParameter("encargos", (int) encargo))
+                    new OleDbParameter("encargos", (int)encargo))
                         .Take(10)
                         .ToList();
             }
-            
+
             return rs.Select(GenerarEncargo);
         }
 
         private Encargo GenerarEncargo(DTO.Encargo encargo)
-        {                        
-            var cliente = _clientesRepository.GetOneOrDefaultById(encargo.Cliente ?? 0);
+        {
+            var cliente = _clientesRepository.GetOneOrDefaultById(encargo.Cliente ?? 0, false); // TODO check false
             var vendedor = _vendedoresRepository.GetOneOrDefaultById(encargo.Vendedor ?? 0);
 
             var farmacoEncargado = default(Farmaco);
@@ -115,7 +115,7 @@ namespace Sisfarma.Sincronizador.Nixfarma.Infrastructure.Repositories.Farmacia
                     Stock = farmaco.Existencias ?? 0
                 };
             }
-            
+
             return new Encargo
             {
                 Id = encargo.Id,

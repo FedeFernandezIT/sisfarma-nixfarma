@@ -21,7 +21,7 @@ namespace Sisfarma.Sincronizador.Domain.Entities.Farmacia
 
         public DateTime? FechaNacimiento { get; set; }
 
-        public long Puntos { get; set; }
+        public decimal Puntos { get; set; }
 
         public string NumeroIdentificacion { get; set; }
 
