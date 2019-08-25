@@ -155,14 +155,14 @@ namespace Sisfarma.Sincronizador.Nixfarma.Infrastructure.Repositories.Farmacia
                 var ventas = new List<Venta>();
                 while (reader.Read())
                 {
-                    var cliCodigo = reader["CLI_CODIGO"] != null ? (long?)Convert.ToInt32(reader["CLI_CODIGO"]) : null;
                     var fechaVenta = Convert.ToDateTime(reader["FECHA_VENTA"]);
+                    var cliCodigo = !Convert.IsDBNull(reader["CLI_CODIGO"]) ? (long?)Convert.ToInt32(reader["CLI_CODIGO"]) : null;
                     var fechaFin = Convert.ToDateTime(reader["FECHA_FIN"]);
                     var tipoOperacion = Convert.ToString(reader["TIPO_OPERACION"]);
                     var operacion = Convert.ToInt64(reader["OPERACION"]);
                     var puesto = Convert.ToString(reader["PUESTO"]);
                     var usrCodigo = Convert.ToString(reader["USR_CODIGO"]);
-                    var importeVentaE = reader["IMPORTE_VTA_E"] != null ? Convert.ToDecimal(reader["IMPORTE_VTA_E"]) : default(decimal);
+                    var importeVentaE = !Convert.IsDBNull(reader["IMPORTE_VTA_E"]) ? Convert.ToDecimal(reader["IMPORTE_VTA_E"]) : default(decimal);
                     var empCodigo = Convert.ToString(reader["EMP_CODIGO"]);
                     ventas.Add(new Venta
                     {
