@@ -62,11 +62,11 @@ namespace Sisfarma.Sincronizador.Unycop.Domain.Core.Sincronizadores
             var ventas = _farmacia.Ventas.GetAllByIdGreaterOrEqual(anioProcesando, ventaId);
             if (!ventas.Any())
             {
-                if (anioProcesando == DateTime.Now.Year)
-                    return;
+                //if (anioProcesando == DateTime.Now.Year)
+                //    return;
 
-                _aniosProcesados.Add(anioProcesando + 1);
-                _ultimaVenta = $"{anioProcesando + 1 }{0}".ToIntegerOrDefault();
+                //_aniosProcesados.Add(anioProcesando + 1);
+                //_ultimaVenta = $"{anioProcesando + 1 }{0}".ToIntegerOrDefault();
                 return;
             }
 
@@ -76,33 +76,33 @@ namespace Sisfarma.Sincronizador.Unycop.Domain.Core.Sincronizadores
                 _cancellationToken.ThrowIfCancellationRequested();
 
                 if (venta.ClienteId > 0)
-                    venta.Cliente = _farmacia.Clientes.GetOneOrDefaultById(venta.ClienteId.Value);
+                    venta.Cliente = _farmacia.Clientes.GetOneOrDefaultById(venta.ClienteId);
 
-                var ticket = _ticketRepository.GetOneOrdefaultByVentaId(venta.Id, venta.FechaHora.Year);
-                if (ticket != null)
-                {
-                    venta.Ticket = new Ticket
-                    {
-                        Numero = ticket.Numero,
-                        Serie = ticket.Serie
-                    };
-                }
+                //var ticket = _ticketRepository.GetOneOrdefaultByVentaId(venta.Id, venta.FechaHora.Year);
+                //if (ticket != null)
+                //{
+                //    venta.Ticket = new Ticket
+                //    {
+                //        Numero = ticket.Numero,
+                //        Serie = ticket.Serie
+                //    };
+                //}
 
-                venta.VendedorNombre = _farmacia.Vendedores.GetOneOrDefaultById(venta.VendedorId)?.Nombre;
-                venta.Detalle = _farmacia.Ventas.GetDetalleDeVentaByVentaId($"{venta.FechaHora.Year}{venta.Id}".ToIntegerOrDefault());
+                //venta.VendedorNombre = _farmacia.Vendedores.GetOneOrDefaultById(venta.VendedorId)?.Nombre;
+                //venta.Detalle = _farmacia.Ventas.GetDetalleDeVentaByVentaId($"{venta.FechaHora.Year}{venta.Id}".ToIntegerOrDefault());
 
-                if (venta.HasCliente() && _debeCopiarClientes)
-                {
-                    InsertOrUpdateCliente(venta.Cliente);
-                }
+                //if (venta.HasCliente() && _debeCopiarClientes)
+                //{
+                //    InsertOrUpdateCliente(venta.Cliente);
+                //}
 
-                var puntosPendientes = GenerarPuntosPendientes(venta);
-                foreach (var puntoPendiente in puntosPendientes)
-                {
-                    _sisfarma.PuntosPendientes.Sincronizar(puntoPendiente);
-                }
+                //var puntosPendientes = GenerarPuntosPendientes(venta);
+                //foreach (var puntoPendiente in puntosPendientes)
+                //{
+                //    _sisfarma.PuntosPendientes.Sincronizar(puntoPendiente);
+                //}
 
-                _ultimaVenta = $"{venta.FechaHora.Year}{venta.Id}".ToIntegerOrDefault();
+                //_ultimaVenta = $"{venta.FechaHora.Year}{venta.Id}".ToIntegerOrDefault();
             }
 
             // <= 1 porque las ventas se recuperan con >= ventaID

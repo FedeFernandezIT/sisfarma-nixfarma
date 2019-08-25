@@ -10,11 +10,11 @@ namespace Sisfarma.Sincronizador.Domain.Entities.Farmacia
 
         public DateTime FechaHora { get; set; }
 
-        public DateTime FechaFin { get; set; }
+        public DateTime? FechaFin { get; set; }
 
         public string Puesto { get; set; }
 
-        public long? ClienteId { get; set; }
+        public long ClienteId { get; set; }
 
         public string ClienteCodigo { get; set; }
 

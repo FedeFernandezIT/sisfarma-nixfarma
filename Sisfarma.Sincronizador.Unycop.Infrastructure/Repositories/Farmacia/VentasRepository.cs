@@ -127,19 +127,16 @@ namespace Sisfarma.Sincronizador.Nixfarma.Infrastructure.Repositories.Farmacia
 
         public List<Venta> GetAllByIdGreaterOrEqual(int year, long value)
         {
-            // Access no handlea long
-            var valueInteger = (int)value;
-
             try
             {
-                var sql1 = @"SELECT
+                var sql = $@"SELECT
                                 FECHA_VENTA, FECHA_FIN, CLI_CODIGO, TIPO_OPERACION, OPERACION, PUESTO, USR_CODIGO, IMPORTE_VTA_E, EMP_CODIGO
                                 FROM appul.ah_ventas
                                 WHERE ROWNUM <= 999
                                     AND emp_codigo = 'EMP1'
                                     AND situacion = 'N'
-                                    AND fecha_venta >= to_date('01/01/2018', 'DD/MM/YYYY')
-                                    AND fecha_venta >= to_date('01/01/2018 00:00:00', 'DD/MM/YYYY HH24:MI:SS')
+                                    AND fecha_venta >= to_date('01/01/{year}', 'DD/MM/YYYY')
+                                    AND fecha_venta >= to_date('01/01/{year} 00:00:00', 'DD/MM/YYYY HH24:MI:SS')
                                     ORDER BY fecha_venta ASC";
 
                 string connectionString = @"User Id=""CONSU""; Password=""consu"";" +
@@ -149,15 +146,15 @@ namespace Sisfarma.Sincronizador.Nixfarma.Infrastructure.Repositories.Farmacia
                 var conn = new OracleConnection(connectionString);
                 conn.Open();
                 var cmd = conn.CreateCommand();
-                cmd.CommandText = sql1;
+                cmd.CommandText = sql;
                 var reader = cmd.ExecuteReader();
 
                 var ventas = new List<Venta>();
                 while (reader.Read())
                 {
                     var fechaVenta = Convert.ToDateTime(reader["FECHA_VENTA"]);
-                    var cliCodigo = !Convert.IsDBNull(reader["CLI_CODIGO"]) ? (long?)Convert.ToInt32(reader["CLI_CODIGO"]) : null;
-                    var fechaFin = Convert.ToDateTime(reader["FECHA_FIN"]);
+                    var fechaFin = !Convert.IsDBNull(reader["FECHA_FIN"]) ? (DateTime?)Convert.ToDateTime(reader["FECHA_FIN"]) : null;
+                    var cliCodigo = !Convert.IsDBNull(reader["CLI_CODIGO"]) ? (long)Convert.ToInt32(reader["CLI_CODIGO"]) : 0;
                     var tipoOperacion = Convert.ToString(reader["TIPO_OPERACION"]);
                     var operacion = Convert.ToInt64(reader["OPERACION"]);
                     var puesto = Convert.ToString(reader["PUESTO"]);
