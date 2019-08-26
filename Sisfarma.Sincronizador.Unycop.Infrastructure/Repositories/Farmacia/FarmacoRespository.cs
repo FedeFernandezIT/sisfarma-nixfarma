@@ -64,7 +64,7 @@ namespace Sisfarma.Sincronizador.Nixfarma.Infrastructure.Repositories.Farmacia
                     EAN_13, PRECIO_LAB_EUROS,
                     FAMSB_CODIGO, FAM_CODIGO,
                     LAB_CODIGO, CLASE, CLASE_BOT,
-                    DESCRIPCION,
+                    DESCRIPCION
                     FROM appul.ab_articulos where codigo = '{id}'";
 
                 var cmd = conn.CreateCommand();
@@ -123,7 +123,7 @@ namespace Sisfarma.Sincronizador.Nixfarma.Infrastructure.Repositories.Farmacia
             }
             catch (Exception ex)
             {
-                return null;
+                throw;
             }
             finally
             {

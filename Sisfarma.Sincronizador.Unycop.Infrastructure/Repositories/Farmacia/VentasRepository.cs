@@ -409,9 +409,8 @@ namespace Sisfarma.Sincronizador.Nixfarma.Infrastructure.Repositories.Farmacia
                             Laboratorio = laboratorio,
                             Denominacion = farmaco.Denominacion
                         };
-
-                        detalle.Add(ventaDetalle);
                     }
+                    detalle.Add(ventaDetalle);
                 }
 
                 return detalle;
