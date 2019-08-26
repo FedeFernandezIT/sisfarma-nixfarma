@@ -62,6 +62,7 @@ namespace Sisfarma.Sincronizador.Unycop.Domain.Core.Sincronizadores
             //var ventaId = int.Parse($"{_ultimaVenta}".Substring(4));
             var anioProcesando = 2000;
             _debeCopiarClientes = true;
+            _cargarPuntos = "si";
             var cargarPuntosSisfarma = true;
             var ventas = _farmacia.Ventas.GetAllByIdGreaterOrEqual(anioProcesando, _timestampUltimaVenta);
             if (!ventas.Any())
@@ -123,7 +124,7 @@ namespace Sisfarma.Sincronizador.Unycop.Domain.Core.Sincronizadores
                 return new PuntosPendientes[0];
 
             var puntosPendientes = new List<PuntosPendientes>();
-            foreach (var item in venta.Detalle)
+            foreach (var item in venta.Detalle.Where(d => d.HasFarmaco()))
             {
                 var familia = item.Farmaco.Familia?.Nombre ?? FAMILIA_DEFAULT;
                 var puntoPendiente = new PuntosPendientes

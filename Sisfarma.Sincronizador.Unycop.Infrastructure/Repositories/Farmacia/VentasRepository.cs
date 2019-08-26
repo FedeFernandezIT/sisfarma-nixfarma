@@ -343,7 +343,7 @@ namespace Sisfarma.Sincronizador.Nixfarma.Infrastructure.Repositories.Farmacia
                 var reader = cmd.ExecuteReader();
 
                 var detalle = new List<VentaDetalle>();
-                while (!reader.Read())
+                while (reader.Read())
                 {
                     var vtaOperacion = Convert.ToInt64(reader["VTA_OPERACION"]);
                     var lineaVenta = Convert.ToInt32(reader["LINEA_VENTA"]);
