@@ -13,6 +13,6 @@ namespace Sisfarma.Sincronizador.Domain.Core.Repositories.Farmacia
 
         Proveedor GetOneOrDefaultById(long id);
 
-        Proveedor GetOneOrDefaultByCodigoNacional(long codigoNacional);
+        Proveedor GetOneOrDefaultByCodigoNacional(string codigoNacional);
     }
 }

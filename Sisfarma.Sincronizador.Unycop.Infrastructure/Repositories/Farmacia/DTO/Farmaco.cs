@@ -10,13 +10,15 @@ namespace Sisfarma.Sincronizador.Nixfarma.Infrastructure.Repositories.Farmacia.D
 
         public float? PrecioUnicoEntrada { get; set; }
 
-        public byte Familia { get; set; }
+        public int Familia { get; set; }
+
+        public string SubFamilia { get; set; }
 
         public int? CategoriaId { get; set; }
 
         public int? SubcategoriaId { get; set; }
 
-        public string Laboratorio { get; set; }
+        public long? Laboratorio { get; set; }
 
         public string Denominacion { get; set; }
 
@@ -42,5 +44,13 @@ namespace Sisfarma.Sincronizador.Nixfarma.Infrastructure.Repositories.Farmacia.D
         /// Fecha formato yyyyMM
         /// </summary>
         public int? FechaCaducidad { get; set; }
+
+        public string CodigoBarras { get; set; }
+
+        public decimal PUC { get; set; }
+
+        public string Clase { get; set; }
+
+        public string ClaseBot { get; set; }
     }
 }

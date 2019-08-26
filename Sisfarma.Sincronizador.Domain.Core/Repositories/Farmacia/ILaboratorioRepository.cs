@@ -3,7 +3,7 @@
 namespace Sisfarma.Sincronizador.Domain.Core.Repositories.Farmacia
 {
     public interface ILaboratorioRepository
-    {        
-        Laboratorio GetOneOrDefaultByCodigo(string codigo);
+    {
+        Laboratorio GetOneOrDefaultByCodigo(long codigo, string clase, string claseBot);
     }
 }

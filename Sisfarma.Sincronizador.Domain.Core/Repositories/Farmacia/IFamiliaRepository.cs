@@ -13,6 +13,8 @@ namespace Sisfarma.Sincronizador.Domain.Core.Repositories.Farmacia
 
         string GetSuperFamiliaDescripcionByFamilia(string familia);
 
-        string GetSuperFamiliaDescripcionById(short familia);
+        string GetSuperFamiliaDescripcionById(string id);
+
+        Familia GetSubFamiliaOneOrDefault(long familia, string subFamilia);
     }
 }

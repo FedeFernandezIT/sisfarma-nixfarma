@@ -4,7 +4,7 @@ namespace Sisfarma.Sincronizador.Domain.Entities.Farmacia
 {
     public class Proveedor
     {
-        public int Id { get; set; }
+        public long Id { get; set; }
 
         public string Codigo { get; set; }
 

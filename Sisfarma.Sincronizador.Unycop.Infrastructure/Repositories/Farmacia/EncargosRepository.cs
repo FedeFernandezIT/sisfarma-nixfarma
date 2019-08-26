@@ -78,17 +78,17 @@ namespace Sisfarma.Sincronizador.Nixfarma.Infrastructure.Repositories.Farmacia
             var vendedor = _vendedoresRepository.GetOneOrDefaultById(encargo.Vendedor ?? 0);
 
             var farmacoEncargado = default(Farmaco);
-            var farmaco = _farmacoRepository.GetOneOrDefaultById(encargo.Farmaco ?? 0);
+            var farmaco = _farmacoRepository.GetOneOrDefaultById((encargo.Farmaco ?? 0).ToString());
             if (farmaco != null)
             {
                 var pcoste = farmaco.PrecioUnicoEntrada.HasValue && farmaco.PrecioUnicoEntrada != 0
                     ? (decimal)farmaco.PrecioUnicoEntrada.Value * _factorCentecimal
                     : ((decimal?)farmaco.PrecioMedio ?? 0m) * _factorCentecimal;
 
-                var proveedor = _proveedorRepository.GetOneOrDefaultByCodigoNacional(farmaco.Id);
+                var proveedor = _proveedorRepository.GetOneOrDefaultByCodigoNacional(farmaco.Id.ToString());
 
                 var categoria = farmaco.CategoriaId.HasValue
-                    ? _categoriaRepository.GetOneOrDefaultById(farmaco.CategoriaId.Value)
+                    ? _categoriaRepository.GetOneOrDefaultById(farmaco.CategoriaId.Value.ToString())
                     : null;
 
                 var subcategoria = farmaco.CategoriaId.HasValue && farmaco.SubcategoriaId.HasValue
@@ -98,7 +98,7 @@ namespace Sisfarma.Sincronizador.Nixfarma.Infrastructure.Repositories.Farmacia
                     : null;
 
                 var familia = _familiaRepository.GetOneOrDefaultById(farmaco.Familia);
-                var laboratorio = _laboratorioRepository.GetOneOrDefaultByCodigo(farmaco.Laboratorio);
+                var laboratorio = _laboratorioRepository.GetOneOrDefaultByCodigo(farmaco.Laboratorio.Value, null, null); // TODO check clase y clasebot
 
                 farmacoEncargado = new Farmaco
                 {

@@ -115,6 +115,12 @@ namespace Sisfarma.Sincronizador.Nixfarma.Infrastructure.Repositories.Farmacia
 
         public Cliente GetOneOrDefaultById(long id, bool cargarPuntosSisfarma)
         {
+            string connectionString = @"User Id=""CONSU""; Password=""consu"";" +
+                @"Data Source=(DESCRIPTION=(ADDRESS_LIST=(ADDRESS=(PROTOCOL=IPC)(KEY=DP9))" +
+                    "(ADDRESS=(PROTOCOL=TCP)(HOST=192.168.0.30)(PORT=1521)))(CONNECT_DATA=(INSTANCE_NAME=DP9)(SERVICE_NAME=ORACLE9)))";
+
+            var conn = new OracleConnection(connectionString);
+
             try
             {
                 var sql = $@"SELECT
@@ -125,11 +131,6 @@ namespace Sisfarma.Sincronizador.Nixfarma.Infrastructure.Repositories.Farmacia
                                 OPE_APLICA, TIP_CODIGO, DES_CODIGO, AUTORIZA_COMERCIAL
                                 FROM appul.ag_clientes WHERE codigo = {id}";
 
-                string connectionString = @"User Id=""CONSU""; Password=""consu"";" +
-                @"Data Source=(DESCRIPTION=(ADDRESS_LIST=(ADDRESS=(PROTOCOL=IPC)(KEY=DP9))" +
-                    "(ADDRESS=(PROTOCOL=TCP)(HOST=192.168.0.30)(PORT=1521)))(CONNECT_DATA=(INSTANCE_NAME=DP9)(SERVICE_NAME=ORACLE9)))";
-
-                var conn = new OracleConnection(connectionString);
                 conn.Open();
                 var cmd = conn.CreateCommand();
                 cmd.CommandText = sql;
@@ -200,7 +201,7 @@ namespace Sisfarma.Sincronizador.Nixfarma.Infrastructure.Repositories.Farmacia
                     cmd.CommandText = sql;
                     reader = cmd.ExecuteReader();
 
-                    if (!reader.Read())
+                    if (reader.Read())
                     {
                         var puntosAcumulados = Convert.ToDecimal(reader["PUNTOS"]);
                         cliente.Puntos = puntosAcumulados - dtoPuntosE;
@@ -208,22 +209,25 @@ namespace Sisfarma.Sincronizador.Nixfarma.Infrastructure.Repositories.Farmacia
                 }
 
                 // buscamos tarjeta asociada
-                sql = $@"SELECT CODIGO_ID FROM appul.ag_tarjetas WHERE ROW cod_cliente = {id}";
+                sql = $@"SELECT CODIGO_ID FROM appul.ag_tarjetas WHERE cod_cliente = {id}";
                 cmd.CommandText = sql;
                 reader = cmd.ExecuteReader();
 
-                if (!reader.Read())
+                if (reader.Read())
                 {
                     var tarjeta = Convert.ToString(reader["CODIGO_ID"]);
                     cliente.Tarjeta = !string.IsNullOrWhiteSpace(tarjeta) ? tarjeta.Trim() : string.Empty;
                 }
 
-                conn.Close();
                 return cliente;
             }
             catch (Exception ex)
             {
                 return new Cliente();
+            }
+            finally
+            {
+                conn.Close();
             }
         }
 

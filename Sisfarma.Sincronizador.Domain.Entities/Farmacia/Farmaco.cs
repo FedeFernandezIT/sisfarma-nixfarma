@@ -18,6 +18,8 @@ namespace Sisfarma.Sincronizador.Domain.Entities.Farmacia
 
         public Familia Familia { get; set; }
 
+        public Familia SuperFamilia { get; set; }
+
         public Categoria Categoria { get; set; }
 
         public Subcategoria Subcategoria { get; set; }

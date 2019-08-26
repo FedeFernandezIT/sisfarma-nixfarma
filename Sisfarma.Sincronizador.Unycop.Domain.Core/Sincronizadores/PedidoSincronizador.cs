@@ -75,7 +75,7 @@ namespace Sisfarma.Sincronizador.Unycop.Domain.Core.Sincronizadores
                 var detalle = new List<RecepcionDetalle>();
                 foreach (var item in group.Value)
                 {
-                    var farmaco = (_farmacia.Farmacos as FarmacoRespository).GetOneOrDefaultById(item.Farmaco);
+                    var farmaco = (_farmacia.Farmacos as FarmacoRespository).GetOneOrDefaultById(item.Farmaco.ToString());
                     if (farmaco != null)
                     {
                         var recepcionDetalle = new RecepcionDetalle()
@@ -97,11 +97,11 @@ namespace Sisfarma.Sincronizador.Unycop.Domain.Core.Sincronizadores
                                 ? (decimal)farmaco.PrecioUnicoEntrada.Value * _factorCentecimal
                                 : ((decimal?)farmaco.PrecioMedio ?? 0m) * _factorCentecimal;
 
-                        var proveedor = _farmacia.Proveedores.GetOneOrDefaultByCodigoNacional(farmaco.Id)
+                        var proveedor = _farmacia.Proveedores.GetOneOrDefaultByCodigoNacional(farmaco.Id.ToString())
                                 ?? _farmacia.Proveedores.GetOneOrDefaultById(farmaco.Id);
 
                         var categoria = farmaco.CategoriaId.HasValue
-                            ? _categoriaRepository.GetOneOrDefaultById(farmaco.CategoriaId.Value)
+                            ? _categoriaRepository.GetOneOrDefaultById(farmaco.CategoriaId.Value.ToString())
                             : null;
 
                         var subcategoria = farmaco.CategoriaId.HasValue && farmaco.SubcategoriaId.HasValue
@@ -111,7 +111,7 @@ namespace Sisfarma.Sincronizador.Unycop.Domain.Core.Sincronizadores
                             : null;
 
                         var familia = _farmacia.Familias.GetOneOrDefaultById(farmaco.Familia);
-                        var laboratorio = _laboratorioRepository.GetOneOrDefaultByCodigo(farmaco.Laboratorio);
+                        var laboratorio = _laboratorioRepository.GetOneOrDefaultByCodigo(farmaco.Laboratorio.Value, null, null); // TODO check clase clasebot
 
                         recepcionDetalle.Farmaco = new Farmaco
                         {

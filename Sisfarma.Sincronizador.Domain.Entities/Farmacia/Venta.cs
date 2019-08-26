@@ -74,6 +74,8 @@ namespace Sisfarma.Sincronizador.Domain.Entities.Farmacia
 
         public decimal Descuento { get; set; }
 
+        public decimal Precio { get; set; }
+
         //public string TipoAportacion { get; set; }
 
         //public double ImporteBruto { get; set; }

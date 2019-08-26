@@ -12,25 +12,25 @@ namespace Sisfarma.Sincronizador.Nixfarma.Infrastructure.Repositories.Farmacia
     public class PedidosRepository : FarmaciaRepository, IPedidosRepository
     {
         private readonly IProveedorRepository _proveedorRepository;
-        private readonly IFarmacoRepository _farmacoRepository;        
+        private readonly IFarmacoRepository _farmacoRepository;
         private readonly ICategoriaRepository _categoriaRepository;
         private readonly IFamiliaRepository _familiaRepository;
         private readonly ILaboratorioRepository _laboratorioRepository;
 
         private readonly decimal _factorCentecimal = 0.01m;
-        
+
         public PedidosRepository(LocalConfig config) : base(config)
         { }
 
         public PedidosRepository(
-            IProveedorRepository proveedorRepository, 
-            IFarmacoRepository farmacoRepository,             
-            ICategoriaRepository categoriaRepository, 
-            IFamiliaRepository familiaRepository, 
+            IProveedorRepository proveedorRepository,
+            IFarmacoRepository farmacoRepository,
+            ICategoriaRepository categoriaRepository,
+            IFamiliaRepository familiaRepository,
             ILaboratorioRepository laboratorioRepository)
         {
             _proveedorRepository = proveedorRepository ?? throw new ArgumentNullException(nameof(proveedorRepository));
-            _farmacoRepository = farmacoRepository ?? throw new ArgumentNullException(nameof(farmacoRepository));            
+            _farmacoRepository = farmacoRepository ?? throw new ArgumentNullException(nameof(farmacoRepository));
             _categoriaRepository = categoriaRepository ?? throw new ArgumentNullException(nameof(categoriaRepository));
             _familiaRepository = familiaRepository ?? throw new ArgumentNullException(nameof(familiaRepository));
             _laboratorioRepository = laboratorioRepository ?? throw new ArgumentNullException(nameof(laboratorioRepository));
@@ -42,22 +42,23 @@ namespace Sisfarma.Sincronizador.Nixfarma.Infrastructure.Repositories.Farmacia
             using (var db = FarmaciaContext.Proveedores())
             {
                 var sql = @"SELECT ID_NumPedido as Id, ID_Proveedor as Proveedor, ID_Farmaco as Farmaco, CantInicial, Fecha From recibir WHERE datevalue(Fecha) >= DateValue (@fecha) Order by ID_NumPedido ASC";
-                rs = db.Database.SqlQuery<DTO.Pedido>(sql,                    
+                rs = db.Database.SqlQuery<DTO.Pedido>(sql,
                     new OleDbParameter("fecha", fecha))
                         .Take(10)
                         .ToList();
             }
 
-            var keys = rs.GroupBy(k => new PedidoCompositeKey { Id = k.Id, Proveedor = k.Proveedor });            
-            return GenerarPedidos(keys);            
+            var keys = rs.GroupBy(k => new PedidoCompositeKey { Id = k.Id, Proveedor = k.Proveedor });
+            return GenerarPedidos(keys);
         }
-        
+
         internal class PedidoCompositeKey
         {
             internal short Id { get; set; }
+
             internal int Proveedor { get; set; }
         }
-        
+
         public IEnumerable<Pedido> GetAllByIdGreaterOrEqual(long pedido)
         {
             var rs = Enumerable.Empty<DTO.Pedido>();
@@ -71,7 +72,7 @@ namespace Sisfarma.Sincronizador.Nixfarma.Infrastructure.Repositories.Farmacia
             }
 
             var keys = rs.GroupBy(k => new PedidoCompositeKey { Id = k.Id, Proveedor = k.Proveedor });
-            return GenerarPedidos(keys);            
+            return GenerarPedidos(keys);
         }
 
         private IEnumerable<Pedido> GenerarPedidos(IEnumerable<IGrouping<PedidoCompositeKey, DTO.Pedido>> groups)
@@ -91,17 +92,17 @@ namespace Sisfarma.Sincronizador.Nixfarma.Infrastructure.Repositories.Farmacia
                         PedidoId = item.Id
                     };
 
-                    var farmaco = _farmacoRepository.GetOneOrDefaultById(item.Farmaco);
+                    var farmaco = _farmacoRepository.GetOneOrDefaultById(item.Farmaco.ToString());
                     if (farmaco != null)
                     {
                         var pcoste = farmaco.PrecioUnicoEntrada.HasValue && farmaco.PrecioUnicoEntrada != 0
                             ? (decimal)farmaco.PrecioUnicoEntrada.Value * _factorCentecimal
                             : ((decimal?)farmaco.PrecioMedio ?? 0m) * _factorCentecimal;
 
-                        var proveedor = _proveedorRepository.GetOneOrDefaultByCodigoNacional(farmaco.Id);
+                        var proveedor = _proveedorRepository.GetOneOrDefaultByCodigoNacional(farmaco.Id.ToString());
 
                         var categoria = farmaco.CategoriaId.HasValue
-                            ? _categoriaRepository.GetOneOrDefaultById(farmaco.CategoriaId.Value)
+                            ? _categoriaRepository.GetOneOrDefaultById(farmaco.CategoriaId.Value.ToString())
                             : null;
 
                         var subcategoria = farmaco.CategoriaId.HasValue && farmaco.SubcategoriaId.HasValue
@@ -111,7 +112,7 @@ namespace Sisfarma.Sincronizador.Nixfarma.Infrastructure.Repositories.Farmacia
                             : null;
 
                         var familia = _familiaRepository.GetOneOrDefaultById(farmaco.Familia);
-                        var laboratorio = _laboratorioRepository.GetOneOrDefaultByCodigo(farmaco.Laboratorio);
+                        var laboratorio = _laboratorioRepository.GetOneOrDefaultByCodigo(farmaco.Laboratorio.Value, null, null); // TODO check clase, clasebot
 
                         pedidoDetalle.Farmaco = new Farmaco
                         {
@@ -126,9 +127,9 @@ namespace Sisfarma.Sincronizador.Nixfarma.Infrastructure.Repositories.Farmacia
                             Denominacion = farmaco.Denominacion,
                             Precio = farmaco.PVP * _factorCentecimal,
                             Stock = farmaco.Existencias ?? 0
-                        };                        
+                        };
                     }
-                    detalle.Add(pedidoDetalle);                    
+                    detalle.Add(pedidoDetalle);
                 }
                 pedidos.Add(new Pedido { Id = group.Key.Id, Fecha = fecha }.AddRangeDetalle(detalle));
             }
