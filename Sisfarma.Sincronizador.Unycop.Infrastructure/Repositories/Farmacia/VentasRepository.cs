@@ -334,7 +334,7 @@ namespace Sisfarma.Sincronizador.Nixfarma.Infrastructure.Repositories.Farmacia
                                 VTA_OPERACION, LINEA_VENTA,
                                 ENT_CODIGO, ENTTP_TIPO,
                                 PVP_ORIGINAL_E, PVP_APORTACION_E, IMP_DTO_E,
-                                ART_CODIGO, CANTIDAD, DESCRIPCION, UNIDADES,
+                                ART_CODIGO, DESCRIPCION, UNIDADES
                                 FROM appul.ah_venta_lineas
                                 WHERE emp_codigo = 'EMP1' AND situacion = 'N' AND vta_operacion='{venta}'";
 
@@ -409,6 +409,8 @@ namespace Sisfarma.Sincronizador.Nixfarma.Infrastructure.Repositories.Farmacia
                             Laboratorio = laboratorio,
                             Denominacion = farmaco.Denominacion
                         };
+
+                        detalle.Add(ventaDetalle);
                     }
                 }
 

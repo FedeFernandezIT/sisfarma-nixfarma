@@ -116,8 +116,8 @@ namespace Sisfarma.Sincronizador.Unycop.Domain.Core.Sincronizadores
 
         private IEnumerable<PuntosPendientes> GenerarPuntosPendientes(Venta venta)
         {
-            if (!venta.HasCliente() && venta.Tipo != "1")
-                return new PuntosPendientes[0];
+            //if (!venta.HasCliente() && venta.Tipo != "1")
+            //    return new PuntosPendientes[0];
 
             if (!venta.HasDetalle())
                 return new PuntosPendientes[0];
