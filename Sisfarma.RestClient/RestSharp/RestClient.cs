@@ -19,7 +19,7 @@ namespace Sisfarma.RestClient.RestSharp
             _restClient = new RSharp.RestClient();
             _restClient.ClearHandlers();
             _restClient.AddHandler("application/json", new RSharp.Serialization.Json.JsonDeserializer());
-            _fileLogs = System.Configuration.ConfigurationManager.AppSettings["Directory.Setup"] + @"RestClient.logs";
+            // _fileLogs = System.Configuration.ConfigurationManager.AppSettings["Directory.Setup"] + @"RestClient.logs";
         }
 
         public RestClient(Uri baseAddress) : base(baseAddress)
@@ -117,10 +117,10 @@ namespace Sisfarma.RestClient.RestSharp
         }
 
         private T DoSend<T>(RSharp.Method method, object body)
-        {            
+        {
             _request.AddParameter(
-                "application/json", 
-                Newtonsoft.Json.JsonConvert.SerializeObject(body), 
+                "application/json",
+                Newtonsoft.Json.JsonConvert.SerializeObject(body),
                 ParameterType.RequestBody);
 
             var response = _restClient.Execute(_request, method);
