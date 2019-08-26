@@ -98,13 +98,13 @@ namespace Sisfarma.Sincronizador.Unycop.Domain.Core.Sincronizadores
 
                 if (venta.HasCliente() && _debeCopiarClientes)
                 {
-                    //InsertOrUpdateCliente(venta.Cliente);
+                    InsertOrUpdateCliente(venta.Cliente);
                 }
 
                 var puntosPendientes = GenerarPuntosPendientes(venta);
                 foreach (var puntoPendiente in puntosPendientes)
                 {
-                    //    _sisfarma.PuntosPendientes.Sincronizar(puntoPendiente);
+                    _sisfarma.PuntosPendientes.Sincronizar(puntoPendiente);
                 }
 
                 _timestampUltimaVenta = venta.FechaHora;
