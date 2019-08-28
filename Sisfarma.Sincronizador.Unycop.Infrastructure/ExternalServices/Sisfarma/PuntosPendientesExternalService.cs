@@ -13,7 +13,7 @@ namespace Sisfarma.Sincronizador.Nixfarma.Infrastructure.ExternalServices.Sisfar
 {
     public class PuntosPendientesExternalService : FisiotesExternalService, IPuntosPendientesExternalService
     {
-        public PuntosPendientesExternalService(IRestClient restClient, FisiotesConfig config) 
+        public PuntosPendientesExternalService(IRestClient restClient, FisiotesConfig config)
             : base(restClient, config)
         { }
 
@@ -66,24 +66,24 @@ namespace Sisfarma.Sincronizador.Nixfarma.Infrastructure.ExternalServices.Sisfar
             throw new NotImplementedException();
         }
 
-        public long GetUltimaVenta()
+        public DateTime GetTimestampUltimaVentaByEmpresa(string empresa)
         {
             try
             {
                 return _restClient
-                    .Resource(_config.Puntos.GetUltimaVenta)
-                    .SendGet<IdVentaResponse>()
-                        .idventa ?? 1L;
+                    .Resource(_config.Puntos.GetTimestampUltimaVenta.Replace("{empresa}", $"{empresa}"))
+                    .SendGet<FechaUltimaVenta>()
+                        .fechaVenta.ToDateTimeOrDefault("yyyy-MM-dd HH:mm:ss");
             }
             catch (RestClientNotFoundException)
             {
-                return 1L;
+                return DateTime.MinValue;
             }
         }
 
-        internal class IdVentaResponse
+        internal class FechaUltimaVenta
         {
-            public long? idventa { get; set; }
+            public string fechaVenta { get; set; }
         }
 
         public IEnumerable<PuntosPendientes> GetWithoutRedencion()
@@ -175,7 +175,7 @@ namespace Sisfarma.Sincronizador.Nixfarma.Infrastructure.ExternalServices.Sisfar
                 serie = pp.Serie,
                 superFamiliaAux = pp.SuperFamiliaAux,
                 familiaAux = pp.FamiliaAux,
-                cambioClasificacion = pp.CambioClasificacion,                
+                cambioClasificacion = pp.CambioClasificacion,
             };
 
             var where = new { idventa = pp.VentaId, idnlinea = pp.LineaNumero };
@@ -190,7 +190,6 @@ namespace Sisfarma.Sincronizador.Nixfarma.Infrastructure.ExternalServices.Sisfar
 
         public void Sincronizar(IEnumerable<PuntosPendientes> pp)
         {
-            
         }
 
         public void Update(long venta)
@@ -214,7 +213,7 @@ namespace Sisfarma.Sincronizador.Nixfarma.Infrastructure.ExternalServices.Sisfar
             {
                 var set = new
                 {
-                    pp.tipoPago,                    
+                    pp.tipoPago,
                     actualizado = 1
                 };
 

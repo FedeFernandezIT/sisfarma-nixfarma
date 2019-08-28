@@ -10,7 +10,7 @@ using System.Linq;
 namespace Sisfarma.Sincronizador.Infrastructure.Fisiotes
 {
     public class PuntosPendientesExternalService : FisiotesExternalService
-    {        
+    {
         public PuntosPendientesExternalService(IRestClient restClient, FisiotesConfig config)
             : base(restClient, config)
         { }
@@ -124,7 +124,7 @@ namespace Sisfarma.Sincronizador.Infrastructure.Fisiotes
             try
             {
                 return _restClient
-                    .Resource(_config.Puntos.GetUltimaVenta)
+                    .Resource(_config.Puntos.GetTimestampUltimaVenta.Replace("{empresa}", "0001"))
                     .SendGet<IdVentaResponse>()
                         .idventa ?? 1L;
             }
@@ -370,6 +370,5 @@ namespace Sisfarma.Sincronizador.Infrastructure.Fisiotes
                 .Resource(_config.Puntos.GetPuntosCanjeadosByDni.Replace("{dni}", $"{dni}"))
                 .SendGet<decimal>();
         }
-        
     }
 }

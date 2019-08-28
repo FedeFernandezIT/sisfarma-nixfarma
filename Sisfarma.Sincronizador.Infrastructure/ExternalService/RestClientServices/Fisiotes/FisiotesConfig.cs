@@ -75,11 +75,11 @@ namespace Sisfarma.Sincronizador.Infrastructure.Fisiotes
                     GetSinRedencion = "api/puntos/sinRedencion",
                     GetLastOfYear = "api/puntos/ultimo/year/{year}",
                     GetByItemVenta = "api/puntos/item/venta/{venta}/linea/{linea}",
-                    GetUltimaVenta = "api/puntos/ultimo",
+                    GetTimestampUltimaVenta = "api/puntos/ultimaFechaVenta/empresa/{empresa}",
                     GetPuntosByDni = "api/puntos/index/dni/{dni}",
                     GetPuntosCanjeadosByDni = "api/puntos/canjeados/dni/{dni}",
                     ExistsByFechaGreatThanOrEqual = "api/puntos/exists_greater_equal/ejercicio/{year}/fechaVenta/{fecha}",
-                    Update = "api/puntos/update",                    
+                    Update = "api/puntos/update",
                     Insert = "api/puntos/createUpdate",
                     InsertActualizarVenta = "api/puntos/createUpdate/actualizarVenta/1"
                 },
@@ -232,7 +232,7 @@ public class PuntoResource
     public string GetSinRedencion { get; set; }
 
     public string Update { get; set; }
-        
+
     public string GetLastOfYear { get; set; }
 
     public string GetByItemVenta { get; set; }
@@ -241,7 +241,7 @@ public class PuntoResource
 
     public string InsertActualizarVenta { get; internal set; }
 
-    public string GetUltimaVenta { get; set; }
+    public string GetTimestampUltimaVenta { get; set; }
 
     public string ExistsByFechaGreatThanOrEqual { get; internal set; }
 

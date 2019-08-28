@@ -11,7 +11,7 @@ namespace Sisfarma.Sincronizador.Domain.Core.Sincronizadores
         protected const string FAMILIA_DEFAULT = "<Sin Clasificar>";
         protected const string LABORATORIO_DEFAULT = "<Sin Laboratorio>";
         protected const string VENDEDOR_DEFAULT = "NO";
-        
+
         protected bool _perteneceFarmazul;
         protected string _puntosDeSisfarma;
         protected string _cargarPuntos;
@@ -19,7 +19,7 @@ namespace Sisfarma.Sincronizador.Domain.Core.Sincronizadores
         protected string _soloPuntosConTarjeta;
         protected string _canjeoPuntos;
         protected int _anioInicio;
-        protected long _ultimaVenta;
+        protected DateTime _timestamUltimaVenta;
 
         public PuntoPendienteSincronizador(IFarmaciaService farmacia, ISisfarmaService fisiotes)
             : base(farmacia, fisiotes)
@@ -38,8 +38,8 @@ namespace Sisfarma.Sincronizador.Domain.Core.Sincronizadores
         }
 
         public override void PreSincronizacion()
-        {            
-            _ultimaVenta = _sisfarma.PuntosPendientes.GetUltimaVenta();
+        {
+            _timestamUltimaVenta = _sisfarma.PuntosPendientes.GetTimestampUltimaVentaByEmpresa("0001");
         }
 
         public override void Process()

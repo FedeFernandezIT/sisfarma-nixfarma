@@ -165,7 +165,7 @@ namespace Sisfarma.Sincronizador.Unycop
 
                 //var path = ConfigurationManager.AppSettings["File.Remote.Server"];
                 //var stream = new StreamReader(Path.Combine(dir, path));
-                var remoteServer = "http://localhost:80/farmaciafedcm";//stream.ReadLine();
+                var remoteServer = "https://sisfarma.es/api-cuadromandos";//stream.ReadLine();
                 var remoteToken = "372ea69830809e005bf55c507b0678ca";//stream.ReadLine();
                 SisfarmaFactory.Setup(remoteServer, remoteToken);
 

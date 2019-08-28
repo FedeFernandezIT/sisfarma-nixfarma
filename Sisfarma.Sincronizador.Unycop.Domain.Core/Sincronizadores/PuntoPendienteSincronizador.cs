@@ -37,43 +37,28 @@ namespace Sisfarma.Sincronizador.Unycop.Domain.Core.Sincronizadores
 
         public override void LoadConfiguration()
         {
-            //base.LoadConfiguration();
-            //_clasificacion = !string.IsNullOrWhiteSpace(ConfiguracionPredefinida[Configuracion.FIELD_TIPO_CLASIFICACION])
-            //    ? ConfiguracionPredefinida[Configuracion.FIELD_TIPO_CLASIFICACION]
-            //    : TIPO_CLASIFICACION_DEFAULT;
+            base.LoadConfiguration();
+            _clasificacion = !string.IsNullOrWhiteSpace(ConfiguracionPredefinida[Configuracion.FIELD_TIPO_CLASIFICACION])
+                ? ConfiguracionPredefinida[Configuracion.FIELD_TIPO_CLASIFICACION]
+                : TIPO_CLASIFICACION_DEFAULT;
             _clasificacion = TIPO_CLASIFICACION_CATEGORIA;
-            //_copiarClientes = ConfiguracionPredefinida[Configuracion.FIELD_COPIAS_CLIENTES];
-            //_debeCopiarClientes = _copiarClientes.ToLower().Equals("si") || string.IsNullOrWhiteSpace(_copiarClientes);
+            _copiarClientes = ConfiguracionPredefinida[Configuracion.FIELD_COPIAS_CLIENTES];
+            _debeCopiarClientes = _copiarClientes.ToLower().Equals("si") || string.IsNullOrWhiteSpace(_copiarClientes);
         }
 
         public override void PreSincronizacion()
         {
-            //base.PreSincronizacion();
-            //if (_ultimaVenta == 0 || _ultimaVenta == 1)
-            //    _ultimaVenta = $"{_anioInicio}{_ultimaVenta}".ToIntegerOrDefault();
+            base.PreSincronizacion();
             if (_timestampUltimaVenta == DateTime.MinValue)
-                _timestampUltimaVenta = new DateTime(2000, 1, 1);
+                _timestampUltimaVenta = new DateTime(_anioInicio, 1, 1);
         }
 
         public override void Process()
         {
-            //var anioProcesando = _aniosProcesados.Any() ? _aniosProcesados.Last() : $"{_ultimaVenta}".Substring(0, 4).ToIntegerOrDefault();
-
-            //var ventaId = int.Parse($"{_ultimaVenta}".Substring(4));
-            var anioProcesando = 2000;
-            _debeCopiarClientes = true;
-            _cargarPuntos = "si";
             var cargarPuntosSisfarma = true;
-            var ventas = _farmacia.Ventas.GetAllByIdGreaterOrEqual(anioProcesando, _timestampUltimaVenta);
+            var ventas = _farmacia.Ventas.GetAllByIdGreaterOrEqual(_anioInicio, _timestampUltimaVenta);
             if (!ventas.Any())
-            {
-                //if (anioProcesando == DateTime.Now.Year)
-                //    return;
-
-                //_aniosProcesados.Add(anioProcesando + 1);
-                //_ultimaVenta = $"{anioProcesando + 1 }{0}".ToIntegerOrDefault();
                 return;
-            }
 
             foreach (var venta in ventas)
             {
@@ -83,23 +68,11 @@ namespace Sisfarma.Sincronizador.Unycop.Domain.Core.Sincronizadores
                 if (venta.ClienteId > 0)
                     venta.Cliente = _farmacia.Clientes.GetOneOrDefaultById(venta.ClienteId, cargarPuntosSisfarma);
 
-                //var ticket = _ticketRepository.GetOneOrdefaultByVentaId(venta.Id, venta.FechaHora.Year);
-                //if (ticket != null)
-                //{
-                //    venta.Ticket = new Ticket
-                //    {
-                //        Numero = ticket.Numero,
-                //        Serie = ticket.Serie
-                //    };
-                //}
-
                 //venta.VendedorNombre = _farmacia.Vendedores.GetOneOrDefaultById(venta.VendedorId)?.Nombre;
                 venta.Detalle = _farmacia.Ventas.GetDetalleDeVentaByVentaId(venta.Operacion);
 
                 if (venta.HasCliente() && _debeCopiarClientes)
-                {
                     InsertOrUpdateCliente(venta.Cliente);
-                }
 
                 var puntosPendientes = GenerarPuntosPendientes(venta);
                 foreach (var puntoPendiente in puntosPendientes)
@@ -129,7 +102,7 @@ namespace Sisfarma.Sincronizador.Unycop.Domain.Core.Sincronizadores
                 var familia = item.Farmaco.Familia?.Nombre ?? FAMILIA_DEFAULT;
                 var puntoPendiente = new PuntosPendientes
                 {
-                    VentaId = $"{venta.FechaHora.Year}{venta.Id}".ToLongOrDefault(),
+                    VentaId = $"{venta.Operacion}00001".ToLongOrDefault(),
                     LineaNumero = item.Linea,
                     CodigoBarra = item.Farmaco.CodigoBarras ?? "847000" + item.Farmaco.Codigo.PadLeft(6, '0'),
                     CodigoNacional = item.Farmaco.Codigo,
