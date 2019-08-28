@@ -26,7 +26,6 @@ namespace Sisfarma.Sincronizador.Unycop.Domain.Core.Sincronizadores
         private bool _debeCopiarClientes;
         private string _copiarClientes;
         private ICollection<int> _aniosProcesados;
-        private DateTime _timestampUltimaVenta = DateTime.MinValue;
 
         public PuntoPendienteSincronizador(IFarmaciaService farmacia, ISisfarmaService fisiotes)
             : base(farmacia, fisiotes)

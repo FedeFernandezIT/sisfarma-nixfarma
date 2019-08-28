@@ -19,7 +19,7 @@ namespace Sisfarma.Sincronizador.Domain.Core.Sincronizadores
         protected string _soloPuntosConTarjeta;
         protected string _canjeoPuntos;
         protected int _anioInicio;
-        protected DateTime _timestamUltimaVenta;
+        protected DateTime _timestampUltimaVenta;
 
         public PuntoPendienteSincronizador(IFarmaciaService farmacia, ISisfarmaService fisiotes)
             : base(farmacia, fisiotes)
@@ -39,7 +39,7 @@ namespace Sisfarma.Sincronizador.Domain.Core.Sincronizadores
 
         public override void PreSincronizacion()
         {
-            _timestamUltimaVenta = _sisfarma.PuntosPendientes.GetTimestampUltimaVentaByEmpresa("0001");
+            _timestampUltimaVenta = _sisfarma.PuntosPendientes.GetTimestampUltimaVentaByEmpresa("00001");
         }
 
         public override void Process()
