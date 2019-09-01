@@ -105,7 +105,7 @@ namespace Sisfarma.Sincronizador.Unycop.Domain.Core.Sincronizadores
                 var familia = item.Farmaco.Familia?.Nombre ?? FAMILIA_DEFAULT;
                 var puntoPendiente = new PuntosPendientes
                 {
-                    VentaId = $"{venta.Operacion}00001".ToLongOrDefault(),
+                    VentaId = $"{venta.Operacion}{_codigoEmpresa}".ToLongOrDefault(),
                     LineaNumero = item.Linea,
                     CodigoBarra = item.Farmaco.CodigoBarras ?? "847000" + item.Farmaco.Codigo.PadLeft(6, '0'),
                     CodigoNacional = item.Farmaco.Codigo,
@@ -124,12 +124,12 @@ namespace Sisfarma.Sincronizador.Unycop.Domain.Core.Sincronizadores
                     Cantidad = item.Cantidad,
                     Precio = item.Precio,
                     Pago = item.Equals(venta.Detalle.First()) ? venta.TotalBruto : 0,
-                    TipoPago = venta.Tipo,
+                    TipoPago = venta.TipoOperacion,
                     Fecha = venta.FechaHora.Date.ToDateInteger(),
                     DNI = venta.Cliente?.Id.ToString() ?? "0",
                     Cargado = _cargarPuntos.ToLower().Equals("si") ? "no" : "si",
                     Puesto = $"{venta.Puesto}",
-                    Trabajador = venta.HasCliente() ? venta.Cliente.Trabajador : string.Empty,
+                    Trabajador = !string.IsNullOrWhiteSpace(venta.VendedorCodigo) ? venta.VendedorCodigo.Trim() : string.Empty,
                     LaboratorioCodigo = item.Farmaco.Laboratorio?.Codigo ?? string.Empty,
                     Laboratorio = item.Farmaco.Laboratorio?.Nombre ?? LABORATORIO_DEFAULT,
                     Proveedor = item.Farmaco.Proveedor?.Nombre ?? string.Empty,
