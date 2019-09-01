@@ -119,6 +119,8 @@ namespace Sisfarma.Sincronizador.Nixfarma.Infrastructure.Repositories.Farmacia
                     : pcm != 0 ? pcm
                     : precioLabEuros;
 
+                farmaco.Ubicacion = ubicacion;
+
                 return farmaco;
             }
             catch (Exception ex)

@@ -51,7 +51,7 @@ namespace Sisfarma.Sincronizador.Nixfarma.Infrastructure.Repositories.Farmacia
             try
             {
                 conn.Open();
-                var sql = $@"select DESCRIPCION from appul.ab_familias where codigo='{id}'";
+                var sql = $@"select DESCRIPCION from appul.ab_familias where codigo={id}";
                 var cmd = conn.CreateCommand();
                 cmd.CommandText = sql;
                 var reader = cmd.ExecuteReader();
@@ -99,7 +99,7 @@ namespace Sisfarma.Sincronizador.Nixfarma.Infrastructure.Repositories.Farmacia
             {
                 conn.Open();
                 var sql = $@"select DESCRIPCION from appul.ab_subfamilias
-                    where fam_codigo = '{familia}' AND codigo = '{subFamilia}'";
+                    where fam_codigo = {familia} AND codigo = '{subFamilia}'";
                 var cmd = conn.CreateCommand();
                 cmd.CommandText = sql;
                 var reader = cmd.ExecuteReader();

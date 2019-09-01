@@ -122,7 +122,7 @@ namespace Sisfarma.Sincronizador.Unycop.Domain.Core.Sincronizadores
                     CambioClasificacion = _clasificacion == TIPO_CLASIFICACION_CATEGORIA ? 1 : 0,
 
                     Cantidad = item.Cantidad,
-                    Precio = item.Importe,
+                    Precio = item.Precio,
                     Pago = item.Equals(venta.Detalle.First()) ? venta.TotalBruto : 0,
                     TipoPago = venta.Tipo,
                     Fecha = venta.FechaHora.Date.ToDateInteger(),
