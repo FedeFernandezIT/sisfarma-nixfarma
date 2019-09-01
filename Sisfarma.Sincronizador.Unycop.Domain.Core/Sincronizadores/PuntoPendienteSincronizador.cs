@@ -115,7 +115,7 @@ namespace Sisfarma.Sincronizador.Unycop.Domain.Core.Sincronizadores
                         ? item.Farmaco.Familia?.Nombre ?? FAMILIA_DEFAULT
                         : familia,
                     SuperFamilia = _clasificacion == TIPO_CLASIFICACION_CATEGORIA
-                        ? item.Farmaco.Subcategoria?.Nombre ?? FAMILIA_DEFAULT
+                        ? item.Farmaco.SuperFamilia?.Nombre ?? FAMILIA_DEFAULT
                         : string.Empty,
                     SuperFamiliaAux = string.Empty,
                     FamiliaAux = _clasificacion == TIPO_CLASIFICACION_CATEGORIA ? familia : string.Empty,
