@@ -26,6 +26,8 @@ namespace Sisfarma.Sincronizador.Unycop.Domain.Core.Sincronizadores
         private bool _debeCopiarClientes;
         private string _copiarClientes;
         private ICollection<int> _aniosProcesados;
+        protected string _codigoEmpresa;
+        protected DateTime _timestampUltimaVenta;
 
         public PuntoPendienteSincronizador(IFarmaciaService farmacia, ISisfarmaService fisiotes)
             : base(farmacia, fisiotes)
@@ -47,7 +49,9 @@ namespace Sisfarma.Sincronizador.Unycop.Domain.Core.Sincronizadores
 
         public override void PreSincronizacion()
         {
-            base.PreSincronizacion();
+            _codigoEmpresa = "00001";
+            _timestampUltimaVenta = _sisfarma.PuntosPendientes.GetTimestampUltimaVentaByEmpresa(_codigoEmpresa);
+
             if (_timestampUltimaVenta == DateTime.MinValue)
                 _timestampUltimaVenta = new DateTime(_anioInicio, 1, 1);
         }
