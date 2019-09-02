@@ -60,7 +60,7 @@ namespace Sisfarma.Sincronizador.Nixfarma.Infrastructure.Repositories.Farmacia
 
             try
             {
-                var sql = $@"SELECT
+                var sql = $@"SELECT CODIGO,
                                 APELLIDOS, NOMBRE, NIF, SEXO,
                                 DIRECCION, CODIGO_POSTAL, POBLACION,
                                 TEL_MOVIL, TELEFONO_1, TELEFONO_2, E_MAIL, DTO_PUNTOS_E,
@@ -103,9 +103,11 @@ namespace Sisfarma.Sincronizador.Nixfarma.Infrastructure.Repositories.Farmacia
                     var desCodigo = !Convert.IsDBNull(reader["DES_CODIGO"]) ? (long?)Convert.ToInt32(reader["DES_CODIGO"]) : null;
                     var autorizaComercial = Convert.ToString(reader["AUTORIZA_COMERCIAL"]);
 
+                    var codigo = Convert.ToInt64(reader["CODIGO"]);
+
                     var cliente = new Cliente
                     {
-                        Id = id,
+                        Id = codigo,
                         NombreCompleto = $"{nombre} {apellidos}".Trim(),
                         NumeroIdentificacion = string.IsNullOrWhiteSpace(nif) ? string.Empty : nif.Trim(),
                         Sexo = string.IsNullOrWhiteSpace(sexo) ? string.Empty
