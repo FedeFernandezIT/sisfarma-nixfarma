@@ -171,7 +171,7 @@ namespace Sisfarma.Sincronizador.Nixfarma.Infrastructure.ExternalServices.Sisfar
                 dtoLinea = pp.LineaDescuento,
                 dtoVenta = pp.VentaDescuento,
                 actualizado = "1",
-                numTicket = pp.TicketNumero ?? -1,
+                numTicket = pp.TicketNumero ?? 0,
                 serie = pp.Serie,
                 superFamiliaAux = pp.SuperFamiliaAux,
                 familiaAux = pp.FamiliaAux,
