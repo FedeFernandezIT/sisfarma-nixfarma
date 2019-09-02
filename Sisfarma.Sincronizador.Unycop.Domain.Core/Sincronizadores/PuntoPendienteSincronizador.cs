@@ -213,7 +213,6 @@ namespace Sisfarma.Sincronizador.Unycop.Domain.Core.Sincronizadores
                 _sisfarma.Clientes.Sincronizar(cliente, beBlue, debeCargarPuntos);
             }
             else _sisfarma.Clientes.Sincronizar(cliente, debeCargarPuntos);
-            _sisfarma.Clientes.Sincronizar(cliente, true);
         }
     }
 }
