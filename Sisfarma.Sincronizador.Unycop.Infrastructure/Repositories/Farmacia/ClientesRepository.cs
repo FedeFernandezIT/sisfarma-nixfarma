@@ -146,6 +146,7 @@ namespace Sisfarma.Sincronizador.Nixfarma.Infrastructure.Repositories.Farmacia
                             var puntosAcumulados = Convert.ToDecimal(reader["PUNTOS"]);
                             cliente.Puntos = puntosAcumulados - dtoPuntosE;
                         }
+                        readerPuntos.Dispose();
                     }
 
                     // buscamos tarjeta asociada
@@ -158,6 +159,7 @@ namespace Sisfarma.Sincronizador.Nixfarma.Infrastructure.Repositories.Farmacia
                         var tarjeta = Convert.ToString(reader["CODIGO_ID"]);
                         cliente.Tarjeta = !string.IsNullOrWhiteSpace(tarjeta) ? tarjeta.Trim() : string.Empty;
                     }
+                    readerTarjetas.Dispose();
 
                     clientes.Add(cliente);
                 }
