@@ -407,7 +407,8 @@ namespace Sisfarma.Sincronizador.Nixfarma.Infrastructure.Repositories.Farmacia
                             Familia = familia,
                             SuperFamilia = superFamilia,
                             Laboratorio = laboratorio,
-                            Denominacion = farmaco.Denominacion
+                            Denominacion = farmaco.Denominacion,
+                            Ubicacion = farmaco.Ubicacion
                         };
                     }
                     detalle.Add(ventaDetalle);
