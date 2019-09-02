@@ -122,7 +122,7 @@ namespace Sisfarma.Sincronizador.Unycop.Domain.Core.Sincronizadores
                             : FAMILIA_DEFAULT
                         : string.Empty,
                     SuperFamiliaAux = string.Empty,
-                    FamiliaAux = _clasificacion == TIPO_CLASIFICACION_CATEGORIA ? familia : string.Empty,
+                    FamiliaAux = string.Empty,
                     CambioClasificacion = _clasificacion == TIPO_CLASIFICACION_CATEGORIA ? 1 : 0,
 
                     Cantidad = item.Cantidad,

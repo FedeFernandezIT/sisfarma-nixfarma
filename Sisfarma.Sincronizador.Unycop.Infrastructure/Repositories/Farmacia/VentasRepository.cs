@@ -230,7 +230,7 @@ namespace Sisfarma.Sincronizador.Nixfarma.Infrastructure.Repositories.Farmacia
                         Operacion = operacion,
                         Puesto = puesto,
                         VendedorCodigo = usrCodigo,
-                        Importe = importeVentaE,
+                        TotalDescuento = importeVentaE,
                         EmpresaCodigo = empCodigo
                     });
                 }
