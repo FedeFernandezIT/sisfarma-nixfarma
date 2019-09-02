@@ -11,7 +11,7 @@ namespace Sisfarma.Sincronizador.Domain.Entities.Fisiotes
         public long LineaNumero { get; set; }
 
         public string CodigoBarra { get; set; }
-     
+
         public string CodigoNacional { get; set; }
 
         public string Descripcion { get; set; }
@@ -31,11 +31,11 @@ namespace Sisfarma.Sincronizador.Domain.Entities.Fisiotes
         public string DNI { get; set; }
 
         public string Cargado { get; set; }
-        
+
         public DateTime hora { get; set; }
 
         public string cruzados { get; set; }
-        
+
         public string Puesto { get; set; }
 
         public string Trabajador { get; set; }
@@ -72,15 +72,18 @@ namespace Sisfarma.Sincronizador.Domain.Entities.Fisiotes
 
         public int? actualizado { get; set; }
 
-        public string ubicacion { get; set; }
+        public string Ubicacion { get; set; }
 
         public string recetaPendiente { get; set; }
 
         public long? TicketNumero { get; set; }
+
         public string Serie { get; set; }
 
         public string SuperFamiliaAux { get; set; }
+
         public string FamiliaAux { get; set; }
+
         public int CambioClasificacion { get; set; }
     }
 }

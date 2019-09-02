@@ -112,10 +112,14 @@ namespace Sisfarma.Sincronizador.Unycop.Domain.Core.Sincronizadores
                     Descripcion = item.Farmaco.Denominacion,
 
                     Familia = _clasificacion == TIPO_CLASIFICACION_CATEGORIA
-                        ? item.Farmaco.Familia?.Nombre ?? FAMILIA_DEFAULT
-                        : familia,
+                        ? !string.IsNullOrWhiteSpace(item.Farmaco.Familia?.Nombre)
+                            ? item.Farmaco.Familia?.Nombre
+                            : FAMILIA_DEFAULT
+                        : FAMILIA_DEFAULT,
                     SuperFamilia = _clasificacion == TIPO_CLASIFICACION_CATEGORIA
-                        ? item.Farmaco.SuperFamilia?.Nombre ?? FAMILIA_DEFAULT
+                        ? !string.IsNullOrWhiteSpace(item.Farmaco.SuperFamilia?.Nombre)
+                            ? item.Farmaco.SuperFamilia?.Nombre
+                            : FAMILIA_DEFAULT
                         : string.Empty,
                     SuperFamiliaAux = string.Empty,
                     FamiliaAux = _clasificacion == TIPO_CLASIFICACION_CATEGORIA ? familia : string.Empty,
@@ -143,7 +147,8 @@ namespace Sisfarma.Sincronizador.Unycop.Domain.Core.Sincronizadores
                     LineaDescuento = item.Descuento,
                     TicketNumero = venta.Ticket?.Numero,
                     Serie = venta.Ticket?.Serie ?? string.Empty,
-                    Sistema = SISTEMA_NIXFARMA
+                    Sistema = SISTEMA_NIXFARMA,
+                    Ubicacion = item.Farmaco?.Ubicacion
                 };
 
                 puntosPendientes.Add(puntoPendiente);

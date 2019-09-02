@@ -176,6 +176,7 @@ namespace Sisfarma.Sincronizador.Nixfarma.Infrastructure.ExternalServices.Sisfar
                 superFamiliaAux = pp.SuperFamiliaAux,
                 familiaAux = pp.FamiliaAux,
                 cambioClasificacion = pp.CambioClasificacion,
+                ubicacion = pp.Ubicacion
             };
 
             var where = new { idventa = pp.VentaId, idnlinea = pp.LineaNumero };
