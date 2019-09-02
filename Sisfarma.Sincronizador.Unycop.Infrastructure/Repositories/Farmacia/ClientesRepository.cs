@@ -246,20 +246,45 @@ namespace Sisfarma.Sincronizador.Nixfarma.Infrastructure.Repositories.Farmacia
         public bool Exists(int id)
             => GetOneOrDefaultById(id, false) != null;
 
-        public bool EsBeBlue(string cliente)
+        public bool EsBeBlue(string cliente, string tarifaDescuento)
         {
-            var id = cliente.ToLongOrDefault();
-            using (var db = FarmaciaContext.Clientes())
+            string connectionString = @"User Id=""CONSU""; Password=""consu"";" +
+                @"Data Source=(DESCRIPTION=(ADDRESS_LIST=(ADDRESS=(PROTOCOL=IPC)(KEY=DP9))" +
+                    "(ADDRESS=(PROTOCOL=TCP)(HOST=192.168.0.30)(PORT=1521)))(CONNECT_DATA=(INSTANCE_NAME=DP9)(SERVICE_NAME=ORACLE9)))";
+
+            var conn = new OracleConnection(connectionString);
+
+            try
             {
-                var sql = @"SELECT Perfil FROM Clientes WHERE ID_Cliente = @id";
-                var tipo = db.Database.SqlQuery<int?>(sql,
-                    new SqlParameter("id", id))
-                    .FirstOrDefault();
+                var sql = $"SELECT DESCRIPCION FROM appul.ag_tipos WHERE codigo = {cliente}";
+                conn.Open();
+                var cmd = conn.CreateCommand();
+                cmd.CommandText = sql;
+                var reader = cmd.ExecuteReader();
 
-                if (!tipo.HasValue)
-                    return false;
+                var aux = string.Empty;
+                if (reader.Read())
+                    aux = Convert.ToString(reader["DESCRIPCION"]);
 
-                return tipo.Value == 2;
+                if (aux.Trim().ToLower() == "farmazul")
+                    return true;
+
+                sql = $"SELECT DESCRIPCION FROM appul.ab_descuentos WHERE codigo = {tarifaDescuento}";
+                cmd.CommandText = sql;
+                reader = cmd.ExecuteReader();
+                aux = string.Empty;
+                if (reader.Read())
+                    aux = Convert.ToString(reader["DESCRIPCION"]);
+
+                return aux.Trim().ToLower() == "farmazul";
+            }
+            catch (Exception)
+            {
+                return false;
+            }
+            finally
+            {
+                conn.Close();
             }
         }
 
@@ -290,6 +315,61 @@ namespace Sisfarma.Sincronizador.Nixfarma.Infrastructure.Repositories.Farmacia
                 cliente.Puntos += GetPuntosPremiumByCliente(cliente);
 
             return cliente;
+        }
+
+        public string EsResidencia(string tipo, string descuento, string filtros)
+        {
+            string connectionString = @"User Id=""CONSU""; Password=""consu"";" +
+                @"Data Source=(DESCRIPTION=(ADDRESS_LIST=(ADDRESS=(PROTOCOL=IPC)(KEY=DP9))" +
+                    "(ADDRESS=(PROTOCOL=TCP)(HOST=192.168.0.30)(PORT=1521)))(CONNECT_DATA=(INSTANCE_NAME=DP9)(SERVICE_NAME=ORACLE9)))";
+
+            var conn = new OracleConnection(connectionString);
+            try
+            {
+                if (!string.IsNullOrWhiteSpace(filtros))
+                {
+                    var sql = $"SELECT DESCRIPCION FROM appul.ag_tipos WHERE codigo = {tipo}";
+                    conn.Open();
+                    var cmd = conn.CreateCommand();
+                    cmd.CommandText = sql;
+                    var reader = cmd.ExecuteReader();
+                    if (!reader.Read())
+                        return "cliente";
+
+                    var aFiltros = filtros.Split(',');
+                    var aux = Convert.ToString(reader["DESCRIPCION"]);
+
+                    if (aFiltros.Contains(aux))
+                        return "residencia";
+
+                    return "cliente";
+                }
+                else
+                {
+                    var sql = $"SELECT DESCRIPCION FROM appul.ab_descuentos WHERE codigo = {descuento}";
+                    conn.Open();
+                    var cmd = conn.CreateCommand();
+                    cmd.CommandText = sql;
+                    var reader = cmd.ExecuteReader();
+
+                    var aux = string.Empty;
+                    if (reader.Read())
+                        aux = Convert.ToString(reader["DESCRIPCION"]);
+
+                    if (aux.ToLower().Contains("residencias"))
+                        return "residencia";
+
+                    return "cliente";
+                }
+            }
+            catch (Exception)
+            {
+                return "cliente";
+            }
+            finally
+            {
+                conn.Close();
+            }
         }
     }
 }

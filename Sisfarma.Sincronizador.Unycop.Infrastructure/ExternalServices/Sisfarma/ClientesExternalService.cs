@@ -117,6 +117,7 @@ namespace Sisfarma.Sincronizador.Nixfarma.Infrastructure.ExternalServices.Sisfar
         {
             return new
             {
+                nombre_tra = cliente.Trabajador,
                 dni_tra = "0",
                 tarjeta = cliente.Tarjeta,
                 dniCliente = cliente.NumeroIdentificacion,
@@ -128,6 +129,7 @@ namespace Sisfarma.Sincronizador.Nixfarma.Infrastructure.ExternalServices.Sisfar
                 fecha_nacimiento = cliente.FechaNacimiento.ToDateInteger(),
                 puntos = cliente.Puntos,
                 sexo = cliente.Sexo,
+                tipo = cliente.Tipo,
                 fechaAlta = cliente.FechaAlta.ToIsoString(),
                 baja = cliente.Baja.ToInteger(),
                 estado_civil = cliente.EstadoCivil,
@@ -139,6 +141,7 @@ namespace Sisfarma.Sincronizador.Nixfarma.Infrastructure.ExternalServices.Sisfar
         {
             return new
             {
+                nombre_tra = cliente.Trabajador,
                 dni_tra = "0",
                 tarjeta = cliente.Tarjeta,
                 dniCliente = cliente.NumeroIdentificacion,
@@ -150,6 +153,7 @@ namespace Sisfarma.Sincronizador.Nixfarma.Infrastructure.ExternalServices.Sisfar
                 fecha_nacimiento = cliente.FechaNacimiento.ToDateInteger(),
                 puntos = cliente.Puntos,
                 sexo = cliente.Sexo,
+                tipo = cliente.Tipo,
                 fechaAlta = cliente.FechaAlta.ToIsoString(),
                 baja = cliente.Baja.ToInteger(),
                 estado_civil = cliente.EstadoCivil,
@@ -162,6 +166,7 @@ namespace Sisfarma.Sincronizador.Nixfarma.Infrastructure.ExternalServices.Sisfar
         {
             return new
             {
+                nombre_tra = cliente.Trabajador,
                 dni_tra = "0",
                 tarjeta = cliente.Tarjeta,
                 dniCliente = cliente.NumeroIdentificacion,
@@ -172,6 +177,7 @@ namespace Sisfarma.Sincronizador.Nixfarma.Infrastructure.ExternalServices.Sisfar
                 email = cliente.Email,
                 fecha_nacimiento = cliente.FechaNacimiento.ToDateInteger(),
                 sexo = cliente.Sexo,
+                tipo = cliente.Tipo,
                 fechaAlta = cliente.FechaAlta.ToIsoString(),
                 baja = cliente.Baja.ToInteger(),
                 estado_civil = cliente.EstadoCivil,
@@ -183,6 +189,7 @@ namespace Sisfarma.Sincronizador.Nixfarma.Infrastructure.ExternalServices.Sisfar
         {
             return new
             {
+                nombre_tra = cliente.Trabajador,
                 dni_tra = "0",
                 tarjeta = cliente.Tarjeta,
                 dniCliente = cliente.NumeroIdentificacion,
@@ -193,6 +200,7 @@ namespace Sisfarma.Sincronizador.Nixfarma.Infrastructure.ExternalServices.Sisfar
                 email = cliente.Email,
                 fecha_nacimiento = cliente.FechaNacimiento.ToDateInteger(),
                 sexo = cliente.Sexo,
+                tipo = cliente.Tipo,
                 fechaAlta = cliente.FechaAlta.ToIsoString(),
                 baja = cliente.Baja.ToInteger(),
                 estado_civil = cliente.EstadoCivil,

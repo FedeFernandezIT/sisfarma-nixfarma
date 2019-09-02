@@ -20,7 +20,6 @@ namespace Sisfarma.Sincronizador.Unycop.Domain.Core.Sincronizadores
         protected const string SISTEMA_NIXFARMA = "nixfarma";
 
         private readonly ITicketRepository _ticketRepository;
-        private readonly decimal _factorCentecimal = 0.01m;
 
         private string _clasificacion;
         private bool _debeCopiarClientes;
@@ -28,6 +27,7 @@ namespace Sisfarma.Sincronizador.Unycop.Domain.Core.Sincronizadores
         private ICollection<int> _aniosProcesados;
         protected string _codigoEmpresa;
         protected DateTime _timestampUltimaVenta;
+        private string _filtrosResidencia;
 
         public PuntoPendienteSincronizador(IFarmaciaService farmacia, ISisfarmaService fisiotes)
             : base(farmacia, fisiotes)
@@ -58,7 +58,7 @@ namespace Sisfarma.Sincronizador.Unycop.Domain.Core.Sincronizadores
 
         public override void Process()
         {
-            var cargarPuntosSisfarma = true;
+            var cargarPuntosSisfarma = _cargarPuntos == "si";
             var ventas = _farmacia.Ventas.GetAllByIdGreaterOrEqual(_anioInicio, _timestampUltimaVenta);
             if (!ventas.Any())
                 return;
@@ -203,15 +203,17 @@ namespace Sisfarma.Sincronizador.Unycop.Domain.Core.Sincronizadores
 
         private void InsertOrUpdateCliente(FAR.Cliente cliente)
         {
-            //var debeCargarPuntos = _puntosDeSisfarma.ToLower().Equals("no") || string.IsNullOrWhiteSpace(_puntosDeSisfarma);
+            var debeCargarPuntos = _puntosDeSisfarma.ToLower().Equals("no") || string.IsNullOrWhiteSpace(_puntosDeSisfarma);
 
-            //if (_perteneceFarmazul)
-            //{
-            //    var beBlue = _farmacia.Clientes.EsBeBlue($"{cliente.Id}");
-            //    _sisfarma.Clientes.Sincronizar(cliente, beBlue, debeCargarPuntos);
-            //}
-            //else _sisfarma.Clientes.Sincronizar(cliente, debeCargarPuntos);
-            //_sisfarma.Clientes.Sincronizar(cliente, true);
+            cliente.Tipo = _farmacia.Clientes.EsResidencia($"{cliente.CodigoCliente}", $"{cliente.CodigoDes}", _filtrosResidencia);
+
+            if (_perteneceFarmazul)
+            {
+                var beBlue = _farmacia.Clientes.EsBeBlue($"{cliente.CodigoCliente}", $"{cliente.CodigoDes}");
+                _sisfarma.Clientes.Sincronizar(cliente, beBlue, debeCargarPuntos);
+            }
+            else _sisfarma.Clientes.Sincronizar(cliente, debeCargarPuntos);
+            _sisfarma.Clientes.Sincronizar(cliente, true);
         }
     }
 }

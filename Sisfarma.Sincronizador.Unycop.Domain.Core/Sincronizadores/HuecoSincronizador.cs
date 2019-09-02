@@ -46,7 +46,7 @@ namespace Sisfarma.Sincronizador.Unycop.Domain.Core.Sincronizadores
         {
             if (_perteneceFarmazul)
             {
-                var beBlue = _farmacia.Clientes.EsBeBlue($"{cliente.Id}");
+                var beBlue = _farmacia.Clientes.EsBeBlue($"{cliente.CodigoCliente}", $"{cliente.CodigoDes}");
                 _sisfarma.Clientes.SincronizarHueco(cliente, beBlue, _debeCargarPuntos);
             }
             else _sisfarma.Clientes.SincronizarHueco(cliente, _debeCargarPuntos);

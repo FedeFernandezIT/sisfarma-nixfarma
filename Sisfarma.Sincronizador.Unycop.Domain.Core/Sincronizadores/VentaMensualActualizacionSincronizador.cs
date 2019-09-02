@@ -16,20 +16,20 @@ namespace Sisfarma.Sincronizador.Unycop.Domain.Core.Sincronizadores
         protected const string TIPO_CLASIFICACION_DEFAULT = "Familia";
         protected const string TIPO_CLASIFICACION_CATEGORIA = "Categoria";
         protected const string SISTEMA_UNYCOP = "unycop";
-                
+
         private string _clasificacion;
         private bool _debeCopiarClientes;
         private string _copiarClientes;
 
         private ICollection<int> _aniosProcesados;
 
-        public VentaMensualActualizacionSincronizador(IFarmaciaService farmacia, ISisfarmaService fisiotes, int listaDeArticulo) 
+        public VentaMensualActualizacionSincronizador(IFarmaciaService farmacia, ISisfarmaService fisiotes, int listaDeArticulo)
             : base(farmacia, fisiotes, listaDeArticulo)
         { }
 
         public override void LoadConfiguration()
         {
-            base.LoadConfiguration();            
+            base.LoadConfiguration();
             _clasificacion = !string.IsNullOrWhiteSpace(ConfiguracionPredefinida[Configuracion.FIELD_TIPO_CLASIFICACION])
                 ? ConfiguracionPredefinida[Configuracion.FIELD_TIPO_CLASIFICACION]
                 : TIPO_CLASIFICACION_DEFAULT;
@@ -47,7 +47,7 @@ namespace Sisfarma.Sincronizador.Unycop.Domain.Core.Sincronizadores
             var fechaInicial = CalcularFechaInicialDelProceso(fechaActual);
             if (!_sisfarma.PuntosPendientes.ExistsGreatThanOrEqual(fechaInicial))
                 return;
-            
+
             var ventaIdConfiguracion = _sisfarma.Configuraciones
                 .GetByCampo(Configuracion.FIELD_POR_DONDE_VOY_VENTA_MES_ID)
                     .ToIntegerOrDefault();
@@ -71,7 +71,7 @@ namespace Sisfarma.Sincronizador.Unycop.Domain.Core.Sincronizadores
             _sisfarma.Configuraciones.Update(Configuracion.FIELD_POR_DONDE_VOY_VENTA_MES_ID, "0");
             _sisfarma.Configuraciones.Update(Configuracion.FIELD_POR_DONDE_VOY_VENTA_MES, fechaActual.ToString("yyyy-MM-dd"));
         }
-        
+
         private DateTime CalcularFechaInicialDelProceso(DateTime fechaActual)
         {
             var mesConfiguracion = ConfiguracionPredefinida[Configuracion.FIELD_REVISAR_VENTA_MES_DESDE].ToIntegerOrDefault();
@@ -143,14 +143,14 @@ namespace Sisfarma.Sincronizador.Unycop.Domain.Core.Sincronizadores
 
             return puntosPendientes;
         }
-        
+
         private void InsertOrUpdateCliente(FAR.Cliente cliente)
         {
             var debeCargarPuntos = _puntosDeSisfarma.ToLower().Equals("no") || string.IsNullOrWhiteSpace(_puntosDeSisfarma);
 
             if (_perteneceFarmazul)
             {
-                var beBlue = _farmacia.Clientes.EsBeBlue($"{cliente.Id}");
+                var beBlue = _farmacia.Clientes.EsBeBlue($"{cliente.CodigoCliente}", $"{cliente.CodigoDes}");
                 _sisfarma.Clientes.Sincronizar(cliente, beBlue, debeCargarPuntos);
             }
             else _sisfarma.Clientes.Sincronizar(cliente, debeCargarPuntos);

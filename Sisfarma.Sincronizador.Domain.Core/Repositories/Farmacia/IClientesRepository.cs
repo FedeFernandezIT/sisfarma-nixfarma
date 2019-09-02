@@ -5,7 +5,7 @@ namespace Sisfarma.Sincronizador.Domain.Core.Repositories.Farmacia
 {
     public interface IClientesRepository
     {
-        bool EsBeBlue(string tipoCliente);
+        bool EsBeBlue(string tipoCliente, string tipoDescuento);
 
         bool Exists(int id);
 
@@ -18,5 +18,7 @@ namespace Sisfarma.Sincronizador.Domain.Core.Repositories.Farmacia
         decimal GetTotalPuntosById(string idCliente);
 
         bool HasSexoField();
+
+        string EsResidencia(string tipo, string descuento, string filtros);
     }
 }
