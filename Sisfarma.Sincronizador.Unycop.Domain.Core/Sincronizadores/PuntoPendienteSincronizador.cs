@@ -45,6 +45,7 @@ namespace Sisfarma.Sincronizador.Unycop.Domain.Core.Sincronizadores
             _clasificacion = TIPO_CLASIFICACION_CATEGORIA;
             _copiarClientes = ConfiguracionPredefinida[Configuracion.FIELD_COPIAS_CLIENTES];
             _debeCopiarClientes = _copiarClientes.ToLower().Equals("si") || string.IsNullOrWhiteSpace(_copiarClientes);
+            _filtrosResidencia = ConfiguracionPredefinida[Configuracion.FIELD_FILTROS_RESIDENCIA];
         }
 
         public override void PreSincronizacion()
