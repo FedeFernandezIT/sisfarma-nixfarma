@@ -9,7 +9,7 @@ namespace Sisfarma.Sincronizador.Domain.Entities.Fisiotes
         public long idPedido { get; set; }
 
         public long? idLinea { get; set; }
-    
+
         public string cod_nacional { get; set; }
 
         public string descripcion { get; set; }
@@ -18,7 +18,7 @@ namespace Sisfarma.Sincronizador.Domain.Entities.Fisiotes
 
         public string superFamilia { get; set; }
 
-        public int? cantidadPedida { get; set; }
+        public long cantidadPedida { get; set; }
 
         public DateTime? fechaFalta { get; set; }
 
@@ -30,9 +30,9 @@ namespace Sisfarma.Sincronizador.Domain.Entities.Fisiotes
 
         public DateTime? fechaPedido { get; set; }
 
-        public float? pvp { get; set; }
+        public decimal pvp { get; set; }
 
-        public float? puc { get; set; }
+        public decimal puc { get; set; }
 
         public string sistema { get; set; }
 

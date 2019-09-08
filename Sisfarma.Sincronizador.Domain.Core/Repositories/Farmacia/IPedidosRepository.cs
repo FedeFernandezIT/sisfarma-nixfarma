@@ -8,5 +8,6 @@ namespace Sisfarma.Sincronizador.Domain.Core.Repositories.Farmacia
     {
         IEnumerable<Pedido> GetAllByFechaGreaterOrEqual(DateTime dateTime);
         IEnumerable<Pedido> GetAllByIdGreaterOrEqual(long idPedido);
+        IEnumerable<PedidoDetalle> GetAllDetalleByPedido(long numero);
     }
 }

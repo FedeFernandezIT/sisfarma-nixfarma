@@ -149,7 +149,11 @@ namespace Sisfarma.Sincronizador.Unycop
             //        farmacia: FarmaciaFactory.Create(),
             //        fisiotes: SisfarmaFactory.Create())
             //        .SincronizarAsync(Updater.GetCancellationToken(), delayLoop: 1));
-            Task.Factory.StartNew(() => new Domain.Core.Sincronizadores.PedidoSincronizador(
+            //Task.Factory.StartNew(() => new Domain.Core.Sincronizadores.PedidoSincronizador(
+            //        farmacia: FarmaciaFactory.Create(),
+            //        fisiotes: SisfarmaFactory.Create())
+            //.SincronizarAsync(Updater.GetCancellationToken(), delayLoop: 1));
+            Task.Factory.StartNew(() => new Domain.Core.Sincronizadores.ProductoCriticoSincronizador(
                     farmacia: FarmaciaFactory.Create(),
                     fisiotes: SisfarmaFactory.Create())
                     .SincronizarAsync(Updater.GetCancellationToken(), delayLoop: 1));

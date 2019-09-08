@@ -7,7 +7,7 @@ using Sisfarma.Sincronizador.Domain.Entities.Fisiotes;
 namespace Sisfarma.Sincronizador.Infrastructure.Fisiotes
 {
     public class FaltasExternalService : FisiotesExternalService, IFaltasExternalService
-    {     
+    {
         public FaltasExternalService(IRestClient restClient, FisiotesConfig config)
             : base(restClient, config)
         { }
@@ -26,7 +26,7 @@ namespace Sisfarma.Sincronizador.Infrastructure.Fisiotes
             }
         }
 
-        public Falta GetByLineaDePedido(int pedido, int linea)
+        public Falta GetByLineaDePedido(long pedido, int linea)
         {
             try
             {
@@ -42,7 +42,7 @@ namespace Sisfarma.Sincronizador.Infrastructure.Fisiotes
             }
         }
 
-        public bool ExistsLineaDePedido(int idPedido, int idLinea)
+        public bool ExistsLineaDePedido(long idPedido, int idLinea)
         {
             return GetByLineaDePedido(idPedido, idLinea) != null;
         }
@@ -64,7 +64,7 @@ namespace Sisfarma.Sincronizador.Infrastructure.Fisiotes
                 proveedor = ff.proveedor,
                 fechaPedido = ff.fechaPedido.ToIsoString(),
                 pvp = ff.pvp,
-                puc = ff.puc                
+                puc = ff.puc
             };
 
             _restClient

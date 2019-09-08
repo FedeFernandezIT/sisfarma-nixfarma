@@ -63,7 +63,7 @@ namespace Sisfarma.Sincronizador.Nixfarma.Infrastructure.Repositories.Farmacia
                     EAN_13, PRECIO_LAB_EUROS,
                     FAMSB_CODIGO, FAM_CODIGO,
                     LAB_CODIGO, CLASE, CLASE_BOT,
-                    DESCRIPCION
+                    DESCRIPCION, PVP_EUROS
                     FROM appul.ab_articulos where codigo = '{id}'";
 
                 var cmd = conn.CreateCommand();
@@ -75,6 +75,7 @@ namespace Sisfarma.Sincronizador.Nixfarma.Infrastructure.Repositories.Farmacia
 
                 var ean13 = Convert.ToString(reader["EAN_13"]);
                 var precioLabEuros = !Convert.IsDBNull(reader["PRECIO_LAB_EUROS"]) ? Convert.ToDecimal(reader["PRECIO_LAB_EUROS"]) : 0;
+                var pvpEuros = !Convert.IsDBNull(reader["PVP_EUROS"]) ? Convert.ToDecimal(reader["PVP_EUROS"]) : 0;
                 var fambsCodigo = Convert.ToString(reader["FAMSB_CODIGO"]);
                 var famCodigo = Convert.ToInt32(reader["FAM_CODIGO"]);
                 var labCodigo = !Convert.IsDBNull(reader["LAB_CODIGO"]) ? (long?)Convert.ToInt64(reader["LAB_CODIGO"]) : null;
@@ -120,6 +121,7 @@ namespace Sisfarma.Sincronizador.Nixfarma.Infrastructure.Repositories.Farmacia
                     : precioLabEuros;
 
                 farmaco.Ubicacion = ubicacion;
+                farmaco.PrecioMedio = pvpEuros;
 
                 return farmaco;
             }

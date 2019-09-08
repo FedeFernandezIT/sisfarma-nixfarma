@@ -38,18 +38,46 @@ namespace Sisfarma.Sincronizador.Nixfarma.Infrastructure.Repositories.Farmacia
 
         public IEnumerable<Pedido> GetAllByFechaGreaterOrEqual(DateTime fecha)
         {
-            var rs = Enumerable.Empty<DTO.Pedido>();
-            using (var db = FarmaciaContext.Proveedores())
+            var pedidos = new List<Pedido>();
+            var conn = FarmaciaContext.GetConnection();
+            try
             {
-                var sql = @"SELECT ID_NumPedido as Id, ID_Proveedor as Proveedor, ID_Farmaco as Farmaco, CantInicial, Fecha From recibir WHERE datevalue(Fecha) >= DateValue (@fecha) Order by ID_NumPedido ASC";
-                rs = db.Database.SqlQuery<DTO.Pedido>(sql,
-                    new OleDbParameter("fecha", fecha))
-                        .Take(10)
-                        .ToList();
-            }
+                var sqlExtra = string.Empty;
+                var sql = $@"
+                    SELECT * From appul.ad_pedidos WHERE to_char(fecha_pedido, 'YYYYMMDD') >= '{fecha.ToString("yyyyMMdd")}' Order by pedido ASC";
 
-            var keys = rs.GroupBy(k => new PedidoCompositeKey { Id = k.Id, Proveedor = k.Proveedor });
-            return GenerarPedidos(keys);
+                conn.Open();
+                var cmd = conn.CreateCommand();
+                cmd.CommandText = sql;
+                var reader = cmd.ExecuteReader();
+
+                while (reader.Read())
+                {
+                    var rFechaPedido = Convert.ToDateTime(reader["FECHA_PEDIDO"]);
+                    var rPedido = Convert.ToInt64(reader["PEDIDO"]);
+                    var rEmpCodigo = Convert.ToString(reader["EMP_CODIGO"]);
+
+                    var pedido = new Pedido
+                    {
+                        Fecha = rFechaPedido,
+                        Numero = rPedido,
+                        Empresa = rEmpCodigo
+                    };
+
+                    pedidos.Add(pedido);
+                }
+
+                return pedidos;
+            }
+            catch (Exception ex)
+            {
+                return pedidos;
+            }
+            finally
+            {
+                conn.Close();
+                conn.Dispose();
+            }
         }
 
         internal class PedidoCompositeKey
@@ -134,6 +162,107 @@ namespace Sisfarma.Sincronizador.Nixfarma.Infrastructure.Repositories.Farmacia
                 pedidos.Add(new Pedido { Id = group.Key.Id, Fecha = fecha }.AddRangeDetalle(detalle));
             }
             return pedidos;
+        }
+
+        public IEnumerable<PedidoDetalle> GetAllDetalleByPedido(long numero)
+        {
+            var detalle = new List<PedidoDetalle>();
+            var conn = FarmaciaContext.GetConnection();
+            try
+            {
+                var sqlExtra = string.Empty;
+                var sql = $@"
+                    select * from appul.ad_linped where pedido='{numero}'";
+
+                conn.Open();
+                var cmd = conn.CreateCommand();
+                cmd.CommandText = sql;
+                var reader = cmd.ExecuteReader();
+
+                while (reader.Read())
+                {
+                    var rArtCodigo = Convert.ToString(reader["ART_CODIGO"]);
+                    var rLinea = Convert.ToInt32(reader["LINEA"]);
+                    var rCantPedida = !Convert.IsDBNull(reader["CANT_PEDIDA"]) ? Convert.ToInt64(reader["CANT_SERVIDA"]) : 0L;
+                    var rPedido = Convert.ToInt64(reader["PEDIDO"]);
+                    var rEmpCodigo = Convert.ToString(reader["EMP_CODIGO"]);
+
+                    var rPvpIvaEuros = !Convert.IsDBNull(reader["PVP_IVA_EUROS"]) ? (decimal?)Convert.ToDecimal(reader["PVP_IVA_EUROS"]) : null;
+                    var rPcIvaEuros = !Convert.IsDBNull(reader["PC_IVA_EUROS"]) ? (decimal?)Convert.ToDecimal(reader["PC_IVA_EUROS"]) : null;
+
+                    var farmaco = _farmacoRepository.GetOneOrDefaultById(rArtCodigo);
+                    Farmaco farmacoPedido = null;
+                    if (farmaco != null)
+                    {
+                        sql = $@"select max(actuales) as stock from appul.ac_existencias where art_codigo = '{rArtCodigo}' group by art_codigo";
+                        cmd.CommandText = sql;
+                        var readerStock = cmd.ExecuteReader();
+                        var stock = readerStock.Read() ? Convert.ToInt64(readerStock["stock"]) : 0L;
+                        farmaco.Stock = stock;
+
+                        var proveedor = _proveedorRepository.GetOneOrDefaultByCodigoNacional(rArtCodigo);
+                        var categoria = _categoriaRepository.GetOneOrDefaultById(rArtCodigo);
+
+                        Familia familia = null;
+                        Familia superFamilia = null;
+                        if (string.IsNullOrWhiteSpace(farmaco.SubFamilia))
+                        {
+                            familia = new Familia { Nombre = string.Empty };
+                            superFamilia = _familiaRepository.GetOneOrDefaultById(farmaco.Familia)
+                                ?? new Familia { Nombre = string.Empty };
+                        }
+                        else
+                        {
+                            familia = _familiaRepository.GetSubFamiliaOneOrDefault(farmaco.Familia, farmaco.SubFamilia)
+                                ?? new Familia { Nombre = string.Empty };
+                            superFamilia = _familiaRepository.GetOneOrDefaultById(farmaco.Familia)
+                                ?? new Familia { Nombre = string.Empty };
+                        }
+
+                        var laboratorio = !farmaco.Laboratorio.HasValue ? new Laboratorio { Codigo = string.Empty, Nombre = "<Sin Laboratorio>" }
+                            : _laboratorioRepository.GetOneOrDefaultByCodigo(farmaco.Laboratorio.Value, farmaco.Clase, farmaco.ClaseBot)
+                                ?? new Laboratorio { Codigo = string.Empty, Nombre = "<Sin Laboratorio>" };
+
+                        farmacoPedido = new Farmaco
+                        {
+                            Id = farmaco.Id,
+                            Codigo = farmaco.Codigo,
+                            PrecioCoste = farmaco.PUC,
+                            Proveedor = proveedor,
+                            Categoria = categoria,
+                            Familia = familia,
+                            Laboratorio = laboratorio,
+                            Denominacion = farmaco.Denominacion,
+                            Precio = farmaco.PrecioMedio ?? 0,
+                            Stock = farmaco.Existencias ?? 0
+                        };
+                    }
+
+                    var item = new PedidoDetalle
+                    {
+                        Linea = rLinea,
+                        CantidadPedida = rCantPedida,
+                        FarmacoCodigo = rArtCodigo,
+                        EmpresaCodigo = rEmpCodigo,
+                        PedidoCodigo = rPedido,
+                        Farmaco = farmacoPedido
+                    };
+
+                    detalle.Add(item);
+                }
+
+                return detalle;
+            }
+            catch (Exception ex)
+            {
+                return detalle;
+            }
+            finally
+            {
+                conn.Close();
+                conn.Dispose();
+            }
+            throw new NotImplementedException();
         }
 
         //public IEnumerable<Pedido> GetByIdGreaterOrEqual(long? pedido)

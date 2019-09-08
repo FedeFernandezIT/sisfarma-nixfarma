@@ -9,11 +9,11 @@ namespace Sisfarma.Sincronizador.Nixfarma.Infrastructure.ExternalServices.Sisfar
 {
     public class FaltasExternalService : FisiotesExternalService, IFaltasExternalService
     {
-        public FaltasExternalService(IRestClient restClient, FisiotesConfig config) 
+        public FaltasExternalService(IRestClient restClient, FisiotesConfig config)
             : base(restClient, config)
         { }
 
-        public Falta GetByLineaDePedido(int pedido, int linea)
+        public Falta GetByLineaDePedido(long pedido, int linea)
         {
             try
             {
@@ -29,7 +29,7 @@ namespace Sisfarma.Sincronizador.Nixfarma.Infrastructure.ExternalServices.Sisfar
             }
         }
 
-        public bool ExistsLineaDePedido(int idPedido, int idLinea)
+        public bool ExistsLineaDePedido(long idPedido, int idLinea)
         {
             return GetByLineaDePedido(idPedido, idLinea) != null;
         }

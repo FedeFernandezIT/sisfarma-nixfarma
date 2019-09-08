@@ -2,10 +2,10 @@ using System;
 using System.Collections.Generic;
 
 namespace Sisfarma.Sincronizador.Domain.Entities.Farmacia
-{   
+{
     public class Pedido
     {
-        public int Id { get; set; }
+        public long Id { get; set; }
 
         public Proveedor Proveedor { get; set; }
 
@@ -33,6 +33,10 @@ namespace Sisfarma.Sincronizador.Domain.Entities.Farmacia
 
         public ICollection<PedidoDetalle> Detalle { get; set; }
 
+        public long Numero { get; set; }
+
+        public string Empresa { get; set; }
+
         public Pedido()
             => Detalle = new HashSet<PedidoDetalle>();
 
@@ -41,12 +45,12 @@ namespace Sisfarma.Sincronizador.Domain.Entities.Farmacia
         public bool HasProveedor() => this.Proveedor != null;
 
         public Pedido AddRangeDetalle(List<PedidoDetalle> detalle)
-        {            
+        {
             foreach (var item in detalle)
             {
                 item.Pedido = this;
                 Detalle.Add(item);
-            }            
+            }
             return this;
         }
     }
@@ -55,11 +59,11 @@ namespace Sisfarma.Sincronizador.Domain.Entities.Farmacia
     {
         public int Id { get; set; }
 
-        public int PedidoId { get; set; }
+        public long PedidoId { get; set; }
 
         public int Linea { get; set; }
-        
-        public int CantidadPedida { get; set; }
+
+        public long CantidadPedida { get; set; }
 
         public bool GestionFaltas { get; set; }
 
@@ -67,9 +71,15 @@ namespace Sisfarma.Sincronizador.Domain.Entities.Farmacia
 
         public decimal PUC { get; set; }
 
+        public string FarmacoCodigo { get; set; }
+
         public Farmaco Farmaco { get; set; }
 
-        public Pedido Pedido { get; set; }        
+        public long PedidoCodigo { get; set; }
+
+        public Pedido Pedido { get; set; }
+
+        public string EmpresaCodigo { get; set; }
 
         public bool HasFarmaco() => Farmaco != null;
     }
