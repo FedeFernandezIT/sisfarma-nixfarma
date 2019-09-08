@@ -10,7 +10,7 @@ namespace Sisfarma.Sincronizador.Nixfarma.Infrastructure.ExternalServices.Sisfar
 {
     public class EncargosExternalService : FisiotesExternalService, IEncargosExternalService
     {
-        public EncargosExternalService(IRestClient restClient, FisiotesConfig config) 
+        public EncargosExternalService(IRestClient restClient, FisiotesConfig config)
             : base(restClient, config)
         { }
 
@@ -61,8 +61,8 @@ namespace Sisfarma.Sincronizador.Nixfarma.Infrastructure.ExternalServices.Sisfar
                 fecha = ee.fecha.ToIsoString(),
                 trabajador = ee.trabajador,
                 unidades = ee.unidades,
-                fechaEntrega = ee.fechaEntrega.HasValue ? ee.fechaEntrega.Value.ToIsoString() : DateTime.MinValue.ToIsoString(),
-                observaciones = ee.observaciones,                                
+                fechaEntrega = ee.fechaEntrega.ToIsoString(),
+                observaciones = ee.observaciones,
                 superFamiliaAux = ee.superFamiliaAux.Strip(),
                 familiaAux = ee.familiaAux.Strip(),
                 cambioClasificacion = ee.cambioClasificacion.ToInteger(),
@@ -76,7 +76,7 @@ namespace Sisfarma.Sincronizador.Nixfarma.Infrastructure.ExternalServices.Sisfar
                 {
                     bulk = new[] { encargo }
                 });
-        }    
+        }
 
         public void UpdateFechaDeEntrega(DateTime fechaEntrega, long idEncargo)
         {

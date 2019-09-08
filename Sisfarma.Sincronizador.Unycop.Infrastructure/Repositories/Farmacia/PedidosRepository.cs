@@ -265,7 +265,7 @@ namespace Sisfarma.Sincronizador.Nixfarma.Infrastructure.Repositories.Farmacia
                             Familia = familia,
                             Laboratorio = laboratorio,
                             Denominacion = farmaco.Denominacion,
-                            Precio = farmaco.PrecioMedio ?? 0,
+                            Precio = farmaco.PrecioMedio,
                             Stock = farmaco.Existencias ?? 0
                         };
                     }

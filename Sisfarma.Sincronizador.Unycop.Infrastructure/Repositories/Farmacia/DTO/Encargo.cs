@@ -6,18 +6,24 @@ namespace Sisfarma.Sincronizador.Nixfarma.Infrastructure.Repositories.Farmacia.D
     {
         public int Id { get; set; }
 
-        public int? Farmaco { get; set; }
+        public string Farmaco { get; set; }
 
-        public int? Cliente { get; set; }
+        public long Cliente { get; set; }
 
-        public int? Vendedor { get; set; }
+        public string Vendedor { get; set; }
 
-        public DateTime? FechaHora { get; set; }
+        public DateTime FechaHora { get; set; }
 
-        public DateTime? FechaHoraEntrega { get; set; }
+        public DateTime FechaHoraEntrega { get; set; }
 
-        public short Cantidad { get; set; }
+        public long Cantidad { get; set; }
 
         public string Observaciones { get; set; }
+
+        public string Empresa { get; set; }
+
+        public int Almacen { get; set; }
+
+        public int Linea { get; set; }
     }
 }

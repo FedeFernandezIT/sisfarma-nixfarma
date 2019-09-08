@@ -58,74 +58,138 @@ namespace Sisfarma.Sincronizador.Nixfarma.Infrastructure.Repositories.Farmacia
 
         public IEnumerable<Encargo> GetAllByIdGreaterOrEqual(int year, long encargo)
         {
-            var rs = Enumerable.Empty<DTO.Encargo>();
-            using (var db = FarmaciaContext.Proveedores())
+            var conn = FarmaciaContext.GetConnection();
+            try
             {
-                var sql = @"SELECT ID_Encargo as Id, ID_Farmaco as Farmaco, ID_Cliente as Cliente, ID_Vendedor as Vendedor, Fecha_Hora as FechaHora, Fecha_Hora_Entrega as FechaHoraEntrega, Cantidad, Observaciones From Encargos WHERE year(Fecha_Hora) >= @year AND Id_Encargo >= @encargo Order by Id_Encargo ASC";
-                rs = db.Database.SqlQuery<DTO.Encargo>(sql,
-                    new OleDbParameter("year", year),
-                    new OleDbParameter("encargos", (int)encargo))
-                        .Take(10)
-                        .ToList();
-            }
+                var rs = new List<DTO.Encargo>();
+                var sqlExtra = string.Empty;
+                var sql = $@"
+                    SELECT e.num_enc, e.fecha_enc, e.cliente, e.operador, e.observaciones, e.emp_codigo, e.alm_codigo
+                    From appul.ah_encargos e
+                    WHERE rownum <= 10 to_char(e.fecha_enc, 'YYYY') >= {year} AND e.num_enc >= {encargo} Order by e.num_enc ASC";
 
-            return rs.Select(GenerarEncargo);
+                conn.Open();
+                var cmd = conn.CreateCommand();
+                cmd.CommandText = sql;
+                var reader = cmd.ExecuteReader();
+
+                while (reader.Read())
+                {
+                    var rNumEnc = Convert.ToInt32(reader["num_enc"]);
+                    var rFechaEnc = Convert.ToDateTime(reader["fecha_enc"]);
+                    var rOperador = Convert.ToString(reader["operador"]);
+                    var rCliente = !Convert.IsDBNull(reader["cliente"]) ? Convert.ToInt64(reader["cliente"]) : 0L;
+                    var rObservaciones = Convert.ToString(reader["observaciones"]);
+                    var rEmpCodigo = Convert.ToString(reader["emp_codigo"]);
+                    var rAlmCodigo = Convert.ToInt32(reader["alm_codigo"]);
+
+                    sql = $@"
+                    SELECT le.linea, le.articulo, le.uni_encargadas, le.fecha_disponib, le.emp_codigo
+                    From appul.ah_lin_encargo le
+                    where num_enc = {rNumEnc} AND emp_codigo = '{rEmpCodigo}'
+                        AND alm_codigo = '{rAlmCodigo}' AND to_char(fecha_enc, 'YYYYMMDD') = '{rFechaEnc.ToString("yyyyMMdd")}'";
+
+                    cmd.CommandText = sql;
+                    var readerLineaEncargo = cmd.ExecuteReader();
+
+                    while (readerLineaEncargo.Read())
+                    {
+                        var rLinea = Convert.ToInt32(readerLineaEncargo["linea"]);
+                        var rArticulo = Convert.ToString(readerLineaEncargo["articulo"]);
+                        var rUniEncargadas = !Convert.IsDBNull(readerLineaEncargo["uni_encargadas"]) ? Convert.ToInt64(readerLineaEncargo["uni_encargadas"]) : 0L;
+                        var rFechaDisponib = !Convert.IsDBNull(readerLineaEncargo["fecha_disponib"]) ? Convert.ToDateTime(readerLineaEncargo["fecha_disponib"]) : DateTime.MinValue;
+
+                        var dto = new DTO.Encargo
+                        {
+                            Id = rNumEnc,
+                            FechaHora = rFechaEnc,
+                            Cliente = rCliente,
+                            Vendedor = rOperador,
+                            Observaciones = rObservaciones,
+                            Empresa = rEmpCodigo,
+                            Almacen = rAlmCodigo,
+                            Linea = rLinea,
+                            Farmaco = rArticulo,
+                            Cantidad = rUniEncargadas,
+                            FechaHoraEntrega = rFechaDisponib
+                        };
+
+                        rs.Add(dto);
+                    }
+                }
+
+                return rs.Select(GenerarEncargo);
+            }
+            catch (Exception ex)
+            {
+                return new List<Encargo>();
+            }
+            finally
+            {
+                conn.Close();
+                conn.Dispose();
+            }
         }
 
         private Encargo GenerarEncargo(DTO.Encargo encargo)
         {
-            var cliente = _clientesRepository.GetOneOrDefaultById(encargo.Cliente ?? 0, false); // TODO check false
-            var vendedor = _vendedoresRepository.GetOneOrDefaultById(encargo.Vendedor ?? 0);
+            var cliente = new Cliente { Id = encargo.Cliente };
+            var vendedor = new Vendedor { Nombre = encargo.Vendedor.Trim() };
 
             var farmacoEncargado = default(Farmaco);
-            var farmaco = _farmacoRepository.GetOneOrDefaultById((encargo.Farmaco ?? 0).ToString());
+            var farmaco = _farmacoRepository.GetOneOrDefaultById(encargo.Farmaco);
             if (farmaco != null)
             {
-                var pcoste = farmaco.PrecioUnicoEntrada.HasValue && farmaco.PrecioUnicoEntrada != 0
-                    ? (decimal)farmaco.PrecioUnicoEntrada.Value * _factorCentecimal
-                    : ((decimal?)farmaco.PrecioMedio ?? 0m) * _factorCentecimal;
+                var proveedor = _proveedorRepository.GetOneOrDefaultByCodigoNacional(encargo.Farmaco);
+                var categoria = _categoriaRepository.GetOneOrDefaultById(encargo.Farmaco);
 
-                var proveedor = _proveedorRepository.GetOneOrDefaultByCodigoNacional(farmaco.Id.ToString());
+                Familia familia = null;
+                Familia superFamilia = null;
+                if (string.IsNullOrWhiteSpace(farmaco.SubFamilia))
+                {
+                    familia = new Familia { Nombre = string.Empty };
+                    superFamilia = _familiaRepository.GetOneOrDefaultById(farmaco.Familia)
+                        ?? new Familia { Nombre = string.Empty };
+                }
+                else
+                {
+                    familia = _familiaRepository.GetSubFamiliaOneOrDefault(farmaco.Familia, farmaco.SubFamilia)
+                        ?? new Familia { Nombre = string.Empty };
+                    superFamilia = _familiaRepository.GetOneOrDefaultById(farmaco.Familia)
+                        ?? new Familia { Nombre = string.Empty };
+                }
 
-                var categoria = farmaco.CategoriaId.HasValue
-                    ? _categoriaRepository.GetOneOrDefaultById(farmaco.CategoriaId.Value.ToString())
-                    : null;
-
-                var subcategoria = farmaco.CategoriaId.HasValue && farmaco.SubcategoriaId.HasValue
-                    ? _categoriaRepository.GetSubcategoriaOneOrDefaultByKey(
-                        farmaco.CategoriaId.Value,
-                        farmaco.SubcategoriaId.Value)
-                    : null;
-
-                var familia = _familiaRepository.GetOneOrDefaultById(farmaco.Familia);
-                var laboratorio = _laboratorioRepository.GetOneOrDefaultByCodigo(farmaco.Laboratorio.Value, null, null); // TODO check clase y clasebot
+                var laboratorio = !farmaco.Laboratorio.HasValue ? new Laboratorio { Codigo = string.Empty, Nombre = "<Sin Laboratorio>" }
+                    : _laboratorioRepository.GetOneOrDefaultByCodigo(farmaco.Laboratorio.Value, farmaco.Clase, farmaco.ClaseBot)
+                        ?? new Laboratorio { Codigo = string.Empty, Nombre = "<Sin Laboratorio>" };
 
                 farmacoEncargado = new Farmaco
                 {
                     Id = farmaco.Id,
                     Codigo = encargo.Farmaco.ToString(),
-                    PrecioCoste = pcoste,
+                    PrecioCoste = farmaco.PUC,
                     Proveedor = proveedor,
                     Categoria = categoria,
-                    Subcategoria = subcategoria,
                     Familia = familia,
+                    SuperFamilia = superFamilia,
                     Laboratorio = laboratorio,
                     Denominacion = farmaco.Denominacion,
-                    Precio = farmaco.PVP * _factorCentecimal,
-                    Stock = farmaco.Existencias ?? 0
+                    Precio = farmaco.PrecioMedio
                 };
             }
 
             return new Encargo
             {
                 Id = encargo.Id,
-                Fecha = encargo.FechaHora ?? DateTime.MinValue,
+                Fecha = encargo.FechaHora,
                 FechaEntrega = encargo.FechaHoraEntrega,
                 Farmaco = farmacoEncargado,
                 Cantidad = encargo.Cantidad,
                 Cliente = cliente,
                 Vendedor = vendedor,
-                Observaciones = encargo.Observaciones
+                Observaciones = encargo.Observaciones,
+                Empresa = encargo.Empresa,
+                Almacen = encargo.Almacen
             };
         }
 

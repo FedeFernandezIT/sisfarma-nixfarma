@@ -12,7 +12,7 @@ namespace Sisfarma.Sincronizador.Nixfarma.Infrastructure.Repositories.Farmacia.D
 
         public decimal Precio { get; set; }
 
-        public decimal? PrecioMedio { get; set; }
+        public decimal PrecioMedio { get; set; }
 
         public decimal? PrecioUnicoEntrada { get; set; }
 
