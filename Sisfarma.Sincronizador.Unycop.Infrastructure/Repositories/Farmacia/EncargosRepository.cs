@@ -66,7 +66,7 @@ namespace Sisfarma.Sincronizador.Nixfarma.Infrastructure.Repositories.Farmacia
                 var sql = $@"
                     SELECT e.num_enc, e.fecha_enc, e.cliente, e.operador, e.observaciones, e.emp_codigo, e.alm_codigo
                     From appul.ah_encargos e
-                    WHERE rownum <= 10 to_char(e.fecha_enc, 'YYYY') >= {year} AND e.num_enc >= {encargo} Order by e.num_enc ASC";
+                    WHERE rownum <= 10 AND to_char(e.fecha_enc, 'YYYY') >= {year} AND e.num_enc >= {encargo} Order by e.num_enc ASC";
 
                 conn.Open();
                 var cmd = conn.CreateCommand();
@@ -174,7 +174,7 @@ namespace Sisfarma.Sincronizador.Nixfarma.Infrastructure.Repositories.Farmacia
                     SuperFamilia = superFamilia,
                     Laboratorio = laboratorio,
                     Denominacion = farmaco.Denominacion,
-                    Precio = farmaco.PrecioMedio
+                    Precio = farmaco.PrecioMedio,
                 };
             }
 
@@ -189,7 +189,8 @@ namespace Sisfarma.Sincronizador.Nixfarma.Infrastructure.Repositories.Farmacia
                 Vendedor = vendedor,
                 Observaciones = encargo.Observaciones,
                 Empresa = encargo.Empresa,
-                Almacen = encargo.Almacen
+                Almacen = encargo.Almacen,
+                Linea = encargo.Linea
             };
         }
 

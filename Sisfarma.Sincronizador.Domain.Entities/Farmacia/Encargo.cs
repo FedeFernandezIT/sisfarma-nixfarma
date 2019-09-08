@@ -23,5 +23,7 @@ namespace Sisfarma.Sincronizador.Domain.Entities.Farmacia
         public string Empresa { get; set; }
 
         public int Almacen { get; set; }
+
+        public int Linea { get; set; }
     }
 }

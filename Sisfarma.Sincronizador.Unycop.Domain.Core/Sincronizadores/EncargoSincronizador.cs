@@ -90,7 +90,8 @@ namespace Sisfarma.Sincronizador.Unycop.Domain.Core.Sincronizadores
                 categoria = encargo.Farmaco.Categoria?.Nombre ?? familia,
 
                 empresa_codigo = encargo.Empresa,
-                almacen_codigo = encargo.Almacen
+                almacen_codigo = encargo.Almacen,
+                idLinea = encargo.Linea
             };
         }
     }

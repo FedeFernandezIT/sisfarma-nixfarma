@@ -67,7 +67,8 @@ namespace Sisfarma.Sincronizador.Nixfarma.Infrastructure.ExternalServices.Sisfar
                 familiaAux = ee.familiaAux.Strip(),
                 cambioClasificacion = ee.cambioClasificacion.ToInteger(),
                 categoria = ee.categoria.Strip(),
-                subcategoria = ee.subcategoria.Strip()
+                subcategoria = ee.subcategoria.Strip(),
+                idLinea = ee.idLinea
             };
 
             _restClient

@@ -8,7 +8,7 @@ namespace Sisfarma.Sincronizador.Domain.Entities.Fisiotes
 
         public long? idEncargo { get; set; }
 
-        public long? idLinea { get; set; }
+        public long idLinea { get; set; }
 
         public string cod_nacional { get; set; }
 
