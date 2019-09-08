@@ -68,9 +68,8 @@ namespace Sisfarma.Sincronizador.Unycop.Domain.Core.Sincronizadores
 
         public Medicamento GenerarMedicamento(Farmaco farmaco)
         {
-            var familia = farmaco.Familia?.Nombre ?? FAMILIA_DEFAULT;
-            var superFamilia = farmaco.SuperFamilia?.Nombre ?? FAMILIA_DEFAULT;
-            var familiaAux = _clasificacion == TIPO_CLASIFICACION_CATEGORIA ? familia : string.Empty;
+            var familia = !string.IsNullOrWhiteSpace(farmaco.Familia?.Nombre) ? farmaco.Familia.Nombre : FAMILIA_DEFAULT;
+            var superFamilia = !string.IsNullOrWhiteSpace(farmaco.SuperFamilia?.Nombre) ? farmaco.SuperFamilia.Nombre : FAMILIA_DEFAULT;
 
             var categoria = farmaco.Categoria?.Nombre;
             if (_verCategorias == "si" && !string.IsNullOrWhiteSpace(categoria) && categoria.ToLower() != "sin categoria" && categoria.ToLower() != "sin categoría")
@@ -82,7 +81,7 @@ namespace Sisfarma.Sincronizador.Unycop.Domain.Core.Sincronizadores
 
             return new Medicamento
             {
-                cod_barras = farmaco.CodigoBarras ?? "847000" + farmaco.Codigo.PadLeft(6, '0'),
+                cod_barras = !string.IsNullOrEmpty(farmaco.CodigoBarras) ? farmaco.CodigoBarras : "847000" + farmaco.Codigo.PadLeft(6, '0'),
                 cod_nacional = farmaco.Codigo,
                 nombre = farmaco.Denominacion,
                 familia = familia,
@@ -103,7 +102,6 @@ namespace Sisfarma.Sincronizador.Unycop.Domain.Core.Sincronizadores
                 presentacion = string.Empty,
                 descripcionTienda = string.Empty,
                 activoPrestashop = !farmaco.Baja,
-                familiaAux = familiaAux,
                 fechaCaducidad = farmaco.FechaCaducidad,
                 fechaUltimaCompra = farmaco.FechaUltimaCompra,
                 fechaUltimaVenta = farmaco.FechaUltimaVenta,
