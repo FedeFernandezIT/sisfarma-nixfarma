@@ -40,7 +40,7 @@ namespace Sisfarma.Sincronizador.Unycop.Domain.Core.Sincronizadores
         public override void Process()
         {
             var repository = _farmacia.Farmacos as FarmacoRespository;
-            var farmacos = repository.GetWithStockByIdGreaterOrEqualAsDTO(_ultimoMedicamentoSincronizado);
+            var farmacos = repository.GetWithStockByIdGreaterAsDTO(_ultimoMedicamentoSincronizado);
 
             if (!farmacos.Any())
             {
@@ -57,12 +57,6 @@ namespace Sisfarma.Sincronizador.Unycop.Domain.Core.Sincronizadores
                 var medicamento = GenerarMedicamento(repository.GenerarFarmaco(farmaco));
                 _sisfarma.Medicamentos.Sincronizar(medicamento);
                 _ultimoMedicamentoSincronizado = medicamento.cod_nacional;
-            }
-
-            if (!_farmacia.Farmacos.AnyGreaterThatHasStock(_ultimoMedicamentoSincronizado))
-            {
-                _sisfarma.Configuraciones.Update(Configuracion.FIELD_POR_DONDE_VOY_CON_STOCK, "0");
-                _ultimoMedicamentoSincronizado = "0";
             }
         }
 
