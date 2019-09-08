@@ -207,7 +207,7 @@ namespace Sisfarma.Sincronizador.Nixfarma.Infrastructure.Repositories.Farmacia
             try
             {
                 var sqlExtra = string.Empty;
-                var sql = $@"
+                var sql = $@"select o.* from (
                     select a.codigo, a.precio_lab_euros, a.Pvp_euros, a.famsb_codigo, a.fam_codigo, a.descripcion, a.lab_codigo, a.clase, a.clase_bot,
                            a.imp_codigo, a.ean_13, a.Fecha_Baja, sum(e.actuales) as stock, max(e.stock_min) as stock_minimo, max(e.stock_max) as stock_maximo,
                            max(to_date(e.fecha_caducidad)) as fecha_caducidad, max(e.fuc) AS fuc, max(e.fuv) as fuv,
@@ -219,7 +219,8 @@ namespace Sisfarma.Sincronizador.Nixfarma.Infrastructure.Repositories.Farmacia
                     WHERE a.codigo > '{codArticu.PadLeft(6, '0')}'
                     GROUP BY a.codigo, a.precio_lab_euros, a.Pvp_euros, a.famsb_codigo, a.fam_codigo,
                             a.descripcion, a.lab_codigo, a.clase, a.clase_bot, a.imp_codigo, a.ean_13, a.Fecha_Baja
-                    HAVING NVL(sum(e.actuales),0) <= 0 ORDER BY a.codigo ASC";
+                    HAVING NVL(sum(e.actuales),0) <= 0 ORDER BY a.codigo ASC) o
+                    WHERE rownum <= 999";
 
                 conn.Open();
                 var cmd = conn.CreateCommand();
