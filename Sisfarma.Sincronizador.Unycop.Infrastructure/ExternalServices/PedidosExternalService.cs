@@ -67,6 +67,7 @@ namespace Sisfarma.Sincronizador.Nixfarma.Infrastructure.ExternalServices
                 cod_nacional = ll.cod_nacional,
                 descripcion = ll.descripcion.Strip(),
                 familia = ll.familia,
+                superFamilia = ll.superFamilia,
                 categoria = ll.categoria,
                 cantidad = ll.cantidad,
                 pvp = ll.pvp,
