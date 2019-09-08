@@ -84,6 +84,7 @@ namespace Sisfarma.Sincronizador.Nixfarma.Infrastructure.Repositories.Farmacia
 
                 var farmaco = new DTO.Farmaco
                 {
+                    Codigo = id,
                     CodigoBarras = !string.IsNullOrWhiteSpace(ean13) ? ean13
                         : "847000" + id.ToString().PadLeft(6, '0'),
                     Familia = famCodigo,
