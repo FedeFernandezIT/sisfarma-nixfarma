@@ -294,7 +294,8 @@ namespace Sisfarma.Sincronizador.Nixfarma.Infrastructure.Repositories.Farmacia
                         CodigoBarras = rEan13,
                         CodigoImpuesto = rImpCodigo,
                         Denominacion = rDescripcion,
-                        FechaBaja = rFechaBaja
+                        FechaBaja = rFechaBaja,
+                        Ubicacion = rUbicacion,
                     };
 
                     farmacos.Add(farmaco);
@@ -373,6 +374,7 @@ namespace Sisfarma.Sincronizador.Nixfarma.Infrastructure.Repositories.Farmacia
                 Codigo = farmaco.Codigo,
                 Denominacion = farmaco.Denominacion,
                 Familia = familia,
+                SuperFamilia = superFamilia,
                 Categoria = categoria,
                 CodigoBarras = farmaco.CodigoBarras,
                 Proveedor = proveedor,
@@ -387,7 +389,7 @@ namespace Sisfarma.Sincronizador.Nixfarma.Infrastructure.Repositories.Farmacia
                 StockMinimo = farmaco.StockMinimo,
                 StockMaximo = farmaco.StockMaximo,
                 Laboratorio = laboratorio,
-                Baja = farmaco.FechaBaja.HasValue,
+                Baja = farmaco.FechaBaja.HasValue
             };
         }
 
