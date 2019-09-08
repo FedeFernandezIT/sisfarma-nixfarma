@@ -44,8 +44,12 @@ namespace Sisfarma.Sincronizador.Unycop.Domain.Core.Sincronizadores
 
             if (!pedidos.Any())
             {
-                _anioInicio++;
-                _lastPedido = null;
+                if (_anioInicio < DateTime.Now.Year)
+                {
+                    _anioInicio++;
+                    _lastPedido = null;
+                }
+
                 return;
             }
 
