@@ -164,7 +164,7 @@ namespace Sisfarma.Sincronizador.Nixfarma.Infrastructure.Repositories.Farmacia
             return pedidos;
         }
 
-        public IEnumerable<PedidoDetalle> GetAllDetalleByPedido(long numero)
+        public IEnumerable<PedidoDetalle> GetAllDetalleByPedido(long numero, string empresa)
         {
             var detalle = new List<PedidoDetalle>();
             var conn = FarmaciaContext.GetConnection();
@@ -172,7 +172,7 @@ namespace Sisfarma.Sincronizador.Nixfarma.Infrastructure.Repositories.Farmacia
             {
                 var sqlExtra = string.Empty;
                 var sql = $@"
-                    select * from appul.ad_linped where pedido='{numero}'";
+                    select * from appul.ad_linped where pedido='{numero}' AND emp_codigo ='{empresa}'";
 
                 conn.Open();
                 var cmd = conn.CreateCommand();
@@ -183,7 +183,7 @@ namespace Sisfarma.Sincronizador.Nixfarma.Infrastructure.Repositories.Farmacia
                 {
                     var rArtCodigo = Convert.ToString(reader["ART_CODIGO"]);
                     var rLinea = Convert.ToInt32(reader["LINEA"]);
-                    var rCantPedida = !Convert.IsDBNull(reader["CANT_PEDIDA"]) ? Convert.ToInt64(reader["CANT_SERVIDA"]) : 0L;
+                    var rCantPedida = !Convert.IsDBNull(reader["CANT_PEDIDA"]) ? Convert.ToInt64(reader["CANT_PEDIDA"]) : 0L;
                     var rPedido = Convert.ToInt64(reader["PEDIDO"]);
                     var rEmpCodigo = Convert.ToString(reader["EMP_CODIGO"]);
 

@@ -7,7 +7,9 @@ namespace Sisfarma.Sincronizador.Domain.Core.Repositories.Farmacia
     public interface IPedidosRepository
     {
         IEnumerable<Pedido> GetAllByFechaGreaterOrEqual(DateTime dateTime);
+
         IEnumerable<Pedido> GetAllByIdGreaterOrEqual(long idPedido);
-        IEnumerable<PedidoDetalle> GetAllDetalleByPedido(long numero);
+
+        IEnumerable<PedidoDetalle> GetAllDetalleByPedido(long numero, string empresa);
     }
 }

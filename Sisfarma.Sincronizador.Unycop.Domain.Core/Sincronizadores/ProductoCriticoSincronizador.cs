@@ -52,7 +52,7 @@ namespace Sisfarma.Sincronizador.Unycop.Domain.Core.Sincronizadores
 
                 _cancellationToken.ThrowIfCancellationRequested();
 
-                var detalle = _farmacia.Pedidos.GetAllDetalleByPedido(pedido.Numero);
+                var detalle = _farmacia.Pedidos.GetAllDetalleByPedido(pedido.Numero, pedido.Empresa);
 
                 foreach (var linea in pedido.Detalle.Where(f => f.Farmaco.Stock == STOCK_CRITICO))
                 {
