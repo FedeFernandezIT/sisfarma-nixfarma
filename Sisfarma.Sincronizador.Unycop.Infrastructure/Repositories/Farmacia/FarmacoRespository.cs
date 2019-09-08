@@ -266,8 +266,8 @@ namespace Sisfarma.Sincronizador.Nixfarma.Infrastructure.Repositories.Farmacia
                     var rEan13 = Convert.ToString(reader["ean_13"]);
                     var rFechaBaja = !Convert.IsDBNull(reader["Fecha_Baja"]) ? (DateTime?)Convert.ToDateTime(reader["Fecha_Baja"]) : null;
                     var rStock = !Convert.IsDBNull(reader["stock"]) ? Convert.ToInt64(reader["stock"]) : 0L;
-                    var rStockMinimo = Convert.ToInt64(reader["stock_minimo"]);
-                    var rStockMaximo = Convert.ToInt64(reader["stock_maximo"]);
+                    var rStockMinimo = !Convert.IsDBNull(reader["stock_minimo"]) ? Convert.ToInt64(reader["stock_minimo"]) : 0L;
+                    var rStockMaximo = !Convert.IsDBNull(reader["stock_maximo"]) ? Convert.ToInt64(reader["stock_maximo"]) : 0L;
                     var rFechaCaducidad = !Convert.IsDBNull(reader["fecha_caducidad"]) ? (DateTime?)Convert.ToDateTime(reader["fecha_caducidad"]) : null;
                     var rFuc = !Convert.IsDBNull(reader["fuc"]) ? (DateTime?)Convert.ToDateTime(reader["fuc"]) : null;
                     var rFuv = !Convert.IsDBNull(reader["fuv"]) ? (DateTime?)Convert.ToDateTime(reader["fuv"]) : null;
