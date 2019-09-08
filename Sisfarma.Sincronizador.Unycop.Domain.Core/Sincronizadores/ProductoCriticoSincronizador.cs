@@ -54,8 +54,9 @@ namespace Sisfarma.Sincronizador.Unycop.Domain.Core.Sincronizadores
 
                 var detalle = _farmacia.Pedidos.GetAllDetalleByPedido(pedido.Numero, pedido.Empresa, pedido.Fecha.Year);
 
-                foreach (var linea in pedido.Detalle.Where(f => f.Farmaco.Stock == STOCK_CRITICO))
+                foreach (var linea in detalle.Where(f => f.Farmaco.Stock == STOCK_CRITICO))
                 {
+                    linea.Pedido = pedido;
                     linea.PedidoId = pedido.Id;
                     Task.Delay(1).Wait();
 

@@ -262,7 +262,6 @@ namespace Sisfarma.Sincronizador.Nixfarma.Infrastructure.Repositories.Farmacia
                 conn.Close();
                 conn.Dispose();
             }
-            throw new NotImplementedException();
         }
 
         //public IEnumerable<Pedido> GetByIdGreaterOrEqual(long? pedido)
