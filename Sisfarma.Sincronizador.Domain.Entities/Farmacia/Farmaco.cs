@@ -38,9 +38,11 @@ namespace Sisfarma.Sincronizador.Domain.Entities.Farmacia
 
         public bool Web { get; set; }
 
-        public int Stock { get; set; }
+        public long Stock { get; set; }
 
-        public int StockMinimo { get; set; }
+        public long StockMinimo { get; set; }
+
+        public long StockMaximo { get; set; }
 
         public decimal Iva { get; set; }
 
@@ -56,6 +58,6 @@ namespace Sisfarma.Sincronizador.Domain.Entities.Farmacia
 
         public bool HasLaboratorio => Laboratorio != null;
 
-        public decimal PrecioSinIva() => Math.Round(Precio / (1 + 0.01m * Iva), 2);
+        public decimal PrecioSinIva() => Math.Round((Precio * 100) / (Iva + 100), 2);
     }
 }

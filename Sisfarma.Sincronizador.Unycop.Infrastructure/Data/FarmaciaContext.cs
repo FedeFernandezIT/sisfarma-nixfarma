@@ -204,6 +204,16 @@ namespace Sisfarma.Sincronizador.Nixfarma.Infrastructure.Data
                 username: _username,
                 password: _password);
         }
+
+        public static OracleConnection GetConnection()
+        {
+            string connectionString = @"User Id=""CONSU""; Password=""consu"";" +
+                @"Data Source=(DESCRIPTION=(ADDRESS_LIST=(ADDRESS=(PROTOCOL=IPC)(KEY=DP9))" +
+                    "(ADDRESS=(PROTOCOL=TCP)(HOST=192.168.0.30)(PORT=1521)))(CONNECT_DATA=(INSTANCE_NAME=DP9)(SERVICE_NAME=ORACLE9)))";
+
+            var conn = new OracleConnection(connectionString);
+            return conn;
+        }
     }
 
     [Serializable]

@@ -14,7 +14,7 @@ namespace Sisfarma.Sincronizador.Domain.Entities.Fisiotes
 
         public string superFamilia { get; set; }
 
-        public float precio { get; set; }
+        public decimal precio { get; set; }
 
         public string descripcion { get; set; }
 
@@ -24,17 +24,17 @@ namespace Sisfarma.Sincronizador.Domain.Entities.Fisiotes
 
         public string proveedor { get; set; }
 
-        public float? pvpSinIva { get; set; }
+        public decimal? pvpSinIva { get; set; }
 
         public int? iva { get; set; }
 
-        public int? stock { get; set; }
+        public long? stock { get; set; }
 
-        public float? puc { get; set; }
+        public decimal? puc { get; set; }
 
-        public int? stockMinimo { get; set; }
+        public long? stockMinimo { get; set; }
 
-        public int? stockMaximo { get; set; }
+        public long? stockMaximo { get; set; }
 
         public string categoria { get; set; }
 

@@ -11,7 +11,7 @@ namespace Sisfarma.Sincronizador.Nixfarma.Infrastructure.ExternalServices.Sisfar
 {
     public class MedicamentosExternalServices : FisiotesExternalService, IMedicamentosExternalService
     {
-        public MedicamentosExternalServices(IRestClient restClient, FisiotesConfig config) 
+        public MedicamentosExternalServices(IRestClient restClient, FisiotesConfig config)
             : base(restClient, config)
         { }
 
@@ -78,8 +78,7 @@ namespace Sisfarma.Sincronizador.Nixfarma.Infrastructure.ExternalServices.Sisfar
                     cod_barras = mm.cod_barras.Strip(),
                     cod_nacional = mm.cod_nacional,
                     nombre = mm.nombre.Strip(),
-                    familia = mm.familia.Strip(),                    
-                    familiaAux = mm.familiaAux.Strip(),
+                    familia = mm.familia.Strip(),
                     precio = mm.precio,
                     descripcion = mm.descripcion.Strip(),
                     laboratorio = mm.laboratorio.Strip(),
@@ -92,8 +91,6 @@ namespace Sisfarma.Sincronizador.Nixfarma.Infrastructure.ExternalServices.Sisfar
                     stockMinimo = mm.stockMinimo,
                     stockMaximo = mm.stockMaximo,
                     categoria = mm.categoria.Strip(),
-                    subcategoria = mm.subcategoria.Strip(),
-                    web = mm.web.ToInteger(),
                     ubicacion = mm.ubicacion.Strip(),
                     presentacion = mm.presentacion,
                     descripcionTienda = mm.descripcionTienda,
@@ -101,13 +98,12 @@ namespace Sisfarma.Sincronizador.Nixfarma.Infrastructure.ExternalServices.Sisfar
                     fechaCaducidad = mm.fechaCaducidad?.ToDateInteger("yyyyMM") ?? 0,
                     fechaUltimaCompra = mm.fechaUltimaCompra.ToIsoString(),
                     fechaUltimaVenta = mm.fechaUltimaVenta.ToIsoString(),
-                    baja = mm.baja.ToInteger()
+                    baja = mm.baja.ToInteger(),
                 }};
 
             _restClient.
                 Resource(_config.Medicamentos.Insert)
                 .SendPost(new { bulk = medicamento });
-
         }
 
         public void Update(Medicamento mm, bool withSqlExtra = false)

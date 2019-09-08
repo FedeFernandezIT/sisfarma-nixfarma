@@ -34,7 +34,8 @@ namespace Sisfarma.Sincronizador.Unycop.IoC.Factories
                         familiaRepository: new FamiliaRepository(),
                         laboratorioRepository: new LaboratorioRepository(),
                         proveedorRepository: new ProveedoresRepository(
-                                recepcionRespository: new RecepcionRespository())),
+                                recepcionRespository: new RecepcionRespository()),
+                        tarifaRepository: new TarifaRepository()),
 
                 pedidos: new PedidosRepository(
                         proveedorRepository: new ProveedoresRepository(

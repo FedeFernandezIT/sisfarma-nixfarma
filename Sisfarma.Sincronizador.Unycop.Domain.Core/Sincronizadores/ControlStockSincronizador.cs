@@ -17,6 +17,7 @@ namespace Sisfarma.Sincronizador.Unycop.Domain.Core.Sincronizadores
         private const string TIPO_CLASIFICACION_CATEGORIA = "Categoria";
 
         private string _clasificacion;
+        private string _verCategorias;
 
         public ControlStockSincronizador(IFarmaciaService farmacia, ISisfarmaService fisiotes)
             : base(farmacia, fisiotes)
@@ -28,6 +29,7 @@ namespace Sisfarma.Sincronizador.Unycop.Domain.Core.Sincronizadores
             _clasificacion = !string.IsNullOrWhiteSpace(ConfiguracionPredefinida[Configuracion.FIELD_TIPO_CLASIFICACION])
                 ? ConfiguracionPredefinida[Configuracion.FIELD_TIPO_CLASIFICACION]
                 : TIPO_CLASIFICACION_DEFAULT;
+            _verCategorias = ConfiguracionPredefinida[Configuracion.FIELD_VER_CATEGORIAS];
         }
 
         public override void PreSincronizacion()
@@ -67,28 +69,36 @@ namespace Sisfarma.Sincronizador.Unycop.Domain.Core.Sincronizadores
         public Medicamento GenerarMedicamento(Farmaco farmaco)
         {
             var familia = farmaco.Familia?.Nombre ?? FAMILIA_DEFAULT;
+            var superFamilia = farmaco.SuperFamilia?.Nombre ?? FAMILIA_DEFAULT;
             var familiaAux = _clasificacion == TIPO_CLASIFICACION_CATEGORIA ? familia : string.Empty;
+
+            var categoria = farmaco.Categoria?.Nombre;
+            if (_verCategorias == "si" && !string.IsNullOrWhiteSpace(categoria) && categoria.ToLower() != "sin categoria" && categoria.ToLower() != "sin categoría")
+            {
+                if (string.IsNullOrEmpty(superFamilia) || superFamilia == FAMILIA_DEFAULT)
+                    superFamilia = categoria;
+                else superFamilia = $"{superFamilia} ~~~~~~~~ {categoria}";
+            }
 
             return new Medicamento
             {
                 cod_barras = farmaco.CodigoBarras ?? "847000" + farmaco.Codigo.PadLeft(6, '0'),
-                cod_nacional = farmaco.Id.ToString(),
+                cod_nacional = farmaco.Codigo,
                 nombre = farmaco.Denominacion,
                 familia = familia,
-                precio = (float)farmaco.Precio,
+                superFamilia = superFamilia,
+                precio = farmaco.Precio,
                 descripcion = farmaco.Denominacion,
                 laboratorio = farmaco.Laboratorio?.Codigo ?? "0",
                 nombre_laboratorio = farmaco.Laboratorio?.Nombre ?? LABORATORIO_DEFAULT,
                 proveedor = farmaco.Proveedor?.Nombre ?? string.Empty,
-                pvpSinIva = (float)farmaco.PrecioSinIva(),
+                pvpSinIva = farmaco.PrecioSinIva(),
                 iva = (int)farmaco.Iva,
                 stock = farmaco.Stock,
-                puc = (float)farmaco.PrecioCoste,
+                puc = farmaco.PrecioCoste,
                 stockMinimo = farmaco.StockMinimo,
-                stockMaximo = 0,
+                stockMaximo = farmaco.StockMaximo,
                 categoria = farmaco.Categoria?.Nombre ?? string.Empty,
-                subcategoria = farmaco.Subcategoria?.Nombre ?? string.Empty,
-                web = farmaco.Web,
                 ubicacion = farmaco.Ubicacion ?? string.Empty,
                 presentacion = string.Empty,
                 descripcionTienda = string.Empty,
@@ -97,7 +107,7 @@ namespace Sisfarma.Sincronizador.Unycop.Domain.Core.Sincronizadores
                 fechaCaducidad = farmaco.FechaCaducidad,
                 fechaUltimaCompra = farmaco.FechaUltimaCompra,
                 fechaUltimaVenta = farmaco.FechaUltimaVenta,
-                baja = farmaco.Baja
+                baja = farmaco.Baja,
             };
         }
     }

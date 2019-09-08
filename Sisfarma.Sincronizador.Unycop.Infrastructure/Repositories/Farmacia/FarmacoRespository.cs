@@ -24,6 +24,7 @@ namespace Sisfarma.Sincronizador.Nixfarma.Infrastructure.Repositories.Farmacia
         private readonly DC.IFamiliaRepository _familiaRepository;
         private readonly DC.ILaboratorioRepository _laboratorioRepository;
         private readonly DC.IProveedorRepository _proveedorRepository;
+        private readonly ITarifaRepository _tarifaRepository;
 
         private readonly decimal _factorCentecimal = 0.01m;
 
@@ -40,13 +41,15 @@ namespace Sisfarma.Sincronizador.Nixfarma.Infrastructure.Repositories.Farmacia
             ICodigoBarraRepository barraRepository,
             DC.IFamiliaRepository familiaRepository,
             DC.ILaboratorioRepository laboratorioRepository,
-            DC.IProveedorRepository proveedorRepository)
+            DC.IProveedorRepository proveedorRepository,
+            ITarifaRepository tarifaRepository)
         {
             _categoriaRepository = categoriaRepository ?? throw new ArgumentNullException(nameof(categoriaRepository));
             _barraRepository = barraRepository ?? throw new ArgumentNullException(nameof(barraRepository));
             _familiaRepository = familiaRepository ?? throw new ArgumentNullException(nameof(familiaRepository));
             _laboratorioRepository = laboratorioRepository ?? throw new ArgumentNullException(nameof(laboratorioRepository));
             _proveedorRepository = proveedorRepository ?? throw new ArgumentNullException(nameof(proveedorRepository));
+            _tarifaRepository = tarifaRepository ?? throw new ArgumentNullException(nameof(tarifaRepository));
         }
 
         public DTO.Farmaco GetOneOrDefaultById(string id)
@@ -222,14 +225,91 @@ namespace Sisfarma.Sincronizador.Nixfarma.Infrastructure.Repositories.Farmacia
             return rs.Select(GenerarFarmaco);
         }
 
-        public IEnumerable<DTO.Farmaco> GetWithStockByIdGreaterOrEqualAsDTO(string codigo)
+        public IEnumerable<DTO.Farmaco> GetWithStockByIdGreaterOrEqualAsDTO(string codArticu)
         {
-            using (var db = FarmaciaContext.Farmacos())
+            var farmacos = new List<DTO.Farmaco>();
+            var conn = FarmaciaContext.GetConnection();
+            try
             {
-                var sql = @"select top 999 ID_Farmaco as Id, Familia, CategoriaId, SubcategoriaId, Fecha_U_Entrada as FechaUltimaEntrada, Fecha_U_Salida as FechaUltimaSalida, Ubicacion, PC_U_Entrada as PrecioUnicoEntrada, PCMedio as PrecioMedio, BolsaPlastico, PVP, IVA, Stock, Existencias, Denominacion, Laboratorio, FechaBaja, Fecha_Caducidad as FechaCaducidad from Farmacos WHERE ID_Farmaco >= @codigo AND existencias > 0 ORDER BY ID_Farmaco ASC";
-                return db.Database.SqlQuery<DTO.Farmaco>(sql,
-                    new OleDbParameter("codigo", int.Parse(codigo)))
-                    .ToList();
+                var sqlExtra = string.Empty;
+                var sql = $@"
+                    select a.codigo, a.precio_lab_euros, a.Pvp_euros, a.famsb_codigo, a.fam_codigo, a.descripcion, a.lab_codigo, a.clase, a.clase_bot,
+                           a.imp_codigo, a.ean_13, a.Fecha_Baja, sum(e.actuales) as stock, max(e.stock_min) as stock_minimo, max(e.stock_max) as stock_maximo,
+                           max(to_date(e.fecha_caducidad)) as fecha_caducidad, max(e.fuc) AS fuc, max(e.fuv) as fuv,
+                           NVL(MAX(e.pmc_es),0) AS pcmedio, NVL(MAX(e.puc_es),0) AS puc, NVL(MAX(e.ubicacion),'') AS ubicacion
+                    from (select distinct
+                                codigo, precio_lab_euros, Pvp_euros, famsb_codigo, fam_codigo, descripcion, lab_codigo, clase, clase_bot,
+                                imp_codigo, ean_13, Fecha_Baja from appul.ab_articulos {sqlExtra}) a
+                    LEFT JOIN appul.ac_existencias e ON e.art_codigo = a.codigo
+                    WHERE a.codigo >= '{codArticu.PadLeft(6, '0')}'
+                    GROUP BY a.codigo, a.precio_lab_euros, a.Pvp_euros, a.famsb_codigo, a.fam_codigo,
+                            a.descripcion, a.lab_codigo, a.clase, a.clase_bot, a.imp_codigo, a.ean_13, a.Fecha_Baja
+                    HAVING NVL(sum(e.actuales),0) > 0 ORDER BY a.codigo ASC";
+
+                conn.Open();
+                var cmd = conn.CreateCommand();
+                cmd.CommandText = sql;
+                var reader = cmd.ExecuteReader();
+
+                while (reader.Read())
+                {
+                    var rCodigo = Convert.ToString(reader["codigo"]);
+                    var rPrecioLabEuros = !Convert.IsDBNull(reader["precio_lab_euros"]) ? (decimal?)Convert.ToDecimal(reader["precio_lab_euros"]) : null;
+                    var rPvpEuros = !Convert.IsDBNull(reader["Pvp_euros"]) ? (decimal?)Convert.ToDecimal(reader["Pvp_euros"]) : null;
+                    var rFamsbCodigo = Convert.ToString(reader["famsb_codigo"]);
+                    var rFamCodigo = Convert.ToString(reader["fam_codigo"]);
+                    var rDescripcion = Convert.ToString(reader["descripcion"]);
+                    var rLabCodigo = !Convert.IsDBNull(reader["lab_codigo"]) ? (long?)Convert.ToInt64(reader["lab_codigo"]) : null;
+                    var rClase = Convert.ToString(reader["clase"]);
+                    var rClaseBot = Convert.ToString(reader["clase_bot"]);
+                    var rImpCodigo = Convert.ToString(reader["imp_codigo"]);
+                    var rEan13 = Convert.ToString(reader["ean_13"]);
+                    var rFechaBaja = !Convert.IsDBNull(reader["Fecha_Baja"]) ? (DateTime?)Convert.ToDateTime(reader["Fecha_Baja"]) : null;
+                    var rStock = Convert.ToInt64(reader["stock"]);
+                    var rStockMinimo = Convert.ToInt64(reader["stock_minimo"]);
+                    var rStockMaximo = Convert.ToInt64(reader["stock_maximo"]);
+                    var rFechaCaducidad = !Convert.IsDBNull(reader["fecha_caducidad"]) ? (DateTime?)Convert.ToDateTime(reader["fecha_caducidad"]) : null;
+                    var rFuc = !Convert.IsDBNull(reader["fuc"]) ? (DateTime?)Convert.ToDateTime(reader["fuc"]) : null;
+                    var rFuv = !Convert.IsDBNull(reader["fuv"]) ? (DateTime?)Convert.ToDateTime(reader["fuv"]) : null;
+                    var rPcMedio = !Convert.IsDBNull(reader["pcmedio"]) ? Convert.ToDecimal(reader["pcmedio"]) : 0m;
+                    var rPuc = !Convert.IsDBNull(reader["puc"]) ? Convert.ToDecimal(reader["puc"]) : 0m;
+                    var rUbicacion = Convert.ToString(reader["ubicacion"]);
+
+                    var farmaco = new DTO.Farmaco
+                    {
+                        Codigo = rCodigo,
+                        Stock = rStock,
+                        StockMinimo = rStockMinimo,
+                        StockMaximo = rStockMaximo,
+                        FechaCaducidad = rFechaCaducidad,
+                        FechaUltimaCompra = rFuc,
+                        FechaUltimaVenta = rFuv,
+                        PrecioCoste = rPuc != 0m ? rPuc
+                            : rPcMedio != 0m ? rPcMedio
+                            : rPrecioLabEuros ?? 0m,
+                        Precio = rPvpEuros ?? 0m,
+                        Familia = rFamCodigo.ToIntegerOrDefault(),
+                        SubFamilia = rFamsbCodigo,
+                        Laboratorio = rLabCodigo,
+                        CodigoBarras = rEan13,
+                        CodigoImpuesto = rImpCodigo,
+                        Denominacion = rDescripcion,
+                        FechaBaja = rFechaBaja
+                    };
+
+                    farmacos.Add(farmaco);
+                }
+
+                return farmacos;
+            }
+            catch (Exception)
+            {
+                return farmacos;
+            }
+            finally
+            {
+                conn.Close();
+                conn.Dispose();
             }
         }
 
@@ -261,61 +341,53 @@ namespace Sisfarma.Sincronizador.Nixfarma.Infrastructure.Repositories.Farmacia
 
         public Farmaco GenerarFarmaco(DTO.Farmaco farmaco)
         {
-            var familia = _familiaRepository.GetOneOrDefaultById(farmaco.Familia);
-            var categoria = farmaco.CategoriaId.HasValue
-                            ? _categoriaRepository.GetOneOrDefaultById(farmaco.CategoriaId.Value.ToString())
-                            : null;
+            var proveedor = _proveedorRepository.GetOneOrDefaultByCodigoNacional(farmaco.Codigo);
+            var categoria = _categoriaRepository.GetOneOrDefaultById(farmaco.Codigo);
 
-            var subcategoria = farmaco.CategoriaId.HasValue && farmaco.SubcategoriaId.HasValue
-                ? _categoriaRepository.GetSubcategoriaOneOrDefaultByKey(
-                    farmaco.CategoriaId.Value,
-                    farmaco.SubcategoriaId.Value)
-                : null;
-
-            var codigoBarra = _barraRepository.GetOneByFarmacoId(farmaco.Id);
-
-            var proveedor = _proveedorRepository.GetOneOrDefaultByCodigoNacional(farmaco.Id.ToString());
-
-            var laboratorio = _laboratorioRepository.GetOneOrDefaultByCodigo(farmaco.Laboratorio.Value, null, null); // TODO check clase clasebot
-
-            var pcoste = farmaco.PrecioUnicoEntrada.HasValue && farmaco.PrecioUnicoEntrada != 0
-                            ? (decimal)farmaco.PrecioUnicoEntrada.Value * _factorCentecimal
-                            : ((decimal?)farmaco.PrecioMedio ?? 0m) * _factorCentecimal;
-
-            var iva = default(decimal);
-            switch (farmaco.IVA)
+            Familia familia = null;
+            Familia superFamilia = null;
+            if (string.IsNullOrWhiteSpace(farmaco.SubFamilia))
             {
-                case 1: iva = 4; break;
-
-                case 2: iva = 10; break;
-
-                case 3: iva = 21; break;
-
-                default: iva = 0; break;
+                familia = new Familia { Nombre = string.Empty };
+                superFamilia = _familiaRepository.GetOneOrDefaultById(farmaco.Familia)
+                    ?? new Familia { Nombre = string.Empty };
             }
+            else
+            {
+                familia = _familiaRepository.GetSubFamiliaOneOrDefault(farmaco.Familia, farmaco.SubFamilia)
+                    ?? new Familia { Nombre = string.Empty };
+                superFamilia = _familiaRepository.GetOneOrDefaultById(farmaco.Familia)
+                    ?? new Familia { Nombre = string.Empty };
+            }
+
+            var laboratorio = !farmaco.Laboratorio.HasValue ? new Laboratorio { Codigo = string.Empty, Nombre = "<Sin Laboratorio>" }
+                : _laboratorioRepository.GetOneOrDefaultByCodigo(farmaco.Laboratorio.Value, farmaco.Clase, farmaco.ClaseBot)
+                    ?? new Laboratorio { Codigo = string.Empty, Nombre = "<Sin Laboratorio>" };
+
+            var impuesto = !string.IsNullOrWhiteSpace(farmaco.CodigoImpuesto) ? farmaco.CodigoImpuesto : "0";
+            var iva = _tarifaRepository.GetTarifaOrDefaultByCodigoImpuesto(impuesto) ?? 0m;
 
             return new Farmaco
             {
                 Id = farmaco.Id,
-                Codigo = farmaco.Id.ToString(),
+                Codigo = farmaco.Codigo,
                 Denominacion = farmaco.Denominacion,
                 Familia = familia,
                 Categoria = categoria,
-                Subcategoria = subcategoria,
-                CodigoBarras = codigoBarra,
+                CodigoBarras = farmaco.CodigoBarras,
                 Proveedor = proveedor,
-                FechaUltimaCompra = farmaco.FechaUltimaEntrada.HasValue ? (DateTime?)$"{farmaco.FechaUltimaEntrada.Value}".ToDateTimeOrDefault("yyyyMMdd") : null,
-                FechaUltimaVenta = farmaco.FechaUltimaSalida.HasValue ? (DateTime?)$"{farmaco.FechaUltimaSalida.Value}".ToDateTimeOrDefault("yyyyMMdd") : null,
+                FechaUltimaCompra = farmaco.FechaUltimaCompra.HasValue ? (DateTime?)$"{farmaco.FechaUltimaCompra.Value}".ToDateTimeOrDefault("yyyyMMdd") : null,
+                FechaUltimaVenta = farmaco.FechaUltimaVenta.HasValue ? (DateTime?)$"{farmaco.FechaUltimaVenta.Value}".ToDateTimeOrDefault("yyyyMMdd") : null,
+                FechaCaducidad = farmaco.FechaCaducidad.HasValue ? (DateTime?)$"{farmaco.FechaCaducidad.Value}".ToDateTimeOrDefault("yyyyMM") : null,
                 Ubicacion = farmaco.Ubicacion ?? string.Empty,
-                Web = farmaco.BolsaPlastico,
-                Precio = farmaco.PVP * _factorCentecimal,
-                PrecioCoste = pcoste,
+                Precio = farmaco.Precio,
+                PrecioCoste = farmaco.PrecioCoste,
                 Iva = iva,
-                Stock = farmaco.Existencias ?? 0,
-                StockMinimo = farmaco.Stock ?? 0,
+                Stock = farmaco.Stock,
+                StockMinimo = farmaco.StockMinimo,
+                StockMaximo = farmaco.StockMaximo,
                 Laboratorio = laboratorio,
-                Baja = farmaco.FechaBaja > 0,
-                FechaCaducidad = farmaco.FechaCaducidad.HasValue ? (DateTime?)$"{farmaco.FechaCaducidad.Value}".ToDateTimeOrDefault("yyyyMM") : null
+                Baja = farmaco.FechaBaja.HasValue,
             };
         }
 

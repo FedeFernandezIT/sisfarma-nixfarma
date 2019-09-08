@@ -32,6 +32,7 @@ namespace Sisfarma.Sincronizador.Domain.Entities.Fisiotes
         public const string FIELD_ES_FARMAZUL = "esFarmazul";
         public const string FIELD_TIPO_CLASIFICACION = "clasificar";
         public const string FIELD_FILTROS_RESIDENCIA = "filtroResidencias";
+        public const string FIELD_VER_CATEGORIAS = "verCategorias";
     }
 
     //public static class FieldsConfiguracion

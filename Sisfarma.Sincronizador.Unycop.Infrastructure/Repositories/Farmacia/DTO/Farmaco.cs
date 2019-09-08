@@ -6,9 +6,15 @@ namespace Sisfarma.Sincronizador.Nixfarma.Infrastructure.Repositories.Farmacia.D
     {
         public int Id { get; set; }
 
-        public float? PrecioMedio { get; set; }
+        public string Codigo { get; set; }
 
-        public float? PrecioUnicoEntrada { get; set; }
+        public decimal PrecioCoste { get; set; }
+
+        public decimal Precio { get; set; }
+
+        public decimal? PrecioMedio { get; set; }
+
+        public decimal? PrecioUnicoEntrada { get; set; }
 
         public int Familia { get; set; }
 
@@ -22,9 +28,9 @@ namespace Sisfarma.Sincronizador.Nixfarma.Infrastructure.Repositories.Farmacia.D
 
         public string Denominacion { get; set; }
 
-        public int? FechaUltimaEntrada { get; set; }
+        public DateTime? FechaUltimaCompra { get; set; }
 
-        public int? FechaUltimaSalida { get; set; }
+        public DateTime? FechaUltimaVenta { get; set; }
 
         public string Ubicacion { get; set; }
 
@@ -34,23 +40,26 @@ namespace Sisfarma.Sincronizador.Nixfarma.Infrastructure.Repositories.Farmacia.D
 
         public int PVP { get; set; }
 
-        public short? Stock { get; set; }
+        public long Stock { get; set; }
 
         public short? Existencias { get; set; }
 
-        public int FechaBaja { get; set; }
+        public DateTime? FechaBaja { get; set; }
 
-        /// <summary>
-        /// Fecha formato yyyyMM
-        /// </summary>
-        public int? FechaCaducidad { get; set; }
+        public DateTime? FechaCaducidad { get; set; }
 
         public string CodigoBarras { get; set; }
+
+        public string CodigoImpuesto { get; set; }
 
         public decimal PUC { get; set; }
 
         public string Clase { get; set; }
 
         public string ClaseBot { get; set; }
+
+        public long StockMinimo { get; set; }
+
+        public long StockMaximo { get; set; }
     }
 }

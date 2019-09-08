@@ -92,6 +92,7 @@
     <Compile Include="Repositories\Farmacia\RecepcionRespository.cs" />
     <Compile Include="Repositories\Farmacia\SinonimosRepository.cs" />
     <Compile Include="Repositories\Farmacia\SubcategoriaRepository.cs" />
+    <Compile Include="Repositories\Farmacia\TarifaRepository.cs" />
     <Compile Include="Repositories\Farmacia\VendedoresRepository.cs" />
     <Compile Include="Repositories\Farmacia\VentasPremiumRepository.cs" />
     <Compile Include="Repositories\Farmacia\VentasRepository.cs" />
