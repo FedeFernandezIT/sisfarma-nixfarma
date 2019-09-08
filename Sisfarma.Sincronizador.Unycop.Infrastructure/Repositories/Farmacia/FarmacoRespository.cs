@@ -265,7 +265,7 @@ namespace Sisfarma.Sincronizador.Nixfarma.Infrastructure.Repositories.Farmacia
                     var rImpCodigo = Convert.ToString(reader["imp_codigo"]);
                     var rEan13 = Convert.ToString(reader["ean_13"]);
                     var rFechaBaja = !Convert.IsDBNull(reader["Fecha_Baja"]) ? (DateTime?)Convert.ToDateTime(reader["Fecha_Baja"]) : null;
-                    var rStock = Convert.ToInt64(reader["stock"]);
+                    var rStock = !Convert.IsDBNull(reader["stock"]) ? Convert.ToInt64(reader["stock"]) : 0L;
                     var rStockMinimo = Convert.ToInt64(reader["stock_minimo"]);
                     var rStockMaximo = Convert.ToInt64(reader["stock_maximo"]);
                     var rFechaCaducidad = !Convert.IsDBNull(reader["fecha_caducidad"]) ? (DateTime?)Convert.ToDateTime(reader["fecha_caducidad"]) : null;
@@ -302,7 +302,7 @@ namespace Sisfarma.Sincronizador.Nixfarma.Infrastructure.Repositories.Farmacia
 
                 return farmacos;
             }
-            catch (Exception)
+            catch (Exception ex)
             {
                 return farmacos;
             }
