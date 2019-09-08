@@ -79,6 +79,7 @@ namespace Sisfarma.Sincronizador.Nixfarma.Infrastructure.ExternalServices.Sisfar
                     cod_nacional = mm.cod_nacional,
                     nombre = mm.nombre.Strip(),
                     familia = mm.familia.Strip(),
+                    superfamilia = mm.superFamilia.Strip(),
                     precio = mm.precio,
                     descripcion = mm.descripcion.Strip(),
                     laboratorio = mm.laboratorio.Strip(),
