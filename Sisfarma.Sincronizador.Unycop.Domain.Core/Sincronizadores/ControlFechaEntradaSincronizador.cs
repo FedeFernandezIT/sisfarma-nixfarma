@@ -40,7 +40,7 @@ namespace Sisfarma.Sincronizador.Unycop.Domain.Core.Sincronizadores
         public override void Process()
         {
             var repository = _farmacia.Farmacos as FarmacoRespository;
-            var farmacos = repository.GetAllByFechaUltimaEntradaGreaterAsDTO(_ultimoFechaActualizacionStockSincronizado);
+            var farmacos = repository.GetAllByFechaUltimaEntradaGreaterOrEqualAsDTO(_ultimoFechaActualizacionStockSincronizado);
 
             foreach (var farmaco in farmacos)
             {
