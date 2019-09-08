@@ -3,6 +3,7 @@ using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
+using Sisfarma.Sincronizador.Core.Extensions;
 using Sisfarma.Sincronizador.Domain.Core.Services;
 using Sisfarma.Sincronizador.Domain.Entities.Farmacia;
 using Sisfarma.Sincronizador.Domain.Entities.Fisiotes;
@@ -42,7 +43,7 @@ namespace Sisfarma.Sincronizador.Unycop.Domain.Core.Sincronizadores
             // _falta se carga en PreSincronizacion
             var pedidos = (_falta == null)
                 ? _farmacia.Pedidos.GetAllByFechaGreaterOrEqual(new DateTime(DateTime.Now.Year - 2, 1, 1))
-                : _farmacia.Pedidos.GetAllByIdGreaterOrEqual(_falta.idPedido);
+                : _farmacia.Pedidos.GetAllByIdGreaterOrEqual(long.Parse(_falta.idPedido.ToString().SubstringEnd(5)));
 
             foreach (var pedido in pedidos)
             {
