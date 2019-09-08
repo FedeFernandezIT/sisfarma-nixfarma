@@ -66,7 +66,6 @@ namespace Sisfarma.Sincronizador.Nixfarma.Infrastructure.Repositories.Farmacia
 
         public RecepcionTotales GetTotalesByPedidoAsDTO(int anio, long numeroPedido, string empresa)
         {
-            var recepciones = new List<DTO.Recepcion>();
             var conn = FarmaciaContext.GetConnection();
             try
             {
@@ -84,16 +83,21 @@ namespace Sisfarma.Sincronizador.Nixfarma.Infrastructure.Repositories.Farmacia
                 cmd.CommandText = sql;
                 var reader = cmd.ExecuteReader();
 
-                var rNumLineas = Convert.ToInt32(reader["numLineas"]);
-                var rImportePvp = Convert.ToDecimal(reader["importePvp"]);
-                var rImportePuc = Convert.ToDecimal(reader["importePuc"]);
-
-                return new RecepcionTotales
+                if (reader.Read())
                 {
-                    Lineas = rNumLineas,
-                    PVP = rImportePvp,
-                    PUC = rImportePuc
-                };
+                    var rNumLineas = Convert.ToInt32(reader["numLineas"]);
+                    var rImportePvp = Convert.ToDecimal(reader["importePvp"]);
+                    var rImportePuc = Convert.ToDecimal(reader["importePuc"]);
+
+                    return new RecepcionTotales
+                    {
+                        Lineas = rNumLineas,
+                        PVP = rImportePvp,
+                        PUC = rImportePuc
+                    };
+                }
+
+                return new RecepcionTotales();
             }
             catch (Exception ex)
             {

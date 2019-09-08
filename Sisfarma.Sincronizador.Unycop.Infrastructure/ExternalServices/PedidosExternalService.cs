@@ -10,7 +10,7 @@ namespace Sisfarma.Sincronizador.Nixfarma.Infrastructure.ExternalServices
 {
     public class PedidosExternalService : FisiotesExternalService, IPedidosExternalService
     {
-        public PedidosExternalService(IRestClient restClient, FisiotesConfig config) 
+        public PedidosExternalService(IRestClient restClient, FisiotesConfig config)
             : base(restClient, config)
         { }
 
@@ -68,7 +68,6 @@ namespace Sisfarma.Sincronizador.Nixfarma.Infrastructure.ExternalServices
                 descripcion = ll.descripcion.Strip(),
                 familia = ll.familia,
                 categoria = ll.categoria,
-                subcategoria = ll.subcategoria,
                 cantidad = ll.cantidad,
                 pvp = ll.pvp,
                 puc = ll.puc,
