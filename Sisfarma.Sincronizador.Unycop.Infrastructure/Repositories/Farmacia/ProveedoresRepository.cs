@@ -47,6 +47,7 @@ namespace Sisfarma.Sincronizador.Nixfarma.Infrastructure.Repositories.Farmacia
 
                     return new Proveedor
                     {
+                        Id = id,
                         Nombre = rNombreAb
                     };
                 }
