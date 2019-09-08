@@ -44,7 +44,7 @@ namespace Sisfarma.Sincronizador.Nixfarma.Infrastructure.Repositories.Farmacia
             {
                 var sqlExtra = string.Empty;
                 var sql = $@"
-                    SELECT * From appul.ad_pedidos WHERE to_char(fecha_pedido, 'YYYYMMDD') >= '{fecha.ToString("yyyyMMdd")}' Order by pedido ASC";
+                    SELECT * From appul.ad_pedidos WHERE rownum <= 999 AND to_char(fecha_pedido, 'YYYYMMDD') >= '{fecha.ToString("yyyyMMdd")}' Order by pedido ASC";
 
                 conn.Open();
                 var cmd = conn.CreateCommand();
@@ -98,7 +98,7 @@ namespace Sisfarma.Sincronizador.Nixfarma.Infrastructure.Repositories.Farmacia
                     SELECT * From appul.ad_pedidos
                     WHERE rownum <= 999
                         AND to_char(fecha_pedido, 'YYYYMMDD') > '{fechaPedido.ToString("yyyyMMdd")}'
-                        OR  (to_char(fecha_pedido, 'YYYYMMDD') = '{fechaPedido.ToString("yyyyMMdd")}' AND pedido >= {numeroPedido})
+                        OR  (to_char(fecha_pedido, 'YYYYMMDD') = '{fechaPedido.ToString("yyyyMMdd")}' AND pedido > {numeroPedido})
                     Order by pedido ASC";
 
                 conn.Open();
