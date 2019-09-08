@@ -28,6 +28,7 @@ namespace Sisfarma.Sincronizador.Unycop.Domain.Core.Sincronizadores
         protected string _codigoEmpresa;
         protected DateTime _timestampUltimaVenta;
         private string _filtrosResidencia;
+        private string _verCategorias;
 
         public PuntoPendienteSincronizador(IFarmaciaService farmacia, ISisfarmaService fisiotes)
             : base(farmacia, fisiotes)
@@ -46,6 +47,7 @@ namespace Sisfarma.Sincronizador.Unycop.Domain.Core.Sincronizadores
             _copiarClientes = ConfiguracionPredefinida[Configuracion.FIELD_COPIAS_CLIENTES];
             _debeCopiarClientes = _copiarClientes.ToLower().Equals("si") || string.IsNullOrWhiteSpace(_copiarClientes);
             _filtrosResidencia = ConfiguracionPredefinida[Configuracion.FIELD_FILTROS_RESIDENCIA];
+            _verCategorias = ConfiguracionPredefinida[Configuracion.FIELD_VER_CATEGORIAS];
         }
 
         public override void PreSincronizacion()
@@ -103,7 +105,17 @@ namespace Sisfarma.Sincronizador.Unycop.Domain.Core.Sincronizadores
             var puntosPendientes = new List<PuntosPendientes>();
             foreach (var item in venta.Detalle.Where(d => d.HasFarmaco()))
             {
-                var familia = item.Farmaco.Familia?.Nombre ?? FAMILIA_DEFAULT;
+                var familia = !string.IsNullOrWhiteSpace(item.Farmaco.Familia?.Nombre) ? item.Farmaco.Familia.Nombre : FAMILIA_DEFAULT;
+                var superFamilia = !string.IsNullOrWhiteSpace(item.Farmaco.SuperFamilia?.Nombre) ? item.Farmaco.SuperFamilia.Nombre : FAMILIA_DEFAULT;
+
+                var categoria = item.Farmaco.Categoria?.Nombre;
+                if (_verCategorias == "si" && !string.IsNullOrWhiteSpace(categoria) && categoria.ToLower() != "sin categoria" && categoria.ToLower() != "sin categoría")
+                {
+                    if (string.IsNullOrEmpty(superFamilia) || superFamilia == FAMILIA_DEFAULT)
+                        superFamilia = categoria;
+                    else superFamilia = $"{superFamilia} ~~~~~~~~ {categoria}";
+                }
+
                 var puntoPendiente = new PuntosPendientes
                 {
                     VentaId = $"{venta.Operacion}{_codigoEmpresa}".ToLongOrDefault(),
@@ -112,16 +124,8 @@ namespace Sisfarma.Sincronizador.Unycop.Domain.Core.Sincronizadores
                     CodigoNacional = item.Farmaco.Codigo,
                     Descripcion = item.Farmaco.Denominacion,
 
-                    Familia = _clasificacion == TIPO_CLASIFICACION_CATEGORIA
-                        ? !string.IsNullOrWhiteSpace(item.Farmaco.Familia?.Nombre)
-                            ? item.Farmaco.Familia?.Nombre
-                            : FAMILIA_DEFAULT
-                        : FAMILIA_DEFAULT,
-                    SuperFamilia = _clasificacion == TIPO_CLASIFICACION_CATEGORIA
-                        ? !string.IsNullOrWhiteSpace(item.Farmaco.SuperFamilia?.Nombre)
-                            ? item.Farmaco.SuperFamilia?.Nombre
-                            : FAMILIA_DEFAULT
-                        : string.Empty,
+                    Familia = familia,
+                    SuperFamilia = superFamilia,
                     SuperFamiliaAux = string.Empty,
                     FamiliaAux = string.Empty,
                     CambioClasificacion = _clasificacion == TIPO_CLASIFICACION_CATEGORIA ? 1 : 0,
