@@ -28,7 +28,7 @@ namespace Sisfarma.Sincronizador.Domain.Entities.Fisiotes
 
         public string proveedor { get; set; }
 
-        public DateTime? fechaPedido { get; set; }
+        public DateTime fechaPedido { get; set; }
 
         public decimal pvp { get; set; }
 

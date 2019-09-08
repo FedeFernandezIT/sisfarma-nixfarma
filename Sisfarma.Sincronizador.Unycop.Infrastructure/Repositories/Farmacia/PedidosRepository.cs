@@ -87,20 +87,52 @@ namespace Sisfarma.Sincronizador.Nixfarma.Infrastructure.Repositories.Farmacia
             internal int Proveedor { get; set; }
         }
 
-        public IEnumerable<Pedido> GetAllByIdGreaterOrEqual(long pedido)
+        public IEnumerable<Pedido> GetAllByIdGreaterOrEqual(long numeroPedido, DateTime fechaPedido)
         {
-            var rs = Enumerable.Empty<DTO.Pedido>();
-            using (var db = FarmaciaContext.Proveedores())
+            var pedidos = new List<Pedido>();
+            var conn = FarmaciaContext.GetConnection();
+            try
             {
-                var sql = @"SELECT ID_NumPedido as Id, ID_Proveedor as Proveedor, ID_Farmaco as Farmaco, CantInicial, Fecha From recibir WHERE ID_NumPedido >= @pedido Order by ID_NumPedido ASC";
-                rs = db.Database.SqlQuery<DTO.Pedido>(sql,
-                    new OleDbParameter("pedido", (int)pedido))
-                        .Take(10)
-                        .ToList();
-            }
+                var sqlExtra = string.Empty;
+                var sql = $@"
+                    SELECT * From appul.ad_pedidos
+                    WHERE rownum <= 999
+                        AND to_char(fecha_pedido, 'YYYYMMDD') > '{fechaPedido.ToString("yyyyMMdd")}'
+                        OR  (to_char(fecha_pedido, 'YYYYMMDD') = '{fechaPedido.ToString("yyyyMMdd")}' AND pedido >= {numeroPedido})
+                    Order by pedido ASC";
 
-            var keys = rs.GroupBy(k => new PedidoCompositeKey { Id = k.Id, Proveedor = k.Proveedor });
-            return GenerarPedidos(keys);
+                conn.Open();
+                var cmd = conn.CreateCommand();
+                cmd.CommandText = sql;
+                var reader = cmd.ExecuteReader();
+
+                while (reader.Read())
+                {
+                    var rFechaPedido = Convert.ToDateTime(reader["FECHA_PEDIDO"]);
+                    var rPedido = Convert.ToInt64(reader["PEDIDO"]);
+                    var rEmpCodigo = Convert.ToString(reader["EMP_CODIGO"]);
+
+                    var pedido = new Pedido
+                    {
+                        Fecha = rFechaPedido,
+                        Numero = rPedido,
+                        Empresa = rEmpCodigo
+                    };
+
+                    pedidos.Add(pedido);
+                }
+
+                return pedidos;
+            }
+            catch (Exception ex)
+            {
+                return pedidos;
+            }
+            finally
+            {
+                conn.Close();
+                conn.Dispose();
+            }
         }
 
         private IEnumerable<Pedido> GenerarPedidos(IEnumerable<IGrouping<PedidoCompositeKey, DTO.Pedido>> groups)
@@ -140,7 +172,7 @@ namespace Sisfarma.Sincronizador.Nixfarma.Infrastructure.Repositories.Farmacia
                             : null;
 
                         var familia = _familiaRepository.GetOneOrDefaultById(farmaco.Familia);
-                        var laboratorio = _laboratorioRepository.GetOneOrDefaultByCodigo(farmaco.Laboratorio.Value, null, null); // TODO check clase, clasebot
+                        var laboratorio = _laboratorioRepository.GetOneOrDefaultByCodigo(farmaco.Laboratorio.Value, farmaco.Clase, farmaco.ClaseBot);
 
                         pedidoDetalle.Farmaco = new Farmaco
                         {

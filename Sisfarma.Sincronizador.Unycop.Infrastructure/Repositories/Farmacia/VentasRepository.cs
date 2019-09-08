@@ -186,6 +186,8 @@ namespace Sisfarma.Sincronizador.Nixfarma.Infrastructure.Repositories.Farmacia
 
         public List<Venta> GetAllByIdGreaterOrEqual(int year, DateTime timestamp)
         {
+            var conn = FarmaciaContext.GetConnection();
+
             try
             {
                 var dateTimeFormated = timestamp.ToString("dd/MM/yyyy HH:mm:ss");
@@ -199,11 +201,6 @@ namespace Sisfarma.Sincronizador.Nixfarma.Infrastructure.Repositories.Farmacia
                                     AND fecha_venta >= to_date('{dateTimeFormated}', 'DD/MM/YYYY HH24:MI:SS')
                                     ORDER BY fecha_venta ASC";
 
-                string connectionString = @"User Id=""CONSU""; Password=""consu"";" +
-                @"Data Source=(DESCRIPTION=(ADDRESS_LIST=(ADDRESS=(PROTOCOL=IPC)(KEY=DP9))" +
-                    "(ADDRESS=(PROTOCOL=TCP)(HOST=192.168.0.30)(PORT=1521)))(CONNECT_DATA=(INSTANCE_NAME=DP9)(SERVICE_NAME=ORACLE9)))";
-
-                var conn = new OracleConnection(connectionString);
                 conn.Open();
                 var cmd = conn.CreateCommand();
                 cmd.CommandText = sql;
@@ -235,12 +232,16 @@ namespace Sisfarma.Sincronizador.Nixfarma.Infrastructure.Repositories.Farmacia
                     });
                 }
 
-                conn.Close();
                 return ventas;
             }
             catch (Exception ex)
             {
                 return new List<Venta>();
+            }
+            finally
+            {
+                conn.Clone();
+                conn.Dispose();
             }
         }
 
