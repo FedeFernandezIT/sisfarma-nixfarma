@@ -150,14 +150,93 @@ namespace Sisfarma.Sincronizador.Nixfarma.Infrastructure.Repositories.Farmacia
             return rs.Select(GenerarFarmaco);
         }
 
-        public IEnumerable<DTO.Farmaco> GetAllByFechaUltimaEntradaGreaterOrEqualAsDTO(DateTime fecha)
+        public IEnumerable<DTO.Farmaco> GetAllByFechaUltimaEntradaGreaterAsDTO(DateTime fecha)
         {
-            using (var db = FarmaciaContext.Farmacos())
+            var farmacos = new List<DTO.Farmaco>();
+            var conn = FarmaciaContext.GetConnection();
+            try
             {
-                var sql = @"select top 999 ID_Farmaco as Id, Familia, CategoriaId, SubcategoriaId, Fecha_U_Entrada as FechaUltimaEntrada, Fecha_U_Salida as FechaUltimaSalida, Ubicacion, PC_U_Entrada as PrecioUnicoEntrada, PCMedio as PrecioMedio, BolsaPlastico, PVP, IVA, Stock, Existencias, Denominacion, Laboratorio, FechaBaja, Fecha_Caducidad as FechaCaducidad from Farmacos WHERE Fecha_U_Entrada >= @fecha ORDER BY Fecha_U_Entrada ASC";
-                return db.Database.SqlQuery<DTO.Farmaco>(sql,
-                    new OleDbParameter("fecha", fecha.ToDateInteger("yyyyMMdd")))
-                    .ToList();
+                var sqlExtra = string.Empty;
+                var sql = $@"select o.* from (
+                    select a.codigo, a.precio_lab_euros, a.Pvp_euros, a.famsb_codigo, a.fam_codigo, a.descripcion, a.lab_codigo, a.clase, a.clase_bot,
+                           a.imp_codigo, a.ean_13, a.Fecha_Baja, sum(e.actuales) as stock, max(e.stock_min) as stock_minimo, max(e.stock_max) as stock_maximo,
+                           max(to_date(e.fecha_caducidad)) as fecha_caducidad, max(e.fuc) AS fuc, max(e.fuv) as fuv,
+                           NVL(MAX(e.pmc_es),0) AS pcmedio, NVL(MAX(e.puc_es),0) AS puc, NVL(MAX(e.ubicacion),'') AS ubicacion
+                    from (select distinct
+                                codigo, precio_lab_euros, Pvp_euros, famsb_codigo, fam_codigo, descripcion, lab_codigo, clase, clase_bot,
+                                imp_codigo, ean_13, Fecha_Baja from appul.ab_articulos {sqlExtra}) a
+                    INNER JOIN appul.ac_existencias e ON e.art_codigo = a.codigo
+                    WHERE to_char (e.fuc, 'YYYYMMDD') >= '{fecha.ToString("yyyyMMdd")}'
+                    GROUP BY a.codigo, a.precio_lab_euros, a.Pvp_euros, a.famsb_codigo, a.fam_codigo,
+                            a.descripcion, a.lab_codigo, a.clase, a.clase_bot, a.imp_codigo, a.ean_13, a.Fecha_Baja
+                    ORDER BY fuc ASC) o
+                    WHERE rownum <= 999";
+
+                conn.Open();
+                var cmd = conn.CreateCommand();
+                cmd.CommandText = sql;
+                var reader = cmd.ExecuteReader();
+
+                while (reader.Read())
+                {
+                    var rCodigo = Convert.ToString(reader["codigo"]);
+                    var rPrecioLabEuros = !Convert.IsDBNull(reader["precio_lab_euros"]) ? (decimal?)Convert.ToDecimal(reader["precio_lab_euros"]) : null;
+                    var rPvpEuros = !Convert.IsDBNull(reader["Pvp_euros"]) ? (decimal?)Convert.ToDecimal(reader["Pvp_euros"]) : null;
+                    var rFamsbCodigo = Convert.ToString(reader["famsb_codigo"]);
+                    var rFamCodigo = Convert.ToString(reader["fam_codigo"]);
+                    var rDescripcion = Convert.ToString(reader["descripcion"]);
+                    var rLabCodigo = !Convert.IsDBNull(reader["lab_codigo"]) ? (long?)Convert.ToInt64(reader["lab_codigo"]) : null;
+                    var rClase = Convert.ToString(reader["clase"]);
+                    var rClaseBot = Convert.ToString(reader["clase_bot"]);
+                    var rImpCodigo = Convert.ToString(reader["imp_codigo"]);
+                    var rEan13 = Convert.ToString(reader["ean_13"]);
+                    var rFechaBaja = !Convert.IsDBNull(reader["Fecha_Baja"]) ? (DateTime?)Convert.ToDateTime(reader["Fecha_Baja"]) : null;
+                    var rStock = !Convert.IsDBNull(reader["stock"]) ? Convert.ToInt64(reader["stock"]) : 0L;
+                    var rStockMinimo = !Convert.IsDBNull(reader["stock_minimo"]) ? Convert.ToInt64(reader["stock_minimo"]) : 0L;
+                    var rStockMaximo = !Convert.IsDBNull(reader["stock_maximo"]) ? Convert.ToInt64(reader["stock_maximo"]) : 0L;
+                    var rFechaCaducidad = !Convert.IsDBNull(reader["fecha_caducidad"]) ? (DateTime?)Convert.ToDateTime(reader["fecha_caducidad"]) : null;
+                    var rFuc = !Convert.IsDBNull(reader["fuc"]) ? (DateTime?)Convert.ToDateTime(reader["fuc"]) : null;
+                    var rFuv = !Convert.IsDBNull(reader["fuv"]) ? (DateTime?)Convert.ToDateTime(reader["fuv"]) : null;
+                    var rPcMedio = !Convert.IsDBNull(reader["pcmedio"]) ? Convert.ToDecimal(reader["pcmedio"]) : 0m;
+                    var rPuc = !Convert.IsDBNull(reader["puc"]) ? Convert.ToDecimal(reader["puc"]) : 0m;
+                    var rUbicacion = Convert.ToString(reader["ubicacion"]);
+
+                    var farmaco = new DTO.Farmaco
+                    {
+                        Codigo = rCodigo,
+                        Stock = rStock,
+                        StockMinimo = rStockMinimo,
+                        StockMaximo = rStockMaximo,
+                        FechaCaducidad = rFechaCaducidad,
+                        FechaUltimaCompra = rFuc,
+                        FechaUltimaVenta = rFuv,
+                        PrecioCoste = rPuc != 0m ? rPuc
+                            : rPcMedio != 0m ? rPcMedio
+                            : rPrecioLabEuros ?? 0m,
+                        Precio = rPvpEuros ?? 0m,
+                        Familia = rFamCodigo.ToIntegerOrDefault(),
+                        SubFamilia = rFamsbCodigo,
+                        Laboratorio = rLabCodigo,
+                        CodigoBarras = rEan13,
+                        CodigoImpuesto = rImpCodigo,
+                        Denominacion = rDescripcion,
+                        FechaBaja = rFechaBaja,
+                        Ubicacion = rUbicacion,
+                    };
+
+                    farmacos.Add(farmaco);
+                }
+
+                return farmacos;
+            }
+            catch (Exception ex)
+            {
+                return farmacos;
+            }
+            finally
+            {
+                conn.Close();
+                conn.Dispose();
             }
         }
 
@@ -311,7 +390,7 @@ namespace Sisfarma.Sincronizador.Nixfarma.Infrastructure.Repositories.Farmacia
             try
             {
                 var sqlExtra = string.Empty;
-                var sql = $@"
+                var sql = $@"select o.* from (
                     select a.codigo, a.precio_lab_euros, a.Pvp_euros, a.famsb_codigo, a.fam_codigo, a.descripcion, a.lab_codigo, a.clase, a.clase_bot,
                            a.imp_codigo, a.ean_13, a.Fecha_Baja, sum(e.actuales) as stock, max(e.stock_min) as stock_minimo, max(e.stock_max) as stock_maximo,
                            max(to_date(e.fecha_caducidad)) as fecha_caducidad, max(e.fuc) AS fuc, max(e.fuv) as fuv,
@@ -323,7 +402,8 @@ namespace Sisfarma.Sincronizador.Nixfarma.Infrastructure.Repositories.Farmacia
                     WHERE a.codigo > '{codArticu.PadLeft(6, '0')}'
                     GROUP BY a.codigo, a.precio_lab_euros, a.Pvp_euros, a.famsb_codigo, a.fam_codigo,
                             a.descripcion, a.lab_codigo, a.clase, a.clase_bot, a.imp_codigo, a.ean_13, a.Fecha_Baja
-                    HAVING NVL(sum(e.actuales),0) > 0 ORDER BY a.codigo ASC";
+                    HAVING NVL(sum(e.actuales),0) > 0 ORDER BY a.codigo ASC) 0
+                    WHERE rownum <= 999";
 
                 conn.Open();
                 var cmd = conn.CreateCommand();
