@@ -29,24 +29,44 @@ namespace Sisfarma.Sincronizador.Nixfarma.Infrastructure.Repositories.Farmacia
 
         public Proveedor GetOneOrDefaultById(long id)
         {
-            var idInteger = (int)id;
-            using (var db = FarmaciaContext.Proveedores())
+            var conn = FarmaciaContext.GetConnection();
+            try
             {
-                var sql = "SELECT ID_Proveedor as Id, Nombre FROM Proveedores WHERE ID_Proveedor = @id";
-                return db.Database.SqlQuery<Proveedor>(sql,
-                    new OleDbParameter("id", idInteger))
-                    .FirstOrDefault();
+                var sqlExtra = string.Empty;
+                var sql = $@"
+                    select * from appul.ad_proveedores where codigo = {id}";
+
+                conn.Open();
+                var cmd = conn.CreateCommand();
+                cmd.CommandText = sql;
+                var reader = cmd.ExecuteReader();
+
+                if (reader.Read())
+                {
+                    var rNombreAb = Convert.ToString(reader["NOMBRE_AB"]);
+
+                    return new Proveedor
+                    {
+                        Nombre = rNombreAb
+                    };
+                }
+
+                return null;
+            }
+            catch (Exception ex)
+            {
+                return null;
+            }
+            finally
+            {
+                conn.Close();
+                conn.Dispose();
             }
         }
 
         public Proveedor GetOneOrDefaultByCodigoNacional(string codigoNacional)
         {
-            string connectionString = @"User Id=""CONSU""; Password=""consu"";" +
-                @"Data Source=(DESCRIPTION=(ADDRESS_LIST=(ADDRESS=(PROTOCOL=IPC)(KEY=DP9))" +
-                    "(ADDRESS=(PROTOCOL=TCP)(HOST=192.168.0.30)(PORT=1521)))(CONNECT_DATA=(INSTANCE_NAME=DP9)(SERVICE_NAME=ORACLE9)))";
-
-            var conn = new OracleConnection(connectionString);
-
+            var conn = FarmaciaContext.GetConnection();
             try
             {
                 conn.Open();
@@ -87,6 +107,7 @@ namespace Sisfarma.Sincronizador.Nixfarma.Infrastructure.Repositories.Farmacia
             finally
             {
                 conn.Close();
+                conn.Dispose();
             }
         }
 

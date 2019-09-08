@@ -3,10 +3,12 @@ using System.Collections.Generic;
 using System.Linq;
 
 namespace Sisfarma.Sincronizador.Domain.Entities.Farmacia
-{    
+{
     public partial class Recepcion
     {
-        public int Id { get; set; }
+        public long Id { get; set; }
+
+        public long Pedido { get; set; }
 
         public DateTime Fecha { get; set; }
 
@@ -25,8 +27,6 @@ namespace Sisfarma.Sincronizador.Domain.Entities.Farmacia
         public short? Mes { get; set; }
 
         public Proveedor Proveedor { get; set; }
-
-
 
         public ICollection<RecepcionDetalle> Detalle { get; set; }
 
@@ -58,9 +58,9 @@ namespace Sisfarma.Sincronizador.Domain.Entities.Farmacia
     {
         public int Id { get; set; }
 
-        public int RecepcionId { get; set; }
+        public long RecepcionId { get; set; }
 
-        public int Linea { get; set; }
+        public long Linea { get; set; }
 
         public Recepcion Recepcion { get; set; }
 
@@ -70,7 +70,7 @@ namespace Sisfarma.Sincronizador.Domain.Entities.Farmacia
 
         public decimal PUC { get; set; }
 
-        public int Cantidad { get; set; }
+        public long Cantidad { get; set; }
 
         public int CantidadBonificada { get; set; }
     }

@@ -15,18 +15,18 @@ namespace Sisfarma.Sincronizador.Domain.Entities.Fisiotes
         public long? idLinea { get; set; }
 
         public long? cod_nacional { get; set; }
-        
+
         public string descripcion { get; set; }
 
         public string familia { get; set; }
 
         public string superFamilia { get; set; }
 
-        public int? cantidad { get; set; }
+        public long cantidad { get; set; }
 
-        public float? pvp { get; set; }
+        public decimal pvp { get; set; }
 
-        public float? puc { get; set; }
+        public decimal puc { get; set; }
 
         public string proveedor { get; set; }
 

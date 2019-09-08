@@ -14,10 +14,10 @@ namespace Sisfarma.Sincronizador.Domain.Entities.Fisiotes
 
         public int? numLineas { get; set; }
 
-        public float? importePvp { get; set; }
+        public decimal importePvp { get; set; }
 
-        public float? importePuc { get; set; }
-        
+        public decimal importePuc { get; set; }
+
         public string idProveedor { get; set; }
 
         public string proveedor { get; set; }

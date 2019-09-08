@@ -20,12 +20,14 @@ namespace Sisfarma.Sincronizador.Unycop.Domain.Core.Sincronizadores
         private readonly decimal _factorCentecimal = 0.01m;
         private readonly ICategoriaRepository _categoriaRepository;
         private readonly ILaboratorioRepository _laboratorioRepository;
+        private readonly IFamiliaRepository _familiaRepository;
 
         public PedidoSincronizador(IFarmaciaService farmacia, ISisfarmaService fisiotes)
             : base(farmacia, fisiotes)
         {
             _categoriaRepository = new CategoriaRepository();
             _laboratorioRepository = new LaboratorioRepository();
+            _familiaRepository = new FamiliaRepository();
         }
 
         public override void PreSincronizacion()
@@ -36,96 +38,102 @@ namespace Sisfarma.Sincronizador.Unycop.Domain.Core.Sincronizadores
         public override void Process()
         {
             var repository = _farmacia.Recepciones as RecepcionRespository;
-            var recepciones = (_lastPedido == null)
+            var pedidos = (_lastPedido == null)
                 ? repository.GetAllByYearAsDTO(_anioInicio)
                 : repository.GetAllByDateAsDTO(_lastPedido.fechaPedido ?? DateTime.MinValue);
 
-            if (!recepciones.Any())
+            if (!pedidos.Any())
             {
                 _anioInicio++;
                 _lastPedido = null;
                 return;
             }
 
-            var groups = recepciones.GroupBy(k => new { k.Fecha.Value.Year, k.Albaran.Value })
+            var pedidosAgrupados = pedidos.GroupBy(k => new { k.Fecha.Year, k.Empresa, k.Pedido })
                         .ToDictionary(
-                            k => new RecepcionCompositeKey { Anio = k.Key.Year, Albaran = k.Key.Value },
+                            k => new RecepcionCompositeKey { Anio = k.Key.Year, Empresa = k.Key.Empresa, Pedido = k.Key.Pedido },
                             v => v.ToList());
 
-            foreach (var group in groups)
+            foreach (var pedido in pedidosAgrupados)
             {
-                Task.Delay(5).Wait();
-                _cancellationToken.ThrowIfCancellationRequested();
+                var fecha = pedido.Value.First().Fecha; // a la vuelta preguntamos por > fecha
+                var proveedorPedido = pedido.Value.First().Proveedor.HasValue ?
+                    _farmacia.Proveedores.GetOneOrDefaultById(pedido.Value.First().Proveedor.Value) : null;
 
-                var linea = 0;
-                var fecha = group.Value.First().Fecha; // a la vuelta preguntamos por > fecha
-                var proveedorPedido = group.Value.First().Proveedor.HasValue ? _farmacia.Proveedores.GetOneOrDefaultById(group.Value.First().Proveedor.Value) : null;
+                var numeroPedido = pedido.Key.Pedido;
+                var numeroPedidoSerial = numeroPedido.ToString().PadLeft(6, '0');
+                var empresa = pedido.Key.Empresa;
+                var empresaSerial = empresa == "EMP1" ? "00001" : "00002";
+                var anio = pedido.Key.Anio;
+                var identity = long.Parse($"{anio}{numeroPedidoSerial}{empresaSerial}");
 
-                var albaran = group.Key.Albaran > 0 ? group.Key.Albaran : 0;
-                var identity = int.Parse($"{group.Key.Anio}{albaran}");
+                var totales = repository.GetTotalesByPedidoAsDTO(anio, numeroPedido, empresa);
                 var recepcion = new FAR.Recepcion
                 {
                     Id = identity,
-                    Fecha = fecha.Value,
-                    ImportePVP = group.Value.Sum(x => x.PVP * x.Recibido * _factorCentecimal),
-                    ImportePUC = group.Value.Sum(x => x.PCTotal * _factorCentecimal),
+                    Pedido = numeroPedido,
+                    Fecha = fecha,
+                    Lineas = totales.Lineas,
+                    ImportePVP = totales.PVP,
+                    ImportePUC = totales.PUC,
                     Proveedor = proveedorPedido
                 };
 
                 var detalle = new List<RecepcionDetalle>();
-                foreach (var item in group.Value)
+                foreach (var item in pedido.Value)
                 {
-                    var farmaco = (_farmacia.Farmacos as FarmacoRespository).GetOneOrDefaultById(item.Farmaco.ToString());
+                    var farmaco = (_farmacia.Farmacos as FarmacoRespository).GetOneOrDefaultById(item.Farmaco);
                     if (farmaco != null)
                     {
                         var recepcionDetalle = new RecepcionDetalle()
                         {
-                            Linea = ++linea,
+                            Linea = item.Linea,
                             RecepcionId = identity,
-                            Cantidad = item.Recibido - item.Devuelto,
-                            CantidadBonificada = item.Bonificado,
+                            Cantidad = item.Recibido,
                             Recepcion = recepcion
                         };
 
-                        var pcoste = 0m;
-                        if (item.PVAlbaran > 0)
-                            pcoste = item.PVAlbaran * _factorCentecimal;
-                        else if (item.PC > 0)
-                            pcoste = item.PC * _factorCentecimal;
+                        var pvp = item.ImportePvp;
+                        var puc = item.ImportePuc != 0 ? item.ImportePuc : farmaco.PUC;
+
+                        var proveedor = _farmacia.Proveedores.GetOneOrDefaultByCodigoNacional(farmaco.Codigo)
+                                ?? (item.Proveedor.HasValue ? _farmacia.Proveedores.GetOneOrDefaultById(item.Proveedor.Value)
+                                : null);
+
+                        var categoria = _categoriaRepository.GetOneOrDefaultById(farmaco.Codigo);
+
+                        FAR.Familia familia = null;
+                        FAR.Familia superFamilia = null;
+                        if (string.IsNullOrWhiteSpace(farmaco.SubFamilia))
+                        {
+                            familia = new FAR.Familia { Nombre = string.Empty };
+                            superFamilia = _familiaRepository.GetOneOrDefaultById(farmaco.Familia)
+                                ?? new FAR.Familia { Nombre = string.Empty };
+                        }
                         else
-                            pcoste = farmaco.PrecioUnicoEntrada.HasValue && farmaco.PrecioUnicoEntrada != 0
-                                ? (decimal)farmaco.PrecioUnicoEntrada.Value * _factorCentecimal
-                                : ((decimal?)farmaco.PrecioMedio ?? 0m) * _factorCentecimal;
+                        {
+                            familia = _familiaRepository.GetSubFamiliaOneOrDefault(farmaco.Familia, farmaco.SubFamilia)
+                                ?? new FAR.Familia { Nombre = string.Empty };
+                            superFamilia = _familiaRepository.GetOneOrDefaultById(farmaco.Familia)
+                                ?? new FAR.Familia { Nombre = string.Empty };
+                        }
 
-                        var proveedor = _farmacia.Proveedores.GetOneOrDefaultByCodigoNacional(farmaco.Id.ToString())
-                                ?? _farmacia.Proveedores.GetOneOrDefaultById(farmaco.Id);
-
-                        var categoria = farmaco.CategoriaId.HasValue
-                            ? _categoriaRepository.GetOneOrDefaultById(farmaco.CategoriaId.Value.ToString())
-                            : null;
-
-                        var subcategoria = farmaco.CategoriaId.HasValue && farmaco.SubcategoriaId.HasValue
-                            ? _categoriaRepository.GetSubcategoriaOneOrDefaultByKey(
-                                farmaco.CategoriaId.Value,
-                                farmaco.SubcategoriaId.Value)
-                            : null;
-
-                        var familia = _farmacia.Familias.GetOneOrDefaultById(farmaco.Familia);
-                        var laboratorio = _laboratorioRepository.GetOneOrDefaultByCodigo(farmaco.Laboratorio.Value, null, null); // TODO check clase clasebot
+                        var laboratorio = !farmaco.Laboratorio.HasValue ? new Laboratorio { Codigo = string.Empty, Nombre = "<Sin Laboratorio>" }
+                            : _laboratorioRepository.GetOneOrDefaultByCodigo(farmaco.Laboratorio.Value, farmaco.Clase, farmaco.ClaseBot)
+                                ?? new Laboratorio { Codigo = string.Empty, Nombre = "<Sin Laboratorio>" };
 
                         recepcionDetalle.Farmaco = new Farmaco
                         {
                             Id = farmaco.Id,
-                            Codigo = item.Farmaco.ToString(),
-                            PrecioCoste = pcoste,
+                            Codigo = item.Farmaco,
+                            PrecioCoste = puc,
                             Proveedor = proveedor,
                             Categoria = categoria,
-                            Subcategoria = subcategoria,
                             Familia = familia,
+                            SuperFamilia = superFamilia,
                             Laboratorio = laboratorio,
                             Denominacion = farmaco.Denominacion,
-                            Precio = item.PVP * _factorCentecimal,
-                            Stock = farmaco.Existencias ?? 0
+                            Precio = pvp
                         };
 
                         detalle.Add(recepcionDetalle);
@@ -135,11 +143,10 @@ namespace Sisfarma.Sincronizador.Unycop.Domain.Core.Sincronizadores
 
                 if (detalle.Any())
                 {
-                    recepcion.Lineas = detalle.Count();
-                    var pedido = GenerarPedido(recepcion);
-                    _sisfarma.Pedidos.Sincronizar(pedido);
+                    var pedidoCabecera = GenerarPedido(recepcion);
+                    _sisfarma.Pedidos.Sincronizar(pedidoCabecera);
 
-                    _lastPedido = pedido;
+                    _lastPedido = pedidoCabecera;
                 }
             }
         }
@@ -148,7 +155,9 @@ namespace Sisfarma.Sincronizador.Unycop.Domain.Core.Sincronizadores
         {
             internal int Anio { get; set; }
 
-            internal int Albaran { get; set; }
+            internal string Empresa { get; set; }
+
+            internal long Pedido { get; set; }
         }
 
         private LineaPedido GenerarLineaDePedido(FAR.RecepcionDetalle detalle)
@@ -158,15 +167,14 @@ namespace Sisfarma.Sincronizador.Unycop.Domain.Core.Sincronizadores
                 idPedido = detalle.RecepcionId,
                 idLinea = detalle.Linea,
                 fechaPedido = detalle.Recepcion.Fecha,
-                cod_nacional = detalle.Farmaco.Id,
+                cod_nacional = long.TryParse(detalle.Farmaco.Codigo.TrimStart('0'), out var codigoNacional) ? codigoNacional : 0L,
                 descripcion = detalle.Farmaco.Denominacion,
                 familia = detalle.Farmaco.Familia?.Nombre ?? FAMILIA_DEFAULT,
+                superFamilia = detalle.Farmaco.SuperFamilia?.Nombre ?? FAMILIA_DEFAULT,
                 categoria = detalle.Farmaco.Categoria?.Nombre ?? string.Empty,
-                subcategoria = detalle.Farmaco.Subcategoria?.Nombre ?? string.Empty,
                 cantidad = detalle.Cantidad,
-                cantidadBonificada = detalle.CantidadBonificada,
-                pvp = (float)(detalle.Farmaco?.Precio ?? 0),
-                puc = (float)(detalle.Farmaco?.PrecioCoste ?? 0),
+                pvp = detalle.Farmaco?.Precio ?? 0m,
+                puc = detalle.Farmaco?.PrecioCoste ?? 0m,
                 cod_laboratorio = detalle.Farmaco?.Laboratorio?.Codigo ?? "0",
                 laboratorio = detalle.Farmaco?.Laboratorio?.Nombre ?? LABORATORIO_DEFAULT,
                 proveedor = detalle.Farmaco?.Proveedor?.Nombre ?? string.Empty
@@ -181,11 +189,11 @@ namespace Sisfarma.Sincronizador.Unycop.Domain.Core.Sincronizadores
                 fechaPedido = recepcion.Fecha,
                 hora = DateTime.Now,
                 numLineas = recepcion.Lineas,
-                importePvp = (float)recepcion.ImportePVP,
-                importePuc = (float)recepcion.ImportePUC,
+                importePvp = recepcion.ImportePVP,
+                importePuc = recepcion.ImportePUC,
                 idProveedor = recepcion.Proveedor?.Id.ToString() ?? "0",
                 proveedor = recepcion.Proveedor?.Nombre ?? string.Empty,
-                trabajador = string.Empty // no se envía trabajador
+                trabajador = string.Empty
             };
         }
     }

@@ -88,10 +88,6 @@ namespace Sisfarma.Sincronizador.Unycop.Domain.Core.Sincronizadores
 
                 _timestampUltimaVenta = venta.FechaHora;
             }
-
-            var clientesConPuntos = ventas.Where(venta => venta.HasCliente())
-                .Select(venta => venta.Cliente)
-                .Where(cliente => cliente.Puntos > 0);
         }
 
         private IEnumerable<PuntosPendientes> GenerarPuntosPendientes(Venta venta)
