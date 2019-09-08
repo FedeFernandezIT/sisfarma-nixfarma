@@ -10,6 +10,6 @@ namespace Sisfarma.Sincronizador.Domain.Core.Repositories.Farmacia
 
         IEnumerable<Pedido> GetAllByIdGreaterOrEqual(long idPedido);
 
-        IEnumerable<PedidoDetalle> GetAllDetalleByPedido(long numero, string empresa);
+        IEnumerable<PedidoDetalle> GetAllDetalleByPedido(long numero, string empresa, int anio);
     }
 }

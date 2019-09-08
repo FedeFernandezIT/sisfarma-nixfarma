@@ -159,12 +159,12 @@ namespace Sisfarma.Sincronizador.Nixfarma.Infrastructure.Repositories.Farmacia
                     }
                     detalle.Add(pedidoDetalle);
                 }
-                pedidos.Add(new Pedido { Id = group.Key.Id, Fecha = fecha }.AddRangeDetalle(detalle));
+                pedidos.Add(new Pedido { Id = group.Key.Id, Fecha = fecha.Value }.AddRangeDetalle(detalle));
             }
             return pedidos;
         }
 
-        public IEnumerable<PedidoDetalle> GetAllDetalleByPedido(long numero, string empresa)
+        public IEnumerable<PedidoDetalle> GetAllDetalleByPedido(long numero, string empresa, int anio)
         {
             var detalle = new List<PedidoDetalle>();
             var conn = FarmaciaContext.GetConnection();
@@ -172,7 +172,7 @@ namespace Sisfarma.Sincronizador.Nixfarma.Infrastructure.Repositories.Farmacia
             {
                 var sqlExtra = string.Empty;
                 var sql = $@"
-                    select * from appul.ad_linped where pedido='{numero}' AND emp_codigo ='{empresa}'";
+                    select * from appul.ad_linped where pedido='{numero}' AND emp_codigo ='{empresa}' and ejercicio = {anio}";
 
                 conn.Open();
                 var cmd = conn.CreateCommand();

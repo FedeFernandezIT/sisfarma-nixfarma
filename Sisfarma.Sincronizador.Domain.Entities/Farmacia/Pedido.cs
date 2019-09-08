@@ -17,7 +17,7 @@ namespace Sisfarma.Sincronizador.Domain.Entities.Farmacia
 
         public double? ImportePuc { get; set; }
 
-        public DateTime? Fecha { get; set; }
+        public DateTime Fecha { get; set; }
 
         public DateTime? Hora { get; set; }
 
