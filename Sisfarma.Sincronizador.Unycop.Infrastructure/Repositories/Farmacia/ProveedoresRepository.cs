@@ -114,11 +114,33 @@ namespace Sisfarma.Sincronizador.Nixfarma.Infrastructure.Repositories.Farmacia
 
         public IEnumerable<Proveedor> GetAll()
         {
-            using (var db = FarmaciaContext.Proveedores())
+            var conn = FarmaciaContext.GetConnection();
+            var proveedores = new List<Proveedor>();
+            try
             {
-                var sql = "SELECT ID_Proveedor as Id, Nombre FROM proveedores";
-                return db.Database.SqlQuery<Proveedor>(sql)
-                    .ToList();
+                conn.Open();
+                var sql = $@"select codigo, nombre_ab from appul.ad_proveedores";
+                var cmd = conn.CreateCommand();
+                cmd.CommandText = sql;
+                var reader = cmd.ExecuteReader();
+
+                while (reader.Read())
+                {
+                    var rCodigo = Convert.ToInt64(reader["codigo"]);
+                    var rNombreAb = Convert.ToString(reader["nombre_ab"]);
+                    proveedores.Add(new Proveedor { Id = rCodigo, Nombre = rNombreAb });
+                }
+
+                return proveedores;
+            }
+            catch (Exception ex)
+            {
+                return new List<Proveedor>();
+            }
+            finally
+            {
+                conn.Close();
+                conn.Dispose();
             }
         }
     }
