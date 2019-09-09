@@ -1,5 +1,7 @@
-﻿using System.Linq;
+﻿using System;
+using System.Linq;
 using System.Threading.Tasks;
+using Sisfarma.Sincronizador.Core.Extensions;
 using Sisfarma.Sincronizador.Domain.Core.Services;
 using Sisfarma.Sincronizador.Domain.Entities.Fisiotes;
 
@@ -9,9 +11,18 @@ namespace Sisfarma.Sincronizador.Unycop.Domain.Core.Sincronizadores
 {
     public class ProveedorHistorialSincronizador : DC.ProveedorHistorialSincronizador
     {
-        public ProveedorHistorialSincronizador(IFarmaciaService farmacia, ISisfarmaService fisiotes) 
+        private int _anioInicio;
+
+        public ProveedorHistorialSincronizador(IFarmaciaService farmacia, ISisfarmaService fisiotes)
             : base(farmacia, fisiotes)
         { }
+
+        public override void LoadConfiguration()
+        {
+            base.LoadConfiguration();
+            _anioInicio = ConfiguracionPredefinida[Configuracion.FIELD_ANIO_INICIO]
+                .ToIntegerOrDefault(@default: DateTime.Now.Year - 2);
+        }
 
         public override void Process()
         {

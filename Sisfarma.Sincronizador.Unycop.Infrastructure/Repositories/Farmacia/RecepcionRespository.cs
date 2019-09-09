@@ -351,28 +351,50 @@ namespace Sisfarma.Sincronizador.Nixfarma.Infrastructure.Repositories.Farmacia
 
         public IEnumerable<DE.ProveedorHistorico> GetAllHistoricosByFecha(DateTime fecha)
         {
-            var rs = Enumerable.Empty<DTO.ProveedorHistorico>();
-            using (var db = FarmaciaContext.RecepcionByYear(fecha.Year))
+            var historicos = new List<DE.ProveedorHistorico>();
+            var conn = FarmaciaContext.GetConnection();
+            try
             {
-                var sql = $@"SELECT ID_Farmaco as FarmacoId, Proveedor, ID_Fecha as Fecha, PVAlb as PVAlbaran, PC FROM Recepcion WHERE ID_Fecha >= #{fecha.ToString("MM-dd-yyyy HH:mm:ss")}# GROUP BY ID_Farmaco, Proveedor, ID_Fecha, PVAlb, PC ORDER BY ID_Fecha DESC";
+                conn.Open();
+                var sql = $@"
+                    SELECT art_codigo, proveedor, fecha_pedido, pc_iva_euros
+                    FROM appul.ad_rec_linped WHERE to_char(fecha_pedido, 'YYYYMMDDHH24MISS') > '{fecha.ToString("yyyyMMddHHmmss")}'
+                    GROUP BY art_codigo, proveedor, fecha_pedido, pc_iva_euros
+                    ORDER BY fecha_pedido DESC";
 
-                rs = db.Database.SqlQuery<DTO.ProveedorHistorico>(sql)
-                    .Where(r => r.Fecha.HasValue)
-                    .Where(r => r.Proveedor.HasValue)
-                    .ToList();
+                var cmd = conn.CreateCommand();
+                cmd.CommandText = sql;
+                var reader = cmd.ExecuteReader();
+
+                while (reader.Read())
+                {
+                    var rArtCodigo = Convert.ToString(reader["art_codigo"]);
+                    var rProveedor = !Convert.IsDBNull(reader["proveedor"]) ? Convert.ToInt64(reader["proveedor"]) : 0L;
+                    var rFechaPedido = !Convert.IsDBNull(reader["fecha_pedido"]) ? Convert.ToDateTime(reader["fecha_pedido"]) : DateTime.MinValue;
+                    var rPcIvaEuros = !Convert.IsDBNull(reader["pc_iva_euros"]) ? Convert.ToDecimal(reader["pc_iva_euros"]) : 0m;
+
+                    var historico = new DE.ProveedorHistorico
+                    {
+                        Id = rProveedor,
+                        FarmacoId = rArtCodigo,
+                        Fecha = rFechaPedido,
+                        PUC = rPcIvaEuros
+                    };
+
+                    historicos.Add(historico);
+                }
+
+                return historicos;
             }
-
-            return rs.Select(x => new DE.ProveedorHistorico
+            catch (Exception ex)
             {
-                Id = x.Proveedor.Value,
-                FarmacoId = x.Farmaco,
-                Fecha = x.Fecha.Value,
-                PUC = x.PC > 0
-                    ? x.PC * _factorCentecimal
-                    : x.PVAlbaran > 0
-                        ? x.PVAlbaran * _factorCentecimal
-                        : 0m
-            });
+                return historicos;
+            }
+            finally
+            {
+                conn.Close();
+                conn.Dispose();
+            }
         }
 
         public IEnumerable<DE.Recepcion> GetAllByDate(DateTime fecha)

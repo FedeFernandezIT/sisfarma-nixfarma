@@ -13,9 +13,9 @@ namespace Sisfarma.Sincronizador.Domain.Entities.Farmacia
 
     public class ProveedorHistorico
     {
-        public int Id { get; set; }
+        public long Id { get; set; }
 
-        public long FarmacoId { get; set; }
+        public string FarmacoId { get; set; }
 
         public DateTime Fecha { get; set; }
 
