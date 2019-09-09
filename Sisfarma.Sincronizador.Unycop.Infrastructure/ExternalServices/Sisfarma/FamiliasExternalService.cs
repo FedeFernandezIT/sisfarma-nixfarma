@@ -8,7 +8,7 @@ namespace Sisfarma.Sincronizador.Nixfarma.Infrastructure.ExternalServices.Sisfar
 {
     public class FamiliasExternalService : FisiotesExternalService, IFamiliasExternalService
     {
-        public FamiliasExternalService(IRestClient restClient, FisiotesConfig config) 
+        public FamiliasExternalService(IRestClient restClient, FisiotesConfig config)
             : base(restClient, config)
         { }
 
@@ -31,18 +31,15 @@ namespace Sisfarma.Sincronizador.Nixfarma.Infrastructure.ExternalServices.Sisfar
         {
             throw new NotImplementedException();
         }
-        
-        public void Sincronizar(string nombre, string tipo = null)
+
+        public void
+
+            Sincronizar(string nombre, string tipo = null)
         {
             var familia = new
             {
                 familia = nombre,
-                tipo = tipo,
-                puntos = 0,
-                nivel1 = 0,
-                nivel2 = 0,
-                nivel3 = 0,
-                nivel4 = 0,
+                tipo = tipo
             };
 
             _restClient

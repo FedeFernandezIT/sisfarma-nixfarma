@@ -22,11 +22,32 @@ namespace Sisfarma.Sincronizador.Nixfarma.Infrastructure.Repositories.Farmacia
 
         public IEnumerable<Familia> GetAll()
         {
-            using (var db = FarmaciaContext.Default())
+            var conn = FarmaciaContext.GetConnection();
+            var familias = new List<Familia>();
+            try
             {
-                var sql = @"select Nombre from familias";
-                return db.Database.SqlQuery<Familia>(sql)
-                    .ToList();
+                conn.Open();
+                var sql = $@"select * from appul.ab_familias";
+                var cmd = conn.CreateCommand();
+                cmd.CommandText = sql;
+                var reader = cmd.ExecuteReader();
+
+                while (reader.Read())
+                {
+                    var descripcion = Convert.ToString(reader["DESCRIPCION"]) ?? string.Empty;
+                    familias.Add(new Familia { Nombre = descripcion });
+                }
+
+                return familias;
+            }
+            catch (Exception ex)
+            {
+                return null;
+            }
+            finally
+            {
+                conn.Close();
+                conn.Dispose();
             }
         }
 
@@ -102,6 +123,37 @@ namespace Sisfarma.Sincronizador.Nixfarma.Infrastructure.Repositories.Farmacia
                     descripcion = Convert.ToString(reader["DESCRIPCION"]) ?? string.Empty;
 
                 return new Familia { Nombre = descripcion };
+            }
+            catch (Exception ex)
+            {
+                return null;
+            }
+            finally
+            {
+                conn.Close();
+                conn.Dispose();
+            }
+        }
+
+        public IEnumerable<Familia> GetAllSubFamilias()
+        {
+            var conn = FarmaciaContext.GetConnection();
+            var familias = new List<Familia>();
+            try
+            {
+                conn.Open();
+                var sql = $@"select * from appul.ab_subfamilias";
+                var cmd = conn.CreateCommand();
+                cmd.CommandText = sql;
+                var reader = cmd.ExecuteReader();
+
+                while (reader.Read())
+                {
+                    var descripcion = Convert.ToString(reader["DESCRIPCION"]) ?? string.Empty;
+                    familias.Add(new Familia { Nombre = descripcion });
+                }
+
+                return familias;
             }
             catch (Exception ex)
             {

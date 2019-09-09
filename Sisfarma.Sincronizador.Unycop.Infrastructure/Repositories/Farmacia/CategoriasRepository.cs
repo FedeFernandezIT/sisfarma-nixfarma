@@ -2,6 +2,7 @@
 using Sisfarma.Sincronizador.Domain.Core.Repositories.Farmacia;
 using Sisfarma.Sincronizador.Domain.Entities.Farmacia;
 using Sisfarma.Sincronizador.Nixfarma.Infrastructure.Data;
+using System;
 using System.Collections.Generic;
 using System.Data.OleDb;
 using System.Linq;
@@ -9,20 +10,42 @@ using System.Linq;
 namespace Sisfarma.Sincronizador.Nixfarma.Infrastructure.Repositories.Farmacia
 {
     public class CategoriasRepository : FarmaciaRepository, ICategoriasRepository
-    {        
+    {
         public CategoriasRepository(LocalConfig config) : base(config)
         { }
 
-        public CategoriasRepository() { }
-        
+        public CategoriasRepository()
+        {
+        }
 
         public IEnumerable<Categoria> GetAll()
         {
-            using (var db = FarmaciaContext.Default())
+            var conn = FarmaciaContext.GetConnection();
+            var categorias = new List<Categoria>();
+            try
             {
-                var sql = "select Nombre from categorias";
-                return db.Database.SqlQuery<Categoria>(sql)
-                    .ToList();
+                conn.Open();
+                var sql = $@"select * from appul.ab_categorias";
+                var cmd = conn.CreateCommand();
+                cmd.CommandText = sql;
+                var reader = cmd.ExecuteReader();
+
+                while (reader.Read())
+                {
+                    var descripcion = Convert.ToString(reader["DESCRIPCION"]) ?? string.Empty;
+                    categorias.Add(new Categoria { Nombre = descripcion });
+                }
+
+                return categorias;
+            }
+            catch (Exception ex)
+            {
+                return null;
+            }
+            finally
+            {
+                conn.Close();
+                conn.Dispose();
             }
         }
 
@@ -33,12 +56,12 @@ namespace Sisfarma.Sincronizador.Nixfarma.Infrastructure.Repositories.Farmacia
             {
                 var sql = @"select IDCategoria as Id, Nombre from categorias WHERE nombre NOT IN ('ESPECIALIDAD', 'EFP', 'SIN FAMILIA') AND nombre NOT LIKE '%ESPECIALIDADES%' AND nombre NOT LIKE '%Medicamento%'";
                 rs = db.Database.SqlQuery<DTO.Categoria>(sql)
-                    .Select(x => new Categoria { Id = x.Id, Nombre = x.Nombre})
+                    .Select(x => new Categoria { Id = x.Id, Nombre = x.Nombre })
                         .ToList();
             }
 
-            rs.ForEach(item => 
-                item.Subcategorias = GetAllNombreSubcategoriaByCategoriaId(item.Id));            
+            rs.ForEach(item =>
+                item.Subcategorias = GetAllNombreSubcategoriaByCategoriaId(item.Id));
             return rs;
         }
 
@@ -48,7 +71,7 @@ namespace Sisfarma.Sincronizador.Nixfarma.Infrastructure.Repositories.Farmacia
             {
                 var sql = @"SELECT nombre FROM Subcategorias WHERE  IdCategoria = @id";
                 return db.Database.SqlQuery<string>(sql,
-                    new OleDbParameter("id", (int) id))
+                    new OleDbParameter("id", (int)id))
                     .ToList();
             }
         }
