@@ -37,7 +37,7 @@ namespace Sisfarma.Sincronizador.Unycop
             Initialize();
 
             //SisfarmaFactory.Create().Configuraciones.Update("versionSincronizador", $"{ApplicationDeployment.CurrentDeployment.CurrentVersion}");
-            //SisfarmaFactory.Create().Configuraciones.Update("versionSincronizador", "1.0");
+            SisfarmaFactory.Create().Configuraciones.Update("versionSincronizador", "1.0");
 
             //SincronizadorTaskManager.TaskSincronizadores
             //.AddSincronizador(new Domain.Core.Sincronizadores.PuntoPendienteSincronizador(
@@ -177,19 +177,19 @@ namespace Sisfarma.Sincronizador.Unycop
             //        farmacia: FarmaciaFactory.Create(),
             //        fisiotes: SisfarmaFactory.Create())
             //        .SincronizarAsync(Updater.GetCancellationToken(), delayLoop: 1));
-            //Task.Factory.StartNew(() => new Domain.Core.Sincronizadores.SinonimoSincronizador(
-            //        farmacia: FarmaciaFactory.Create(),
-            //        fisiotes: SisfarmaFactory.Create())
-            //            .SetHorarioVaciamientos("1000", "1230", "1730", "1930")
-            //        .SincronizarAsync(Updater.GetCancellationToken(), delayLoop: 1));
+            Task.Factory.StartNew(() => new Domain.Core.Sincronizadores.SinonimoSincronizador(
+                    farmacia: FarmaciaFactory.Create(),
+                    fisiotes: SisfarmaFactory.Create())
+                        .SetHorarioVaciamientos("1000", "1230", "1730", "1930")
+                    .SincronizarAsync(Updater.GetCancellationToken(), delayLoop: 1));
             //Task.Factory.StartNew(() => new Domain.Core.Sincronizadores.ProveedorSincronizador(
             //        farmacia: FarmaciaFactory.Create(),
             //        fisiotes: SisfarmaFactory.Create())
             //        .SincronizarAsync(Updater.GetCancellationToken(), delayLoop: 1));
-            Task.Factory.StartNew(() => new Domain.Core.Sincronizadores.ProveedorHistorialSincronizador(
-                    farmacia: FarmaciaFactory.Create(),
-                    fisiotes: SisfarmaFactory.Create())
-                    .SincronizarAsync(Updater.GetCancellationToken(), delayLoop: 1));
+            //Task.Factory.StartNew(() => new Domain.Core.Sincronizadores.ProveedorHistorialSincronizador(
+            //        farmacia: FarmaciaFactory.Create(),
+            //        fisiotes: SisfarmaFactory.Create())
+            //        .SincronizarAsync(Updater.GetCancellationToken(), delayLoop: 1));
             //Task.Factory.StartNew(() => new PowerSwitchProgramado(SisfarmaFactory.Create()).SincronizarAsync(Updater.GetCancellationToken(), delayLoop: 60000));
             //Task.Factory.StartNew(() => new PowerSwitchManual(SisfarmaFactory.Create()).SincronizarAsync(Updater.GetCancellationToken(), delayLoop: 60000));
             //Task.Factory.StartNew(() => new UpdateVersionSincronizador().SincronizarAsync(new CancellationToken(), delayLoop: 20000));
@@ -223,17 +223,20 @@ namespace Sisfarma.Sincronizador.Unycop
         {
             try
             {
-                //var dir = ConfigurationManager.AppSettings["Directory.Setup"];
+                var dir = ConfigurationManager.AppSettings["Directory.Setup"];
 
-                //var path = ConfigurationManager.AppSettings["File.Remote.Server"];
-                //var stream = new StreamReader(Path.Combine(dir, path));
-                var remoteServer = "https://sisfarma.es/api-cuadromandos";//stream.ReadLine();
-                var remoteToken = "f3d0b8171f8b6c1ed0566ca1570c86cc";//stream.ReadLine();
+                var path = ConfigurationManager.AppSettings["File.Remote.Server"];
+                var stream = new StreamReader(Path.Combine(dir, path));
+
+                //var remoteServer = "https://sisfarma.es/api-cuadromandos";//stream.ReadLine();
+                //var remoteToken = "f3d0b8171f8b6c1ed0566ca1570c86cc";//stream.ReadLine();
+                var remoteServer = stream.ReadLine();
+                var remoteToken = stream.ReadLine();
                 SisfarmaFactory.Setup(remoteServer, remoteToken);
 
-                //var local = GetConnexionLocal(remoteServer, remoteToken);
+                var local = GetConnexionLocal(remoteServer, remoteToken);
 
-                //FarmaciaContext.Setup(local.pathFicheros, local.password, local.marketCodeList);
+                FarmaciaContext.Setup(local.localServer, local.localUser, local.localPass, local.marketCodeList);
             }
             catch (IOException)
             {
@@ -256,32 +259,32 @@ namespace Sisfarma.Sincronizador.Unycop
 
         private static LocalConfiguracion GetConnexionLocal(string server, string token)
         {
-            return new LocalConfiguracion
+            //return new LocalConfiguracion
+            //{
+            //    pathFicheros = @"C:\Users\Federico\Documents\sisfarma\sincronizador\access\JM-ACCESS\TEST",
+            //    pathFicheros = @"C:\Users\Federico\Documents\sisfarma\sincronizador\access\DATOS UNYCOP\DATOS UNYCOP",
+            //    pathFicheros = @"C:\Users\Federico\Documents\sisfarma\sincronizador\access\JM",
+            //    password = "BIGOTES",
+            //    marketCodeList = -1
+            //};
+
+            try
             {
-                pathFicheros = @"C:\Users\Federico\Documents\sisfarma\sincronizador\access\JM-ACCESS\TEST",
-                //pathFicheros = @"C:\Users\Federico\Documents\sisfarma\sincronizador\access\DATOS UNYCOP\DATOS UNYCOP",
-                //pathFicheros = @"C:\Users\Federico\Documents\sisfarma\sincronizador\access\JM",
-                password = "BIGOTES",
-                marketCodeList = -1
-            };
+                var restClient = new RestClient.RestSharp.RestClient();
 
-            //try
-            //{
-            //    var restClient = new RestClient.RestSharp.RestClient();
+                var config = FisiotesConfig.TestConfig(server, token);
 
-            //    var config = FisiotesConfig.TestConfig(server, token);
+                var conn = restClient.BaseAddress(config.BaseAddress)
+                    .UseAuthenticationBasic(config.Credentials.Token)
+                    .Resource(config.Configuraciones.ConexionLocal)
+                    .SendGet<LocalConfiguracion>();
 
-            //    var conn = restClient.BaseAddress(config.BaseAddress)
-            //        .UseAuthenticationBasic(config.Credentials.Token)
-            //        .Resource(config.Configuraciones.ConexionLocal)
-            //        .SendGet<LocalConfiguracion>();
-
-            //    return conn;
-            //}
-            //catch (Exception)
-            //{
-            //    return GetConnexionLocal(server, token);
-            //}
+                return conn;
+            }
+            catch (Exception)
+            {
+                return GetConnexionLocal(server, token);
+            }
         }
     }
 }

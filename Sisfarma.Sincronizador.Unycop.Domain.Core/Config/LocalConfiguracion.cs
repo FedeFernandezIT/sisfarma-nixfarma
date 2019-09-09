@@ -2,9 +2,11 @@
 {
     public class LocalConfiguracion
     {
-        public string pathFicheros { get; set; }
+        public string localServer { get; set; }
 
-        public string password { get; set; }
+        public string localUser { get; set; }
+
+        public string localPass { get; set; }
 
         public int marketCodeList { get; set; }
     }

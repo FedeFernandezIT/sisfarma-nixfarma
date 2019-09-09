@@ -31,7 +31,8 @@ namespace Sisfarma.Sincronizador.Nixfarma.Infrastructure.Data
 
         private static int _anioActual = 0;
         private static ICollection<int> _historicos;
-        private static string _path = "";
+        private static string _localServer = "";
+        private static string _user = "";
         private static string _password = "";
 
         public FarmaciaContext()
@@ -40,12 +41,13 @@ namespace Sisfarma.Sincronizador.Nixfarma.Infrastructure.Data
 
         public static int ListaDeArticulo { get; set; }
 
-        public static void Setup(string path, string password, int listaDeArticulo)
+        public static void Setup(string localServer, string user, string password, int listaDeArticulo)
         {
-            if (string.IsNullOrWhiteSpace(path))
-                throw new System.ArgumentException("message", nameof(path));
+            if (string.IsNullOrWhiteSpace(localServer))
+                throw new System.ArgumentException("message", nameof(localServer));
 
-            _path = path;
+            _localServer = localServer;
+            _user = user ?? throw new System.ArgumentNullException(nameof(user));
             _password = password ?? throw new System.ArgumentNullException(nameof(password));
 
             ListaDeArticulo = listaDeArticulo;
@@ -53,39 +55,10 @@ namespace Sisfarma.Sincronizador.Nixfarma.Infrastructure.Data
 
         public static FarmaciaContext Default()
             => new FarmaciaContext(
-                server: "nixfarma",
+                server: _localServer,
                 database: "nixfarma",
-                username: "consu",
-                password: "consu");
-
-        //public static FarmaciaContext Ventas(int year)
-        //{
-        //    _anioActual = year;
-        //    return Ventas();
-        //}
-
-        //public static FarmaciaContext Ventas()
-        //{
-        //    _historicos = GetHistoricos();
-
-        //    if (_historicos.All(x => x > _anioActual))
-        //        throw new FarmaciaContextException();
-
-        //    if (_historicos.Contains(_anioActual))
-        //    {
-        //        return new FarmaciaContext(
-        //            server: _server,
-        //            database: $@"{_path}\Hst{_anioActual}.accdb",
-        //            username: _username,
-        //            password: _password);
-        //    }
-
-        //    return new FarmaciaContext(
-        //        server: _server,
-        //        database: $@"{_path}\Ventas.accdb",
-        //        username: _username,
-        //        password: _password);
-        //}
+                username: _user,
+                password: _password);
 
         public static FarmaciaContext VentasByYear(int year)
         {
@@ -98,14 +71,14 @@ namespace Sisfarma.Sincronizador.Nixfarma.Infrastructure.Data
             {
                 return new FarmaciaContext(
                     server: _server,
-                    database: $@"{_path}\Hst{year}.accdb",
+                    database: $@"{_localServer}\Hst{year}.accdb",
                     username: _username,
                     password: _password);
             }
 
             return new FarmaciaContext(
                 server: _server,
-                database: $@"{_path}\Ventas.accdb",
+                database: $@"{_localServer}\Ventas.accdb",
                 username: _username,
                 password: _password);
         }
@@ -115,7 +88,7 @@ namespace Sisfarma.Sincronizador.Nixfarma.Infrastructure.Data
             if (_historicos == null)
             {
                 var historicos = Directory.GetFiles(
-                path: $@"{_path}",
+                path: $@"{_localServer}",
                 searchPattern: _pattern,
                 searchOption: SearchOption.TopDirectoryOnly)
                     .Select(path => new string(path.Replace(".accdb", string.Empty).TakeLast(4).ToArray()))
@@ -132,7 +105,7 @@ namespace Sisfarma.Sincronizador.Nixfarma.Infrastructure.Data
         {
             return new FarmaciaContext(
                 server: _server,
-                database: $@"{_path}\Clientes.accdb",
+                database: $@"{_localServer}\Clientes.accdb",
                 username: _username,
                 password: _password);
         }
@@ -141,7 +114,7 @@ namespace Sisfarma.Sincronizador.Nixfarma.Infrastructure.Data
         {
             return new FarmaciaContext(
                 server: _server,
-                database: $@"{_path}\Fidelizacion.accdb",
+                database: $@"{_localServer}\Fidelizacion.accdb",
                 username: _username,
                 password: _password);
         }
@@ -150,7 +123,7 @@ namespace Sisfarma.Sincronizador.Nixfarma.Infrastructure.Data
         {
             return new FarmaciaContext(
                 server: _server,
-                database: $@"{_path}\Vendedor.accdb",
+                database: $@"{_localServer}\Vendedor.accdb",
                 username: _username,
                 password: _password);
         }
@@ -159,7 +132,7 @@ namespace Sisfarma.Sincronizador.Nixfarma.Infrastructure.Data
         {
             return new FarmaciaContext(
                 server: _server,
-                database: $@"{_path}\Farmacos.accdb",
+                database: $@"{_localServer}\Farmacos.accdb",
                 username: _username,
                 password: _password);
         }
@@ -168,7 +141,7 @@ namespace Sisfarma.Sincronizador.Nixfarma.Infrastructure.Data
         {
             return new FarmaciaContext(
                 server: _server,
-                database: $@"{_path}\FarmaDen.accdb",
+                database: $@"{_localServer}\FarmaDen.accdb",
                 username: _username,
                 password: _password);
         }
@@ -184,14 +157,14 @@ namespace Sisfarma.Sincronizador.Nixfarma.Infrastructure.Data
             {
                 return new FarmaciaContext(
                     server: _server,
-                    database: $@"{_path}\Hst{year}.accdb",
+                    database: $@"{_localServer}\Hst{year}.accdb",
                     username: _username,
                     password: _password);
             }
 
             return new FarmaciaContext(
                 server: _server,
-                database: $@"{_path}\FarmaDen.accdb",
+                database: $@"{_localServer}\FarmaDen.accdb",
                 username: _username,
                 password: _password);
         }
@@ -200,16 +173,16 @@ namespace Sisfarma.Sincronizador.Nixfarma.Infrastructure.Data
         {
             return new FarmaciaContext(
                 server: _server,
-                database: $@"{_path}\Proveedo.accdb",
+                database: $@"{_localServer}\Proveedo.accdb",
                 username: _username,
                 password: _password);
         }
 
         public static OracleConnection GetConnection()
         {
-            string connectionString = @"User Id=""CONSU""; Password=""consu"";" +
+            string connectionString = $@"User Id=""{_user.ToUpper()}""; Password=""{_password}"";" +
                 @"Data Source=(DESCRIPTION=(ADDRESS_LIST=(ADDRESS=(PROTOCOL=IPC)(KEY=DP9))" +
-                    "(ADDRESS=(PROTOCOL=TCP)(HOST=192.168.0.30)(PORT=1521)))(CONNECT_DATA=(INSTANCE_NAME=DP9)(SERVICE_NAME=ORACLE9)))";
+                    $@"(ADDRESS=(PROTOCOL=TCP)(HOST={_localServer})(PORT=1521)))(CONNECT_DATA=(INSTANCE_NAME=DP9)(SERVICE_NAME=ORACLE9)))";
 
             var conn = new OracleConnection(connectionString);
             return conn;
