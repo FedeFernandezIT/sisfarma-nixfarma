@@ -173,7 +173,6 @@ namespace Sisfarma.Sincronizador.Unycop
                 SisfarmaFactory.Setup(remoteServer, remoteToken);
 
                 var local = GetConnexionLocal(remoteServer, remoteToken);
-                local.localServer = "192.168.0.30";
 
                 FarmaciaContext.Setup(local.localServer, local.localUser, local.localPass, local.marketCodeList);
             }
