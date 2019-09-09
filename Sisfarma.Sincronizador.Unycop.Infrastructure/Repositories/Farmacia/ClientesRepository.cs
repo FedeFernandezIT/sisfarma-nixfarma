@@ -232,11 +232,7 @@ namespace Sisfarma.Sincronizador.Nixfarma.Infrastructure.Repositories.Farmacia
 
         public Cliente GetOneOrDefaultById(long id, bool cargarPuntosSisfarma)
         {
-            string connectionString = @"User Id=""CONSU""; Password=""consu"";" +
-                @"Data Source=(DESCRIPTION=(ADDRESS_LIST=(ADDRESS=(PROTOCOL=IPC)(KEY=DP9))" +
-                    "(ADDRESS=(PROTOCOL=TCP)(HOST=192.168.0.30)(PORT=1521)))(CONNECT_DATA=(INSTANCE_NAME=DP9)(SERVICE_NAME=ORACLE9)))";
-
-            var conn = new OracleConnection(connectionString);
+            var conn = FarmaciaContext.GetConnection();
 
             try
             {
@@ -345,6 +341,7 @@ namespace Sisfarma.Sincronizador.Nixfarma.Infrastructure.Repositories.Farmacia
             finally
             {
                 conn.Close();
+                conn.Dispose();
             }
         }
 
@@ -365,11 +362,7 @@ namespace Sisfarma.Sincronizador.Nixfarma.Infrastructure.Repositories.Farmacia
 
         public bool EsBeBlue(string cliente, string tarifaDescuento)
         {
-            string connectionString = @"User Id=""CONSU""; Password=""consu"";" +
-                @"Data Source=(DESCRIPTION=(ADDRESS_LIST=(ADDRESS=(PROTOCOL=IPC)(KEY=DP9))" +
-                    "(ADDRESS=(PROTOCOL=TCP)(HOST=192.168.0.30)(PORT=1521)))(CONNECT_DATA=(INSTANCE_NAME=DP9)(SERVICE_NAME=ORACLE9)))";
-
-            var conn = new OracleConnection(connectionString);
+            var conn = FarmaciaContext.GetConnection();
 
             try
             {
@@ -402,6 +395,7 @@ namespace Sisfarma.Sincronizador.Nixfarma.Infrastructure.Repositories.Farmacia
             finally
             {
                 conn.Close();
+                conn.Dispose();
             }
         }
 
@@ -436,11 +430,7 @@ namespace Sisfarma.Sincronizador.Nixfarma.Infrastructure.Repositories.Farmacia
 
         public string EsResidencia(string tipo, string descuento, string filtros)
         {
-            string connectionString = @"User Id=""CONSU""; Password=""consu"";" +
-                @"Data Source=(DESCRIPTION=(ADDRESS_LIST=(ADDRESS=(PROTOCOL=IPC)(KEY=DP9))" +
-                    "(ADDRESS=(PROTOCOL=TCP)(HOST=192.168.0.30)(PORT=1521)))(CONNECT_DATA=(INSTANCE_NAME=DP9)(SERVICE_NAME=ORACLE9)))";
-
-            var conn = new OracleConnection(connectionString);
+            var conn = FarmaciaContext.GetConnection();
             try
             {
                 if (!string.IsNullOrWhiteSpace(filtros))
@@ -486,6 +476,7 @@ namespace Sisfarma.Sincronizador.Nixfarma.Infrastructure.Repositories.Farmacia
             finally
             {
                 conn.Close();
+                conn.Dispose();
             }
         }
     }
