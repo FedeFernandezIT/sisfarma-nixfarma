@@ -7,12 +7,12 @@ using System.Linq;
 namespace Sisfarma.Sincronizador.Infrastructure.Fisiotes
 {
     public class ListasArticulosExternalService : FisiotesExternalService, IListasArticulosExternalService
-    {     
+    {
         public ListasArticulosExternalService(IRestClient restClient, FisiotesConfig config) :
             base(restClient, config)
         { }
 
-        public void Delete(int codigo)
+        public void Delete(long codigo)
         {
             _restClient
                 .Resource(_config.ListaDeArticulos.Eliminar)
@@ -27,7 +27,6 @@ namespace Sisfarma.Sincronizador.Infrastructure.Fisiotes
                 cod_articulo = i.cod_articulo
             });
 
-            
             _restClient
                 .Resource(_config.ListaDeArticulos.Insert)
                 .SendPost(new
@@ -39,6 +38,6 @@ namespace Sisfarma.Sincronizador.Infrastructure.Fisiotes
         public void Sincronizar(ListaArticulo la)
         {
             Sincronizar(new List<ListaArticulo> { la });
-        }        
+        }
     }
 }

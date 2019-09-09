@@ -5,6 +5,6 @@ namespace Sisfarma.Sincronizador.Domain.Core.Repositories.Farmacia
 {
     public interface IListaRepository
     {
-        IEnumerable<Lista> GetAllByIdGreaterThan(int id);
+        IEnumerable<Lista> GetAllByIdGreaterThan(long id);
     }
 }

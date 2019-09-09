@@ -3,16 +3,16 @@ using System.Collections;
 using System.Collections.Generic;
 
 namespace Sisfarma.Sincronizador.Domain.Entities.Farmacia
-{    
+{
     public class Lista
     {
-        public int Id { get; set; }
+        public long Id { get; set; }
 
         public string Descripcion { get; set; }
 
         public DateTime? Fecha { get; set; }
 
-        public int? NumElem { get; set; }
+        public long NumElem { get; set; }
 
         public int? XList_IdFiltro { get; set; }
 
@@ -27,8 +27,8 @@ namespace Sisfarma.Sincronizador.Domain.Entities.Farmacia
     {
         public int Id { get; set; }
 
-        public int ListaId { get; set; }
+        public long ListaId { get; set; }
 
-        public int FarmacoId { get; set; }
+        public string FarmacoId { get; set; }
     }
 }

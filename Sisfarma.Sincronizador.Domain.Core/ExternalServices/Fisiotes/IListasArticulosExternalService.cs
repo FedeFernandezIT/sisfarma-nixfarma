@@ -5,8 +5,10 @@ namespace Sisfarma.Sincronizador.Domain.Core.ExternalServices.Fisiotes
 {
     public interface IListasArticulosExternalService
     {
-        void Delete(int codigo);
+        void Delete(long codigo);
+
         void Sincronizar(List<ListaArticulo> items);
+
         void Sincronizar(ListaArticulo la);
     }
 }

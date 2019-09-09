@@ -2,8 +2,8 @@ namespace Sisfarma.Sincronizador.Domain.Entities.Fisiotes
 {
     public partial class ListaArticulo
     {
-        public int cod_lista { get; set; }
+        public long cod_lista { get; set; }
 
-        public int cod_articulo { get; set; }
+        public string cod_articulo { get; set; }
     }
 }

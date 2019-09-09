@@ -9,9 +9,9 @@ namespace Sisfarma.Sincronizador.Domain.Core.Sincronizadores
     public class ListaSincronizador : TaskSincronizador
     {
         protected const int BATCH_SIZE = 1000;
-        protected int _codActual;
+        protected long _codActual;
 
-        public ListaSincronizador(IFarmaciaService farmacia, ISisfarmaService fisiotes) 
+        public ListaSincronizador(IFarmaciaService farmacia, ISisfarmaService fisiotes)
             : base(farmacia, fisiotes)
         { }
 
@@ -20,6 +20,6 @@ namespace Sisfarma.Sincronizador.Domain.Core.Sincronizadores
             _codActual = _sisfarma.Listas.GetCodPorDondeVoyOrDefault()?.cod ?? -1;
         }
 
-        public override void Process() => throw new NotImplementedException();        
+        public override void Process() => throw new NotImplementedException();
     }
 }
