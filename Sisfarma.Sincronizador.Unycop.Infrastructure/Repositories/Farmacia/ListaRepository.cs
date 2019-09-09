@@ -34,12 +34,12 @@ namespace Sisfarma.Sincronizador.Nixfarma.Infrastructure.Repositories.Farmacia
                 {
                     var rCodigo = Convert.ToInt64(reader["CODIGO"]);
                     var rTituloCliente = Convert.ToString(reader["TITULO_CLIENTE"]);
-                    var rNumRegistro = !Convert.IsDBNull(reader["NUM_REGISTRO"]) ? Convert.ToInt64(reader["NUM_REGISTRO"]) : 0L;
+                    var rNumRegistros = !Convert.IsDBNull(reader["NUM_REGISTROS"]) ? Convert.ToInt64(reader["NUM_REGISTROS"]) : 0L;
 
                     var lista = new Lista
                     {
                         Id = rCodigo,
-                        NumElem = rNumRegistro,
+                        NumElem = rNumRegistros,
                         Descripcion = rTituloCliente
                     };
 
@@ -52,7 +52,7 @@ namespace Sisfarma.Sincronizador.Nixfarma.Infrastructure.Repositories.Farmacia
                     var numeroRegistro = 0;
                     while (readerDetalle.Read())
                     {
-                        var rValorChar = Convert.ToString(reader["valor_char"]);
+                        var rValorChar = Convert.ToString(readerDetalle["valor_char"]);
 
                         var item = new ListaDetalle
                         {
