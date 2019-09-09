@@ -44,7 +44,7 @@ namespace Sisfarma.Sincronizador.Nixfarma.Infrastructure.Repositories.Farmacia
                 while (reader.Read())
                 {
                     var rCodigo = Convert.ToString(reader["codigo"]);
-                    var rEan13 = Convert.ToString(reader["ean13"]);
+                    var rEan13 = Convert.ToString(reader["ean_13"]);
                     sinonimos.Add(new Sinonimo { CodigoBarra = rEan13, CodigoNacional = rCodigo });
                 }
 
