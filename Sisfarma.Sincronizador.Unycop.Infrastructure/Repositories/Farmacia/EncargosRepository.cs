@@ -91,7 +91,7 @@ namespace Sisfarma.Sincronizador.Nixfarma.Infrastructure.Repositories.Farmacia
 
                     cmd.CommandText = sql;
                     var readerLineaEncargo = cmd.ExecuteReader();
-
+                    var numLinea = 0;
                     while (readerLineaEncargo.Read())
                     {
                         var rLinea = Convert.ToInt32(readerLineaEncargo["linea"]);
@@ -108,7 +108,7 @@ namespace Sisfarma.Sincronizador.Nixfarma.Infrastructure.Repositories.Farmacia
                             Observaciones = rObservaciones,
                             Empresa = rEmpCodigo,
                             Almacen = rAlmCodigo,
-                            Linea = rLinea,
+                            Linea = ++numLinea,
                             Farmaco = rArticulo,
                             Cantidad = rUniEncargadas,
                             FechaHoraEntrega = rFechaDisponib
