@@ -53,6 +53,48 @@ namespace Sisfarma.Sincronizador.Nixfarma.Infrastructure.Repositories.Farmacia
 
         public IEnumerable<Familia> GetByDescripcion()
         {
+            var conn = FarmaciaContext.GetConnection();
+            var familias = new List<Familia>();
+            try
+            {
+                conn.Open();
+                var sql = $@"select * from appul.ab_subfamilias WHERE descripcion NOT IN ('ESPECIALIDAD', 'EFP', 'SIN FAMILIA') AND descripcion NOT LIKE '%ESPECIALIDADES%' AND descripcion NOT LIKE '%Medicamento%'";
+                var cmd = conn.CreateCommand();
+                cmd.CommandText = sql;
+                var reader = cmd.ExecuteReader();
+
+                while (reader.Read())
+                {
+                    var rDescripcion = Convert.ToString(reader["DESCRIPCION"]);
+                    var rFamCodigo = Convert.ToString(reader["FAM_CODIGO"]);
+                    var rFamEmpCodigo = Convert.ToString(reader["FAM_EMP_CODIGO"]);
+
+                    sql = $@"select * from appul.ab_familias WHERE codigo = '{rFamCodigo}' AND emp_codigo = '{rFamEmpCodigo}'";
+                    cmd = conn.CreateCommand();
+                    cmd.CommandText = sql;
+                    var readerFamilia = cmd.ExecuteReader();
+
+                    var padre = readerFamilia.Read() ? Convert.ToString(readerFamilia["DESCRIPCION"]) : "<SIN PADRE>";
+
+                    familias.Add(new Familia
+                    {
+                        Nombre = rDescripcion,
+                        Padre = padre
+                    });
+                }
+
+                return familias;
+            }
+            catch (Exception ex)
+            {
+                return new List<Familia>();
+            }
+            finally
+            {
+                conn.Close();
+                conn.Dispose();
+            }
+
             using (var db = FarmaciaContext.Default())
             {
                 var sql = @"select nombre from familias WHERE nombre NOT IN ('ESPECIALIDAD', 'EFP', 'SIN FAMILIA') AND nombre NOT LIKE '%ESPECIALIDADES%' AND nombre NOT LIKE '%Medicamento%'";

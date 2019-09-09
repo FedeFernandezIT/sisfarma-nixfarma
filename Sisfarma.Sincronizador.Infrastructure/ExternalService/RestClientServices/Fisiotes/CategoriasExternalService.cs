@@ -5,9 +5,9 @@ using Sisfarma.Sincronizador.Domain.Core.ExternalServices.Fisiotes;
 using Sisfarma.Sincronizador.Domain.Entities.Fisiotes;
 
 namespace Sisfarma.Sincronizador.Infrastructure.Fisiotes
-{    
+{
     public class CategoriasExternalService : FisiotesExternalService, ICategoriasExternalService
-    {        
+    {
         public CategoriasExternalService(IRestClient restClient, FisiotesConfig config)
             : base(restClient, config)
         { }
@@ -38,7 +38,7 @@ namespace Sisfarma.Sincronizador.Infrastructure.Fisiotes
             try
             {
                 return _restClient
-                    .Resource(_config.Categorias.GetByPadre                        
+                    .Resource(_config.Categorias.GetByPadre
                         .Replace("{padre}", $"{padre}"))
                     .SendGet<Categoria>();
             }
@@ -64,6 +64,6 @@ namespace Sisfarma.Sincronizador.Infrastructure.Fisiotes
                 {
                     categorias = new[] { categoria }
                 });
-        }        
+        }
     }
 }

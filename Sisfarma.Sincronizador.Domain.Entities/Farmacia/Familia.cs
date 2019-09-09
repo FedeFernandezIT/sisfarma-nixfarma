@@ -12,6 +12,8 @@ namespace Sisfarma.Sincronizador.Domain.Entities.Farmacia
 
         public string Nombre { get; set; }
 
+        public string Padre { get; set; }
+
         public ICollection<Categoria> Categorias { get; set; }
 
         public Familia() => Categorias = new HashSet<Categoria>();
