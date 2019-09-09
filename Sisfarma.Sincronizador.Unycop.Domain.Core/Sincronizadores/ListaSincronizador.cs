@@ -8,7 +8,7 @@ namespace Sisfarma.Sincronizador.Unycop.Domain.Core.Sincronizadores
 {
     public class ListaSincronizador : DC.ListaSincronizador
     {
-        public ListaSincronizador(IFarmaciaService farmacia, ISisfarmaService fisiotes) 
+        public ListaSincronizador(IFarmaciaService farmacia, ISisfarmaService fisiotes)
             : base(farmacia, fisiotes)
         { }
 
@@ -20,11 +20,11 @@ namespace Sisfarma.Sincronizador.Unycop.Domain.Core.Sincronizadores
                 Task.Delay(5);
 
                 _cancellationToken.ThrowIfCancellationRequested();
-                
-                _sisfarma.Listas.Sincronizar(new Lista { cod = lista.Id, lista = lista.Descripcion });
+
+                _sisfarma.Listas.Sincronizar(new Lista { cod = lista.Id, lista = lista.Descripcion, numArticulos = lista.NumElem });
 
                 _codActual = lista.Id;
-                
+
                 if (lista.Farmacos.Any())
                 {
                     _sisfarma.Listas.DeArticulos.Delete(lista.Id);
@@ -48,6 +48,6 @@ namespace Sisfarma.Sincronizador.Unycop.Domain.Core.Sincronizadores
             }
 
             _codActual = -1;
-        }        
+        }
     }
 }
