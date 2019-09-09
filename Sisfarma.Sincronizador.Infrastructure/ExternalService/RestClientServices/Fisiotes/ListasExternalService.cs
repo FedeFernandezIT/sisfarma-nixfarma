@@ -10,7 +10,7 @@ namespace Sisfarma.Sincronizador.Infrastructure.Fisiotes
     {
         public IListasArticulosExternalService DeArticulos { get; set; }
 
-        public ListasExternalService(IRestClient restClient, FisiotesConfig config) 
+        public ListasExternalService(IRestClient restClient, FisiotesConfig config)
             : base(restClient, config)
         {
             DeArticulos = new ListasArticulosExternalService(restClient, config);
@@ -33,7 +33,7 @@ namespace Sisfarma.Sincronizador.Infrastructure.Fisiotes
             catch (RestClientNotFoundException)
             {
                 return null;
-            }         
+            }
         }
 
         public void Sincronizar(Lista ll)
@@ -42,6 +42,7 @@ namespace Sisfarma.Sincronizador.Infrastructure.Fisiotes
             {
                 cod = ll.cod,
                 lista = ll.lista.Strip(),
+                numArticulos = ll.numArticulos,
                 porDondeVoy = 1
             };
 
@@ -80,6 +81,6 @@ namespace Sisfarma.Sincronizador.Infrastructure.Fisiotes
             {
                 return;
             }
-        }        
+        }
     }
 }
