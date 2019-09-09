@@ -39,11 +39,15 @@ namespace Sisfarma.Sincronizador.Unycop
             //SisfarmaFactory.Create().Configuraciones.Update("versionSincronizador", $"{ApplicationDeployment.CurrentDeployment.CurrentVersion}");
             SisfarmaFactory.Create().Configuraciones.Update("versionSincronizador", "1.0");
 
-            //SincronizadorTaskManager.TaskSincronizadores
-            //.AddSincronizador(new Domain.Core.Sincronizadores.PuntoPendienteSincronizador(
-            //    farmacia: FarmaciaFactory.Create(),
-            //    fisiotes: SisfarmaFactory.Create()),
-            //    delay: SincronizadorTaskManager.DelayPuntosPendiente);
+            SincronizadorTaskManager.TaskSincronizadores
+            .AddSincronizador(new Domain.Core.Sincronizadores.PuntoPendienteSincronizadorEmp1(
+                farmacia: FarmaciaFactory.Create(),
+                fisiotes: SisfarmaFactory.Create()),
+                delay: SincronizadorTaskManager.DelayPuntosPendiente)
+            .AddSincronizador(new Domain.Core.Sincronizadores.PuntoPendienteSincronizadorEmp2(
+                farmacia: FarmaciaFactory.Create(),
+                fisiotes: SisfarmaFactory.Create()),
+                delay: SincronizadorTaskManager.DelayPuntosPendiente);
             //.AddSincronizador(new Domain.Core.Sincronizadores.ClienteSincronizador(
             //        farmacia: FarmaciaFactory.Create(),
             //        fisiotes: SisfarmaFactory.Create())
@@ -177,11 +181,11 @@ namespace Sisfarma.Sincronizador.Unycop
             //        farmacia: FarmaciaFactory.Create(),
             //        fisiotes: SisfarmaFactory.Create())
             //        .SincronizarAsync(Updater.GetCancellationToken(), delayLoop: 1));
-            Task.Factory.StartNew(() => new Domain.Core.Sincronizadores.SinonimoSincronizador(
-                    farmacia: FarmaciaFactory.Create(),
-                    fisiotes: SisfarmaFactory.Create())
-                        .SetHorarioVaciamientos("1000", "1230", "1730", "1930")
-                    .SincronizarAsync(Updater.GetCancellationToken(), delayLoop: 1));
+            //Task.Factory.StartNew(() => new Domain.Core.Sincronizadores.SinonimoSincronizador(
+            //        farmacia: FarmaciaFactory.Create(),
+            //        fisiotes: SisfarmaFactory.Create())
+            //            .SetHorarioVaciamientos("1000", "1230", "1730", "1930")
+            //        .SincronizarAsync(Updater.GetCancellationToken(), delayLoop: 1));
             //Task.Factory.StartNew(() => new Domain.Core.Sincronizadores.ProveedorSincronizador(
             //        farmacia: FarmaciaFactory.Create(),
             //        fisiotes: SisfarmaFactory.Create())
@@ -190,9 +194,9 @@ namespace Sisfarma.Sincronizador.Unycop
             //        farmacia: FarmaciaFactory.Create(),
             //        fisiotes: SisfarmaFactory.Create())
             //        .SincronizarAsync(Updater.GetCancellationToken(), delayLoop: 1));
-            //Task.Factory.StartNew(() => new PowerSwitchProgramado(SisfarmaFactory.Create()).SincronizarAsync(Updater.GetCancellationToken(), delayLoop: 60000));
-            //Task.Factory.StartNew(() => new PowerSwitchManual(SisfarmaFactory.Create()).SincronizarAsync(Updater.GetCancellationToken(), delayLoop: 60000));
-            //Task.Factory.StartNew(() => new UpdateVersionSincronizador().SincronizarAsync(new CancellationToken(), delayLoop: 20000));
+            Task.Factory.StartNew(() => new PowerSwitchProgramado(SisfarmaFactory.Create()).SincronizarAsync(Updater.GetCancellationToken(), delayLoop: 60000));
+            Task.Factory.StartNew(() => new PowerSwitchManual(SisfarmaFactory.Create()).SincronizarAsync(Updater.GetCancellationToken(), delayLoop: 60000));
+            Task.Factory.StartNew(() => new UpdateVersionSincronizador().SincronizarAsync(new CancellationToken(), delayLoop: 20000));
 
             var notifyIcon = new NotifyIcon();
             notifyIcon.ContextMenuStrip = GetSincronizadorMenuStrip();
@@ -235,6 +239,7 @@ namespace Sisfarma.Sincronizador.Unycop
                 SisfarmaFactory.Setup(remoteServer, remoteToken);
 
                 var local = GetConnexionLocal(remoteServer, remoteToken);
+                local.localServer = "192.168.0.30";
 
                 FarmaciaContext.Setup(local.localServer, local.localUser, local.localPass, local.marketCodeList);
             }

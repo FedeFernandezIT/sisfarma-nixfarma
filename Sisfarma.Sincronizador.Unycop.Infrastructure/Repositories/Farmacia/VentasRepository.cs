@@ -184,7 +184,7 @@ namespace Sisfarma.Sincronizador.Nixfarma.Infrastructure.Repositories.Farmacia
             }
         }
 
-        public List<Venta> GetAllByIdGreaterOrEqual(int year, DateTime timestamp)
+        public List<Venta> GetAllByIdGreaterOrEqual(int year, DateTime timestamp, string empresa)
         {
             var conn = FarmaciaContext.GetConnection();
 
@@ -195,7 +195,7 @@ namespace Sisfarma.Sincronizador.Nixfarma.Infrastructure.Repositories.Farmacia
                                 FECHA_VENTA, FECHA_FIN, CLI_CODIGO, TIPO_OPERACION, OPERACION, PUESTO, USR_CODIGO, IMPORTE_VTA_E, EMP_CODIGO
                                 FROM appul.ah_ventas
                                 WHERE ROWNUM <= 999
-                                    AND emp_codigo = 'EMP1'
+                                    AND emp_codigo = '{empresa}'
                                     AND situacion = 'N'
                                     AND fecha_venta >= to_date('01/01/{year}', 'DD/MM/YYYY')
                                     AND fecha_venta >= to_date('{dateTimeFormated}', 'DD/MM/YYYY HH24:MI:SS')
