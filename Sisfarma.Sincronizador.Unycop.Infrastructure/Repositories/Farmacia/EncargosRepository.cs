@@ -73,6 +73,7 @@ namespace Sisfarma.Sincronizador.Nixfarma.Infrastructure.Repositories.Farmacia
                 cmd.CommandText = sql;
                 var reader = cmd.ExecuteReader();
 
+                var numLinea = 0;
                 while (reader.Read())
                 {
                     var rNumEnc = Convert.ToInt32(reader["num_enc"]);
@@ -91,7 +92,7 @@ namespace Sisfarma.Sincronizador.Nixfarma.Infrastructure.Repositories.Farmacia
 
                     cmd.CommandText = sql;
                     var readerLineaEncargo = cmd.ExecuteReader();
-                    var numLinea = 0;
+
                     while (readerLineaEncargo.Read())
                     {
                         var rLinea = Convert.ToInt32(readerLineaEncargo["linea"]);
