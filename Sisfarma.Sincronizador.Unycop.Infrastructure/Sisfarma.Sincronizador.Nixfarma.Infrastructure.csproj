@@ -80,6 +80,7 @@
     <Compile Include="Repositories\Farmacia\DTO\Ticket.cs" />
     <Compile Include="Repositories\Farmacia\DTO\Venta.cs" />
     <Compile Include="Repositories\Farmacia\DTO\VentaPremiun.cs" />
+    <Compile Include="Repositories\Farmacia\EmpresaRepository.cs" />
     <Compile Include="Repositories\Farmacia\EncargosRepository.cs" />
     <Compile Include="Repositories\Farmacia\CategoriasRepository.cs" />
     <Compile Include="Repositories\Farmacia\FamiliaRepository.cs" />

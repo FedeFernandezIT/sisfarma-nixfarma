@@ -25,6 +25,7 @@ namespace Sisfarma.Sincronizador.Nixfarma.Infrastructure.Repositories.Farmacia
         private readonly DC.ILaboratorioRepository _laboratorioRepository;
         private readonly DC.IProveedorRepository _proveedorRepository;
         private readonly ITarifaRepository _tarifaRepository;
+        private readonly IEmpresaRepository _empresaRepository;
 
         private readonly decimal _factorCentecimal = 0.01m;
 
@@ -42,7 +43,8 @@ namespace Sisfarma.Sincronizador.Nixfarma.Infrastructure.Repositories.Farmacia
             DC.IFamiliaRepository familiaRepository,
             DC.ILaboratorioRepository laboratorioRepository,
             DC.IProveedorRepository proveedorRepository,
-            ITarifaRepository tarifaRepository)
+            ITarifaRepository tarifaRepository,
+            IEmpresaRepository empresaRepository)
         {
             _categoriaRepository = categoriaRepository ?? throw new ArgumentNullException(nameof(categoriaRepository));
             _barraRepository = barraRepository ?? throw new ArgumentNullException(nameof(barraRepository));
@@ -50,6 +52,7 @@ namespace Sisfarma.Sincronizador.Nixfarma.Infrastructure.Repositories.Farmacia
             _laboratorioRepository = laboratorioRepository ?? throw new ArgumentNullException(nameof(laboratorioRepository));
             _proveedorRepository = proveedorRepository ?? throw new ArgumentNullException(nameof(proveedorRepository));
             _tarifaRepository = tarifaRepository ?? throw new ArgumentNullException(nameof(tarifaRepository));
+            _empresaRepository = empresaRepository ?? throw new ArgumentNullException(nameof(empresaRepository));
         }
 
         public DTO.Farmaco GetOneOrDefaultById(string id)
@@ -157,6 +160,13 @@ namespace Sisfarma.Sincronizador.Nixfarma.Infrastructure.Repositories.Farmacia
             try
             {
                 var sqlExtra = string.Empty;
+                if (_empresaRepository.Count() == 2)
+                    sqlExtra = $@"WHERE emp_codigo = (
+                                        CASE WHEN codigo >= '600000' THEN
+                                            case when nvl(pvp_euros,0) > 0 then 'EMP1' else 'EMP2'
+                                        END ELSE CASE WHEN nvl(pvp_euros,0) > 0 then 'EMP2' else 'EMP1'
+                                  END END)";
+
                 var sql = $@"select o.* from (
                     select a.codigo, a.precio_lab_euros, a.Pvp_euros, a.famsb_codigo, a.fam_codigo, a.descripcion, a.lab_codigo, a.clase, a.clase_bot,
                            a.imp_codigo, a.ean_13, a.Fecha_Baja, sum(e.actuales) as stock, max(e.stock_min) as stock_minimo, max(e.stock_max) as stock_maximo,
@@ -261,6 +271,13 @@ namespace Sisfarma.Sincronizador.Nixfarma.Infrastructure.Repositories.Farmacia
             try
             {
                 var sqlExtra = string.Empty;
+                if (_empresaRepository.Count() == 2)
+                    sqlExtra = $@"WHERE emp_codigo = (
+                                        CASE WHEN codigo >= '600000' THEN
+                                            case when nvl(pvp_euros,0) > 0 then 'EMP1' else 'EMP2'
+                                        END ELSE CASE WHEN nvl(pvp_euros,0) > 0 then 'EMP2' else 'EMP1'
+                                  END END)";
+
                 var sql = $@"select o.* from (
                     select a.codigo, a.precio_lab_euros, a.Pvp_euros, a.famsb_codigo, a.fam_codigo, a.descripcion, a.lab_codigo, a.clase, a.clase_bot,
                            a.imp_codigo, a.ean_13, a.Fecha_Baja, sum(e.actuales) as stock, max(e.stock_min) as stock_minimo, max(e.stock_max) as stock_maximo,
@@ -365,6 +382,13 @@ namespace Sisfarma.Sincronizador.Nixfarma.Infrastructure.Repositories.Farmacia
             try
             {
                 var sqlExtra = string.Empty;
+                if (_empresaRepository.Count() == 2)
+                    sqlExtra = $@"WHERE emp_codigo = (
+                                        CASE WHEN codigo >= '600000' THEN
+                                            case when nvl(pvp_euros,0) > 0 then 'EMP1' else 'EMP2'
+                                        END ELSE CASE WHEN nvl(pvp_euros,0) > 0 then 'EMP2' else 'EMP1'
+                                  END END)";
+
                 var sql = $@"select o.* from (
                     select a.codigo, a.precio_lab_euros, a.Pvp_euros, a.famsb_codigo, a.fam_codigo, a.descripcion, a.lab_codigo, a.clase, a.clase_bot,
                            a.imp_codigo, a.ean_13, a.Fecha_Baja, sum(e.actuales) as stock, max(e.stock_min) as stock_minimo, max(e.stock_max) as stock_maximo,
@@ -469,6 +493,13 @@ namespace Sisfarma.Sincronizador.Nixfarma.Infrastructure.Repositories.Farmacia
             try
             {
                 var sqlExtra = string.Empty;
+                if (_empresaRepository.Count() == 2)
+                    sqlExtra = $@"WHERE emp_codigo = (
+                                        CASE WHEN codigo >= '600000' THEN
+                                            case when nvl(pvp_euros,0) > 0 then 'EMP1' else 'EMP2'
+                                        END ELSE CASE WHEN nvl(pvp_euros,0) > 0 then 'EMP2' else 'EMP1'
+                                  END END)";
+
                 var sql = $@"select o.* from (
                     select a.codigo, a.precio_lab_euros, a.Pvp_euros, a.famsb_codigo, a.fam_codigo, a.descripcion, a.lab_codigo, a.clase, a.clase_bot,
                            a.imp_codigo, a.ean_13, a.Fecha_Baja, sum(e.actuales) as stock, max(e.stock_min) as stock_minimo, max(e.stock_max) as stock_maximo,
