@@ -71,6 +71,7 @@
     <Compile Include="Sincronizadores\SinonimoSincronizador.cs" />
     <Compile Include="Sincronizadores\TicketPendienteActualizacionSincronizador.cs" />
     <Compile Include="Sincronizadores\VentaMensualActualizacionSincronizador.cs" />
+    <Compile Include="Sincronizadores\VentaPendienteSincronizador.cs" />
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\Sisfarma.RestClient\Sisfarma.RestClient.csproj">

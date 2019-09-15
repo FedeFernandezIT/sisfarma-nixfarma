@@ -78,7 +78,7 @@ namespace Sisfarma.Sincronizador.Infrastructure.Fisiotes
                     GetTimestampUltimaVenta = "api/puntos/ultimaFechaVenta/empresa/{empresa}",
                     GetPuntosByDni = "api/puntos/index/dni/{dni}",
                     GetPuntosCanjeadosByDni = "api/puntos/canjeados/dni/{dni}",
-                    ExistsByFechaGreatThanOrEqual = "api/puntos/exists_greater_equal/ejercicio/{year}/fechaVenta/{fecha}",
+                    ExistsByFechaGreatThanOrEqual = "api/puntos/exists_greater_equal/ejercicio/{year}/fechaVenta/{fecha}/empresa/{empresa}",
                     Update = "api/puntos/update",
                     Insert = "api/puntos/createUpdate",
                     InsertActualizarVenta = "api/puntos/createUpdate/actualizarVenta/1",

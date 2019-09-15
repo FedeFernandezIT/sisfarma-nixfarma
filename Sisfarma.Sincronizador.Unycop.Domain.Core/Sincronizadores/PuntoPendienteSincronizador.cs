@@ -62,7 +62,7 @@ namespace Sisfarma.Sincronizador.Unycop.Domain.Core.Sincronizadores
         public override void Process()
         {
             var cargarPuntosSisfarma = _cargarPuntos == "si";
-            var ventas = _farmacia.Ventas.GetAllByIdGreaterOrEqual(_anioInicio, _timestampUltimaVenta, "EMP1");
+            var ventas = _farmacia.Ventas.GetAllByDateTimeGreaterOrEqual(_anioInicio, _timestampUltimaVenta, "EMP1");
             if (!ventas.Any())
                 return;
 
@@ -92,9 +92,6 @@ namespace Sisfarma.Sincronizador.Unycop.Domain.Core.Sincronizadores
 
         private IEnumerable<PuntosPendientes> GenerarPuntosPendientes(Venta venta)
         {
-            //if (!venta.HasCliente() && venta.Tipo != "1")
-            //    return new PuntosPendientes[0];
-
             if (!venta.HasDetalle())
                 return new PuntosPendientes[0];
 
@@ -266,7 +263,7 @@ namespace Sisfarma.Sincronizador.Unycop.Domain.Core.Sincronizadores
         public override void Process()
         {
             var cargarPuntosSisfarma = _cargarPuntos == "si";
-            var ventas = _farmacia.Ventas.GetAllByIdGreaterOrEqual(_anioInicio, _timestampUltimaVenta, "EMP2");
+            var ventas = _farmacia.Ventas.GetAllByDateTimeGreaterOrEqual(_anioInicio, _timestampUltimaVenta, "EMP2");
             if (!ventas.Any())
                 return;
 

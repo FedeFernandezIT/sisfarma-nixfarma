@@ -8,9 +8,9 @@ namespace Sisfarma.Sincronizador.Domain.Core.Repositories.Farmacia
     {
         List<Venta> GetAllByIdGreaterOrEqual(int year, long value, string empresa);
 
-        List<Venta> GetAllByIdGreaterOrEqual(int year, DateTime timestamp, string empresa);
+        List<Venta> GetAllByDateTimeGreaterOrEqual(int year, DateTime timestamp, string empresa);
 
-        List<Venta> GetAllByIdGreaterOrEqual(long venta, DateTime fecha);
+        List<Venta> GetAllByIdGreaterOrEqual(long venta, DateTime fecha, string empresa);
 
         List<VentaDetalle> GetDetalleDeVentaByVentaId(long venta, string empresa);
 

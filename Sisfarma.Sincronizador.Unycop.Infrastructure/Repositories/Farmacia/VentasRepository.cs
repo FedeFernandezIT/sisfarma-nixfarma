@@ -166,7 +166,7 @@ namespace Sisfarma.Sincronizador.Nixfarma.Infrastructure.Repositories.Farmacia
             }
         }
 
-        public List<Venta> GetAllByIdGreaterOrEqual(int year, DateTime timestamp, string empresa)
+        public List<Venta> GetAllByDateTimeGreaterOrEqual(int year, DateTime timestamp, string empresa)
         {
             var conn = FarmaciaContext.GetConnection();
 
@@ -241,65 +241,64 @@ namespace Sisfarma.Sincronizador.Nixfarma.Infrastructure.Repositories.Farmacia
                 Importe = venta.Importe * _factorCentecimal,
             };
 
-        public List<Venta> GetAllByIdGreaterOrEqual(long id, DateTime fecha)
+        public List<Venta> GetAllByIdGreaterOrEqual(long id, DateTime fecha, string empresa)
         {
-            var rs = new List<DTO.Venta>();
+            var conn = FarmaciaContext.GetConnection();
+
             try
             {
-                using (var db = FarmaciaContext.VentasByYear(fecha.Year))
+                var sql = $@"SELECT *
+                    FROM appul.ah_ventas
+                    WHERE ROWNUM <= 999
+                        AND emp_codigo = '{empresa}'
+                        AND situacion = 'N'
+                        AND operacion >= {id}
+                        AND fecha_venta >= to_date('01/01/{fecha.Year}', 'DD/MM/YYYY')
+                        AND fecha_venta >= to_date('{fecha.ToString("dd/MM/yyyy")}', 'DD/MM/YYYY')
+                        ORDER BY fecha_venta ASC";
+
+                conn.Open();
+                var cmd = conn.CreateCommand();
+                cmd.CommandText = sql;
+                var reader = cmd.ExecuteReader();
+
+                var ventas = new List<Venta>();
+                while (reader.Read())
                 {
-                    var year = fecha.Year;
-                    var fechaInicial = fecha.Date.ToString("dd-MM-yyyy HH:mm:ss");
-
-                    var sql = $@"SELECT TOP 999 ID_VENTA as Id, Fecha, NPuesto as Puesto, Cliente, Vendedor, Descuento, Pago, Tipo, Importe FROM ventas WHERE id_venta >= @id AND year(fecha) = @year AND fecha >= #{fechaInicial}# ORDER BY id_venta ASC";
-
-                    rs = db.Database.SqlQuery<DTO.Venta>(sql,
-                        new OleDbParameter("id", (int)id),
-                        new OleDbParameter("year", year))
-                            .ToList();
+                    var fechaVenta = Convert.ToDateTime(reader["FECHA_VENTA"]);
+                    var fechaFin = !Convert.IsDBNull(reader["FECHA_FIN"]) ? (DateTime?)Convert.ToDateTime(reader["FECHA_FIN"]) : null;
+                    var cliCodigo = !Convert.IsDBNull(reader["CLI_CODIGO"]) ? (long)Convert.ToInt32(reader["CLI_CODIGO"]) : 0;
+                    var tipoOperacion = Convert.ToString(reader["TIPO_OPERACION"]);
+                    var operacion = Convert.ToInt64(reader["OPERACION"]);
+                    var puesto = Convert.ToString(reader["PUESTO"]);
+                    var usrCodigo = Convert.ToString(reader["USR_CODIGO"]);
+                    var importeVentaE = !Convert.IsDBNull(reader["IMPORTE_VTA_E"]) ? Convert.ToDecimal(reader["IMPORTE_VTA_E"]) : default(decimal);
+                    var empCodigo = Convert.ToString(reader["EMP_CODIGO"]);
+                    ventas.Add(new Venta
+                    {
+                        ClienteId = cliCodigo,
+                        FechaFin = fechaFin,
+                        FechaHora = fechaVenta,
+                        TipoOperacion = tipoOperacion,
+                        Operacion = operacion,
+                        Puesto = puesto,
+                        VendedorCodigo = usrCodigo,
+                        TotalDescuento = importeVentaE,
+                        EmpresaCodigo = empCodigo
+                    });
                 }
+
+                return ventas;
             }
-            catch (FarmaciaContextException)
+            catch (Exception ex)
             {
                 return new List<Venta>();
             }
-
-            var ventas = new List<Venta>();
-            foreach (var ventaRegistrada in rs)
+            finally
             {
-                var venta = new Venta
-                {
-                    Id = ventaRegistrada.Id,
-                    Tipo = ventaRegistrada.Tipo.ToString(),
-                    FechaHora = ventaRegistrada.Fecha,
-                    Puesto = ventaRegistrada.Puesto.ToString(),
-                    ClienteId = ventaRegistrada.Cliente,
-                    VendedorId = ventaRegistrada.Vendedor,
-                    TotalDescuento = ventaRegistrada.Descuento * _factorCentecimal,
-                    TotalBruto = ventaRegistrada.Pago * _factorCentecimal,
-                    Importe = ventaRegistrada.Importe * _factorCentecimal,
-                };
-
-                if (ventaRegistrada.Cliente > 0)
-                    venta.Cliente = _clientesRepository.GetOneOrDefaultById(ventaRegistrada.Cliente, false); // TODO verficar hacer
-
-                var ticket = _ticketRepository.GetOneOrdefaultByVentaId(ventaRegistrada.Id, fecha.Year);
-                if (ticket != null)
-                {
-                    venta.Ticket = new Ticket
-                    {
-                        Numero = ticket.Numero,
-                        Serie = ticket.Serie
-                    };
-                }
-
-                venta.VendedorNombre = _vendedoresRepository.GetOneOrDefaultById(ventaRegistrada.Vendedor)?.Nombre;
-                venta.Detalle = GetDetalleDeVentaByVentaId(fecha.Year, ventaRegistrada.Id);
-
-                ventas.Add(venta);
+                conn.Clone();
+                conn.Dispose();
             }
-
-            return ventas;
         }
 
         public List<VentaDetalle> GetDetalleDeVentaByVentaId(long venta, string empresa)

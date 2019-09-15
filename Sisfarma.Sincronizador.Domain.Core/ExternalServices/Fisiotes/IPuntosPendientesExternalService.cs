@@ -9,7 +9,7 @@ namespace Sisfarma.Sincronizador.Domain.Core.ExternalServices.Fisiotes
     {
         bool Exists(int venta, int linea);
 
-        bool ExistsGreatThanOrEqual(DateTime fecha);
+        bool ExistsGreatThanOrEqual(DateTime fecha, string empresa);
 
         long GetLastOfYear(int year);
 

@@ -22,7 +22,7 @@ namespace Sisfarma.Sincronizador.Nixfarma.Infrastructure.ExternalServices.Sisfar
             throw new NotImplementedException();
         }
 
-        public bool ExistsGreatThanOrEqual(DateTime fecha)
+        public bool ExistsGreatThanOrEqual(DateTime fecha, string empresa)
         {
             var year = fecha.Year;
             var fechaVenta = fecha.Date.ToIsoString();
@@ -32,7 +32,8 @@ namespace Sisfarma.Sincronizador.Nixfarma.Infrastructure.ExternalServices.Sisfar
                 return _restClient
                     .Resource(_config.Puntos.ExistsByFechaGreatThanOrEqual
                         .Replace("{year}", $"{year}")
-                        .Replace("{fecha}", $"{fechaVenta})"))
+                        .Replace("{fecha}", $"{fechaVenta})")
+                        .Replace("{empresa}", $"{empresa}"))
                     .SendGet<bool>();
             }
             catch (RestClientNotFoundException)
