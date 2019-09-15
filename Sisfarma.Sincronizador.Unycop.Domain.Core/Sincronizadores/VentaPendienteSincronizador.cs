@@ -6,8 +6,6 @@ using Sisfarma.Sincronizador.Domain.Core.ExternalServices.Fisiotes.DTO.VentasPen
 using Sisfarma.Sincronizador.Domain.Core.Services;
 using Sisfarma.Sincronizador.Domain.Core.Sincronizadores.SuperTypes;
 using Sisfarma.Sincronizador.Domain.Entities.Fisiotes;
-using Sisfarma.Sincronizador.Infrastructure.Fisiotes.DTO;
-using DC = Sisfarma.Sincronizador.Domain.Core.Sincronizadores;
 using FAR = Sisfarma.Sincronizador.Domain.Entities.Farmacia;
 
 namespace Sisfarma.Sincronizador.Unycop.Domain.Core.Sincronizadores
