@@ -17,8 +17,6 @@ namespace Sisfarma.Sincronizador.Nixfarma.Infrastructure.Repositories.Farmacia
         private readonly IFamiliaRepository _familiaRepository;
         private readonly ILaboratorioRepository _laboratorioRepository;
 
-        private readonly decimal _factorCentecimal = 0.01m;
-
         public PedidosRepository(LocalConfig config) : base(config)
         { }
 
@@ -133,67 +131,6 @@ namespace Sisfarma.Sincronizador.Nixfarma.Infrastructure.Repositories.Farmacia
                 conn.Close();
                 conn.Dispose();
             }
-        }
-
-        private IEnumerable<Pedido> GenerarPedidos(IEnumerable<IGrouping<PedidoCompositeKey, DTO.Pedido>> groups)
-        {
-            var pedidos = new List<Pedido>();
-            foreach (var group in groups)
-            {
-                var linea = 0;
-                var fecha = group.FirstOrDefault()?.Fecha;
-                var detalle = new List<PedidoDetalle>();
-                foreach (var item in group)
-                {
-                    var pedidoDetalle = new PedidoDetalle()
-                    {
-                        Linea = ++linea,
-                        CantidadPedida = item.CantInicial,
-                        PedidoId = item.Id
-                    };
-
-                    var farmaco = _farmacoRepository.GetOneOrDefaultById(item.Farmaco.ToString());
-                    if (farmaco != null)
-                    {
-                        var pcoste = farmaco.PrecioUnicoEntrada.HasValue && farmaco.PrecioUnicoEntrada != 0
-                            ? (decimal)farmaco.PrecioUnicoEntrada.Value * _factorCentecimal
-                            : ((decimal?)farmaco.PrecioMedio ?? 0m) * _factorCentecimal;
-
-                        var proveedor = _proveedorRepository.GetOneOrDefaultByCodigoNacional(farmaco.Id.ToString());
-
-                        var categoria = farmaco.CategoriaId.HasValue
-                            ? _categoriaRepository.GetOneOrDefaultById(farmaco.CategoriaId.Value.ToString())
-                            : null;
-
-                        var subcategoria = farmaco.CategoriaId.HasValue && farmaco.SubcategoriaId.HasValue
-                            ? _categoriaRepository.GetSubcategoriaOneOrDefaultByKey(
-                                farmaco.CategoriaId.Value,
-                                farmaco.SubcategoriaId.Value)
-                            : null;
-
-                        var familia = _familiaRepository.GetOneOrDefaultById(farmaco.Familia);
-                        var laboratorio = _laboratorioRepository.GetOneOrDefaultByCodigo(farmaco.Laboratorio.Value, farmaco.Clase, farmaco.ClaseBot);
-
-                        pedidoDetalle.Farmaco = new Farmaco
-                        {
-                            Id = farmaco.Id,
-                            Codigo = item.Farmaco.ToString(),
-                            PrecioCoste = pcoste,
-                            Proveedor = proveedor,
-                            Categoria = categoria,
-                            Subcategoria = subcategoria,
-                            Familia = familia,
-                            Laboratorio = laboratorio,
-                            Denominacion = farmaco.Denominacion,
-                            Precio = farmaco.PVP * _factorCentecimal,
-                            Stock = farmaco.Existencias ?? 0
-                        };
-                    }
-                    detalle.Add(pedidoDetalle);
-                }
-                pedidos.Add(new Pedido { Id = group.Key.Id, Fecha = fecha.Value }.AddRangeDetalle(detalle));
-            }
-            return pedidos;
         }
 
         public IEnumerable<PedidoDetalle> GetAllDetalleByPedido(long numero, string empresa, int anio)

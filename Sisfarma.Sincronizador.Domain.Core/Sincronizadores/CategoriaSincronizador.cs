@@ -10,30 +10,13 @@ namespace Sisfarma.Sincronizador.Domain.Core.Sincronizadores
     {
         protected const string PADRE_DEFAULT = @"<SIN PADRE>";
 
-        public CategoriaSincronizador(IFarmaciaService farmacia, ISisfarmaService fisiotes) 
+        public CategoriaSincronizador(IFarmaciaService farmacia, ISisfarmaService fisiotes)
             : base(farmacia, fisiotes)
         { }
 
-        public override void Process() => ProcessCategorias();
-
-        private void ProcessCategorias()
+        public override void Process()
         {
-            var categorias = _farmacia.Categorias.GetAllByDescripcion();
-            foreach (var categoria in categorias)
-            {
-                Task.Delay(5).Wait();
-                _cancellationToken.ThrowIfCancellationRequested();
-
-                var padre = _farmacia.Categorias.GetSubCategoriaById($"{categoria.Id}") 
-                    ?? PADRE_DEFAULT;
-                                                
-                _sisfarma.Categorias.Sincronizar(new Categoria
-                {
-                    categoria = categoria.Nombre.Strip(),
-                    padre = padre.Strip(),
-                    prestashopPadreId = null                            
-                });                
-            }
+            throw new System.NotImplementedException();
         }
     }
 }

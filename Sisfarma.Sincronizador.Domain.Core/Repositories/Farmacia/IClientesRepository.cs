@@ -9,15 +9,7 @@ namespace Sisfarma.Sincronizador.Domain.Core.Repositories.Farmacia
 
         bool Exists(int id);
 
-        T GetAuxiliarById<T>(string cliente) where T : ClienteAux;
-
-        List<Cliente> GetGreatThanId(long id);
-
         Cliente GetOneOrDefaultById(long id, bool cargarPuntosSisfarma);
-
-        decimal GetTotalPuntosById(string idCliente);
-
-        bool HasSexoField();
 
         string EsResidencia(string tipo, string descuento, string filtros);
     }

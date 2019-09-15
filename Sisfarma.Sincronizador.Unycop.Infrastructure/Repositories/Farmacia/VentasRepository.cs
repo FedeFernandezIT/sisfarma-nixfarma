@@ -14,8 +14,6 @@ namespace Sisfarma.Sincronizador.Nixfarma.Infrastructure.Repositories.Farmacia
     public class VentasRepository : FarmaciaRepository, IVentasRepository
     {
         private readonly IClientesRepository _clientesRepository;
-        private readonly ITicketRepository _ticketRepository;
-        private readonly IVendedoresRepository _vendedoresRepository;
         private readonly IFarmacoRepository _farmacoRepository;
         private readonly ICodigoBarraRepository _barraRepository;
         private readonly IProveedorRepository _proveedorRepository;
@@ -27,8 +25,6 @@ namespace Sisfarma.Sincronizador.Nixfarma.Infrastructure.Repositories.Farmacia
 
         public VentasRepository(LocalConfig config,
             IClientesRepository clientesRepository,
-            ITicketRepository ticketRepository,
-            IVendedoresRepository vendedoresRepository,
             IFarmacoRepository farmacoRepository,
             ICodigoBarraRepository barraRepository,
             IProveedorRepository proveedorRepository,
@@ -37,20 +33,16 @@ namespace Sisfarma.Sincronizador.Nixfarma.Infrastructure.Repositories.Farmacia
             ILaboratorioRepository laboratorioRepository) : base(config)
         {
             _clientesRepository = clientesRepository ?? throw new ArgumentNullException(nameof(clientesRepository));
-            _ticketRepository = ticketRepository ?? throw new ArgumentNullException(nameof(ticketRepository));
             _farmacoRepository = farmacoRepository ?? throw new ArgumentNullException(nameof(farmacoRepository));
             _barraRepository = barraRepository ?? throw new ArgumentNullException(nameof(barraRepository));
             _proveedorRepository = proveedorRepository ?? throw new ArgumentNullException(nameof(proveedorRepository));
             _categoriaRepository = categoriaRepository ?? throw new ArgumentNullException(nameof(categoriaRepository));
             _familiaRepository = familiaRepository ?? throw new ArgumentNullException(nameof(familiaRepository));
             _laboratorioRepository = laboratorioRepository ?? throw new ArgumentNullException(nameof(laboratorioRepository));
-            _vendedoresRepository = vendedoresRepository ?? throw new ArgumentNullException(nameof(vendedoresRepository));
         }
 
         public VentasRepository(
             IClientesRepository clientesRepository,
-            ITicketRepository ticketRepository,
-            IVendedoresRepository vendedoresRepository,
             IFarmacoRepository farmacoRepository,
             ICodigoBarraRepository barraRepository,
             IProveedorRepository proveedorRepository,
@@ -59,14 +51,12 @@ namespace Sisfarma.Sincronizador.Nixfarma.Infrastructure.Repositories.Farmacia
             ILaboratorioRepository laboratorioRepository)
         {
             _clientesRepository = clientesRepository ?? throw new ArgumentNullException(nameof(clientesRepository));
-            _ticketRepository = ticketRepository ?? throw new ArgumentNullException(nameof(ticketRepository));
             _farmacoRepository = farmacoRepository ?? throw new ArgumentNullException(nameof(farmacoRepository));
             _barraRepository = barraRepository ?? throw new ArgumentNullException(nameof(barraRepository));
             _proveedorRepository = proveedorRepository ?? throw new ArgumentNullException(nameof(proveedorRepository));
             _categoriaRepository = categoriaRepository ?? throw new ArgumentNullException(nameof(categoriaRepository));
             _familiaRepository = familiaRepository ?? throw new ArgumentNullException(nameof(familiaRepository));
             _laboratorioRepository = laboratorioRepository ?? throw new ArgumentNullException(nameof(laboratorioRepository));
-            _vendedoresRepository = vendedoresRepository ?? throw new ArgumentNullException(nameof(vendedoresRepository));
         }
 
         public Venta GetOneOrDefaultById(long id, string empresa, int anio)
@@ -402,101 +392,6 @@ namespace Sisfarma.Sincronizador.Nixfarma.Infrastructure.Repositories.Farmacia
             {
                 conn.Close();
                 conn.Dispose();
-            }
-        }
-
-        public List<VentaDetalle> GetDetalleDeVentaByVentaId(int year, long venta)
-        {
-            var ventaInteger = (int)venta;
-
-            try
-            {
-                using (var db = FarmaciaContext.VentasByYear(year))
-                {
-                    var sql = @"SELECT ID_Farmaco as Farmaco, Organismo, Cantidad, PVP, DescLin as Descuento, Importe FROM lineas_venta WHERE ID_venta= @venta";
-                    var lineas = db.Database.SqlQuery<DTO.LineaVenta>(sql,
-                        new OleDbParameter("venta", ventaInteger))
-                        .ToList();
-
-                    var linea = 0;
-                    var detalle = new List<VentaDetalle>();
-                    foreach (var item in lineas)
-                    {
-                        var ventaDetalle = new VentaDetalle
-                        {
-                            Linea = ++linea,
-                            Importe = item.Importe * _factorCentecimal,
-                            PVP = item.PVP * _factorCentecimal,
-                            Descuento = item.Descuento * _factorCentecimal,
-                            Receta = item.Organismo,
-                            Cantidad = item.Cantidad
-                        };
-
-                        var farmaco = _farmacoRepository.GetOneOrDefaultById(item.Farmaco.ToString());
-                        if (farmaco != null)
-                        {
-                            var pcoste = farmaco.PrecioUnicoEntrada.HasValue && farmaco.PrecioUnicoEntrada != 0
-                                ? (decimal)farmaco.PrecioUnicoEntrada.Value * _factorCentecimal
-                                : ((decimal?)farmaco.PrecioMedio ?? 0m) * _factorCentecimal;
-
-                            var codigoBarra = _barraRepository.GetOneByFarmacoId(farmaco.Id);
-                            var proveedor = _proveedorRepository.GetOneOrDefaultByCodigoNacional(farmaco.Id.ToString());
-
-                            var categoria = farmaco.CategoriaId.HasValue
-                                ? _categoriaRepository.GetOneOrDefaultById(farmaco.CategoriaId.Value.ToString())
-                                : null;
-
-                            var subcategoria = farmaco.CategoriaId.HasValue && farmaco.SubcategoriaId.HasValue
-                                ? _categoriaRepository.GetSubcategoriaOneOrDefaultByKey(
-                                    farmaco.CategoriaId.Value,
-                                    farmaco.SubcategoriaId.Value)
-                                : null;
-
-                            var familia = _familiaRepository.GetOneOrDefaultById(farmaco.Familia);
-                            var laboratorio = _laboratorioRepository.GetOneOrDefaultByCodigo(farmaco.Laboratorio.Value, null, null) // TODO check clase y clasebot
-                                ?? new Laboratorio { Codigo = farmaco.Laboratorio.Value.ToString() };
-
-                            ventaDetalle.Farmaco = new Farmaco
-                            {
-                                Id = farmaco.Id,
-                                Codigo = item.Farmaco.ToString(),
-                                PrecioCoste = pcoste,
-                                CodigoBarras = codigoBarra,
-                                Proveedor = proveedor,
-                                Categoria = categoria,
-                                Subcategoria = subcategoria,
-                                Familia = familia,
-                                Laboratorio = laboratorio,
-                                Denominacion = farmaco.Denominacion
-                            };
-                        }
-                        else ventaDetalle.Farmaco = new Farmaco { Id = item.Farmaco, Codigo = item.Farmaco.ToString() };
-
-                        detalle.Add(ventaDetalle);
-                    }
-
-                    return detalle;
-                }
-            }
-            catch (FarmaciaContextException)
-            {
-                return new List<VentaDetalle>();
-            }
-        }
-
-        public Ticket GetOneOrDefaultTicketByVentaId(long id)
-        {
-            var year = int.Parse($"{id}".Substring(0, 4));
-            var ventaId = int.Parse($"{id}".Substring(4));
-
-            using (var db = FarmaciaContext.VentasByYear(year))
-            {
-                var sql = @"SELECT Id_Ticket as Numero, Serie FROM Tickets_D WHERE Id_Venta = @venta";
-                var rs = db.Database.SqlQuery<DTO.Ticket>(sql,
-                    new OleDbParameter("venta", ventaId))
-                    .FirstOrDefault();
-
-                return rs != null ? new Ticket { Numero = rs.Numero, Serie = rs.Serie } : null;
             }
         }
 

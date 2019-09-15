@@ -21,8 +21,6 @@ namespace Sisfarma.Sincronizador.Domain.Core.Services
 
         IEncargosRepository Encargos { get; }
 
-        ISubcategoriasRepository Subcategorias { get; }
-
         IListaRepository Listas { get; }
 
         ISinonimosRepository Sinonimos { get; }
@@ -50,8 +48,6 @@ namespace Sisfarma.Sincronizador.Domain.Core.Services
 
         public IEncargosRepository Encargos { get; }
 
-        public ISubcategoriasRepository Subcategorias { get; }
-
         public IListaRepository Listas { get; }
 
         public ISinonimosRepository Sinonimos { get; }
@@ -72,12 +68,10 @@ namespace Sisfarma.Sincronizador.Domain.Core.Services
             IFarmacosRepository farmacos,
             IPedidosRepository pedidos,
             IEncargosRepository encargos,
-            ISubcategoriasRepository subcategorias,
             IListaRepository listas,
             ISinonimosRepository sinonimos,
             IRecepcionRepository recepciones,
-            IProveedorRepository proveedores,
-            IVendedoresRepository vendedores)
+            IProveedorRepository proveedores)
         {
             Categorias = categorias ?? throw new ArgumentNullException(nameof(categorias));
             Familias = familias ?? throw new ArgumentNullException(nameof(familias));
@@ -86,12 +80,10 @@ namespace Sisfarma.Sincronizador.Domain.Core.Services
             Farmacos = farmacos ?? throw new ArgumentNullException(nameof(farmacos));
             Pedidos = pedidos ?? throw new ArgumentNullException(nameof(pedidos));
             Encargos = encargos ?? throw new ArgumentNullException(nameof(encargos));
-            Subcategorias = subcategorias ?? throw new ArgumentNullException(nameof(subcategorias));
             Listas = listas ?? throw new ArgumentNullException(nameof(listas));
             Sinonimos = sinonimos ?? throw new ArgumentNullException(nameof(sinonimos));
             Recepciones = recepciones ?? throw new ArgumentNullException(nameof(recepciones));
             Proveedores = proveedores ?? throw new ArgumentNullException(nameof(proveedores));
-            Vendedores = vendedores ?? throw new ArgumentNullException(nameof(vendedores));
         }
     }
 }

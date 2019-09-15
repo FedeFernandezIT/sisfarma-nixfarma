@@ -37,9 +37,6 @@
     <Reference Include="EntityFramework.SqlServer, Version=6.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089, processorArchitecture=MSIL">
       <HintPath>..\packages\EntityFramework.6.1.3\lib\net45\EntityFramework.SqlServer.dll</HintPath>
     </Reference>
-    <Reference Include="JetEntityFrameworkProvider, Version=6.0.0.0, Culture=neutral, PublicKeyToken=756cf6beb8fe7b41, processorArchitecture=x86">
-      <HintPath>..\packages\JetEntityFrameworkProvider.6.1.4\lib\JetEntityFrameworkProvider.dll</HintPath>
-    </Reference>
     <Reference Include="Oracle.DataAccess">
       <HintPath>..\packages\build\Oracle.DataAccess.dll</HintPath>
     </Reference>
@@ -92,12 +89,8 @@
     <Compile Include="Repositories\Farmacia\ProveedoresRepository.cs" />
     <Compile Include="Repositories\Farmacia\RecepcionRespository.cs" />
     <Compile Include="Repositories\Farmacia\SinonimosRepository.cs" />
-    <Compile Include="Repositories\Farmacia\SubcategoriaRepository.cs" />
     <Compile Include="Repositories\Farmacia\TarifaRepository.cs" />
-    <Compile Include="Repositories\Farmacia\VendedoresRepository.cs" />
-    <Compile Include="Repositories\Farmacia\VentasPremiumRepository.cs" />
     <Compile Include="Repositories\Farmacia\VentasRepository.cs" />
-    <Compile Include="Repositories\TicketRepository.cs" />
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\Sisfarma.RestClient\Sisfarma.RestClient.csproj">

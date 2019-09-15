@@ -11,8 +11,6 @@ namespace Sisfarma.Sincronizador.Nixfarma.Infrastructure.Repositories.Farmacia
     public interface ICategoriaRepository
     {
         Categoria GetOneOrDefaultById(string id);
-
-        Subcategoria GetSubcategoriaOneOrDefaultByKey(long categoria, long id);
     }
 
     public class CategoriaRepository : FarmaciaRepository, ICategoriaRepository
@@ -55,21 +53,6 @@ namespace Sisfarma.Sincronizador.Nixfarma.Infrastructure.Repositories.Farmacia
             finally
             {
                 conn.Close();
-            }
-        }
-
-        public Subcategoria GetSubcategoriaOneOrDefaultByKey(long categoria, long id)
-        {
-            var categInteger = (int)categoria;
-            var idInteger = (int)id;
-
-            using (var db = FarmaciaContext.Default())
-            {
-                var sql = "SELECT Nombre FROM subcategorias WHERE IdSubCategoria = @id AND IdCategoria = @categoria";
-                return db.Database.SqlQuery<Subcategoria>(sql,
-                    new OleDbParameter("id", idInteger),
-                    new OleDbParameter("categoria", categInteger))
-                        .FirstOrDefault();
             }
         }
     }

@@ -19,9 +19,6 @@ namespace Sisfarma.Sincronizador.Nixfarma.Infrastructure.Repositories.Farmacia
         private readonly ICategoriaRepository _categoriaRepository;
         private readonly IFamiliaRepository _familiaRepository;
         private readonly ILaboratorioRepository _laboratorioRepository;
-        private readonly IVendedoresRepository _vendedoresRepository;
-
-        private readonly decimal _factorCentecimal = 0.01m;
 
         public EncargosRepository(LocalConfig config) : base(config)
         { }
@@ -32,8 +29,7 @@ namespace Sisfarma.Sincronizador.Nixfarma.Infrastructure.Repositories.Farmacia
             IFarmacoRepository farmacoRepository,
             ICategoriaRepository categoriaRepository,
             IFamiliaRepository familiaRepository,
-            ILaboratorioRepository laboratorioRepository,
-            IVendedoresRepository vendedoresRepository)
+            ILaboratorioRepository laboratorioRepository)
         {
             _clientesRepository = clientesRepository ?? throw new ArgumentNullException(nameof(clientesRepository));
             _proveedorRepository = proveedorRepository ?? throw new ArgumentNullException(nameof(proveedorRepository));
@@ -41,7 +37,6 @@ namespace Sisfarma.Sincronizador.Nixfarma.Infrastructure.Repositories.Farmacia
             _categoriaRepository = categoriaRepository ?? throw new ArgumentNullException(nameof(categoriaRepository));
             _familiaRepository = familiaRepository ?? throw new ArgumentNullException(nameof(familiaRepository));
             _laboratorioRepository = laboratorioRepository ?? throw new ArgumentNullException(nameof(laboratorioRepository));
-            _vendedoresRepository = vendedoresRepository ?? throw new ArgumentNullException(nameof(vendedoresRepository));
         }
 
         public IEnumerable<Encargo> GetAllByContadorGreaterOrEqual(int year, long? contador)

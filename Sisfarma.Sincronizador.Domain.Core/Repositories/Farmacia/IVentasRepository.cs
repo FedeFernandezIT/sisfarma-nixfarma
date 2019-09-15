@@ -14,15 +14,8 @@ namespace Sisfarma.Sincronizador.Domain.Core.Repositories.Farmacia
 
         List<VentaDetalle> GetDetalleDeVentaByVentaId(long venta, string empresa);
 
-        Ticket GetOneOrDefaultTicketByVentaId(long venta);
-
-        //List<LineaVentaVirtual> GetLineasVirtualesByVenta(int venta);
-        //VentaDetalle GetLineaVentaOrDefaultByKey(long venta, long linea);
         Venta GetOneOrDefaultById(long venta, string empresa, int anio);
 
         List<VentaDetalle> GetDetalleDeVentaPendienteByVentaId(long numeroVenta, string empresa);
-
-        //LineaVentaRedencion GetOneOrDefaultLineaRedencionByKey(int venta, int linea);
-        //List<Venta> GetVirtualesLessThanId(long venta);
     }
 }

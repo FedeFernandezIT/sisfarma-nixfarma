@@ -8,27 +8,15 @@ namespace Sisfarma.Sincronizador.Nixfarma.Infrastructure.Repositories.Farmacia
 {
     public interface ICodigoBarraRepository
     {
-        string GetOneByFarmacoId(long farmaco);
     }
-
 
     public class CodigoBarraRepository : FarmaciaRepository, ICodigoBarraRepository
     {
         public CodigoBarraRepository(LocalConfig config) : base(config)
         { }
 
-        public CodigoBarraRepository() { }
-
-        public string GetOneByFarmacoId(long farmaco)
+        public CodigoBarraRepository()
         {
-            var farmacoInteger = (int)farmaco;
-            using (var db = FarmaciaContext.Default())
-            {
-                var sql = @"select Cod_Barra from codigo_barra where ID_farmaco = @farmaco";                    
-                return db.Database.SqlQuery<string>(sql,
-                    new OleDbParameter("farmaco", farmacoInteger))
-                        .FirstOrDefault();
-            }
         }
     }
 }

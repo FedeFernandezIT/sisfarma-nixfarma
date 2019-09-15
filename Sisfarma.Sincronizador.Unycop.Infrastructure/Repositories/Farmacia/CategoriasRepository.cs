@@ -48,43 +48,5 @@ namespace Sisfarma.Sincronizador.Nixfarma.Infrastructure.Repositories.Farmacia
                 conn.Dispose();
             }
         }
-
-        public IEnumerable<Categoria> GetAllByDescripcion()
-        {
-            var rs = new List<Categoria>();
-            using (var db = FarmaciaContext.Default())
-            {
-                var sql = @"select IDCategoria as Id, Nombre from categorias WHERE nombre NOT IN ('ESPECIALIDAD', 'EFP', 'SIN FAMILIA') AND nombre NOT LIKE '%ESPECIALIDADES%' AND nombre NOT LIKE '%Medicamento%'";
-                rs = db.Database.SqlQuery<DTO.Categoria>(sql)
-                    .Select(x => new Categoria { Id = x.Id, Nombre = x.Nombre })
-                        .ToList();
-            }
-
-            rs.ForEach(item =>
-                item.Subcategorias = GetAllNombreSubcategoriaByCategoriaId(item.Id));
-            return rs;
-        }
-
-        public IEnumerable<string> GetAllNombreSubcategoriaByCategoriaId(long id)
-        {
-            using (var db = FarmaciaContext.Default())
-            {
-                var sql = @"SELECT nombre FROM Subcategorias WHERE  IdCategoria = @id";
-                return db.Database.SqlQuery<string>(sql,
-                    new OleDbParameter("id", (int)id))
-                    .ToList();
-            }
-        }
-
-        public string GetSubCategoriaById(string id)
-        {
-            using (var db = FarmaciaContext.Default())
-            {
-                var sql = @"SELECT nombre FROM Subcategorias WHERE  IdCategoria = @id";
-                return db.Database.SqlQuery<string>(sql,
-                    new OleDbParameter("id", int.Parse(id)))
-                    .FirstOrDefault();
-            }
-        }
     }
 }

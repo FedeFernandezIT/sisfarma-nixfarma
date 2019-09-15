@@ -94,13 +94,6 @@ namespace Sisfarma.Sincronizador.Nixfarma.Infrastructure.Repositories.Farmacia
                 conn.Close();
                 conn.Dispose();
             }
-
-            using (var db = FarmaciaContext.Default())
-            {
-                var sql = @"select nombre from familias WHERE nombre NOT IN ('ESPECIALIDAD', 'EFP', 'SIN FAMILIA') AND nombre NOT LIKE '%ESPECIALIDADES%' AND nombre NOT LIKE '%Medicamento%'";
-                return db.Database.SqlQuery<Familia>(sql)
-                    .ToList();
-            }
         }
 
         public Familia GetOneOrDefaultById(long id)

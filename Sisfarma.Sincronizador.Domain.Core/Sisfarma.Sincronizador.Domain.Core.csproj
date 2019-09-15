@@ -50,7 +50,6 @@
     <Compile Include="Repositories\Farmacia\IPedidosRepository.cs" />
     <Compile Include="Repositories\Farmacia\IRecepcionRepository.cs" />
     <Compile Include="Repositories\Farmacia\ISinonimosRepository.cs" />
-    <Compile Include="Repositories\Farmacia\ISubcategoriaRepository.cs" />
     <Compile Include="Sincronizadores\ClienteSincronizador.cs" />
     <Compile Include="ExternalServices\Fisiotes\DTO\Clientes\UpdatePuntaje.cs" />
     <Compile Include="ExternalServices\Fisiotes\DTO\PuntosPendientes\InsertPuntuacion.cs" />

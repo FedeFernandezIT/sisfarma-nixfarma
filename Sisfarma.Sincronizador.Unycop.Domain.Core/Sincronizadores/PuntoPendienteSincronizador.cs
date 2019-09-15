@@ -20,8 +20,6 @@ namespace Sisfarma.Sincronizador.Unycop.Domain.Core.Sincronizadores
         protected const string TIPO_CLASIFICACION_CATEGORIA = "Categoria";
         protected const string SISTEMA_NIXFARMA = "nixfarma";
 
-        private readonly ITicketRepository _ticketRepository;
-
         private string _clasificacion;
         private bool _debeCopiarClientes;
         private string _copiarClientes;
@@ -34,7 +32,6 @@ namespace Sisfarma.Sincronizador.Unycop.Domain.Core.Sincronizadores
         public PuntoPendienteSincronizadorEmp1(IFarmaciaService farmacia, ISisfarmaService fisiotes)
             : base(farmacia, fisiotes)
         {
-            _ticketRepository = new TicketRepository();
             _aniosProcesados = new HashSet<int>();
         }
 
@@ -227,8 +224,6 @@ namespace Sisfarma.Sincronizador.Unycop.Domain.Core.Sincronizadores
         protected const string TIPO_CLASIFICACION_CATEGORIA = "Categoria";
         protected const string SISTEMA_NIXFARMA = "nixfarma";
 
-        private readonly ITicketRepository _ticketRepository;
-
         private string _clasificacion;
         private bool _debeCopiarClientes;
         private string _copiarClientes;
@@ -241,7 +236,6 @@ namespace Sisfarma.Sincronizador.Unycop.Domain.Core.Sincronizadores
         public PuntoPendienteSincronizadorEmp2(IFarmaciaService farmacia, ISisfarmaService fisiotes)
             : base(farmacia, fisiotes)
         {
-            _ticketRepository = new TicketRepository();
             _aniosProcesados = new HashSet<int>();
         }
 

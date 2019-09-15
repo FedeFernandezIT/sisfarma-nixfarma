@@ -1,8 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 using Sisfarma.Sincronizador.Domain.Core.Repositories.Farmacia;
 using Sisfarma.Sincronizador.Domain.Core.Services;
 using Sisfarma.Sincronizador.Domain.Entities.Farmacia;
@@ -17,7 +15,6 @@ namespace Sisfarma.Sincronizador.Unycop.Domain.Core.Sincronizadores
 {
     public class PedidoSincronizador : DC.PedidoSincronizador
     {
-        private readonly decimal _factorCentecimal = 0.01m;
         private readonly ICategoriaRepository _categoriaRepository;
         private readonly ILaboratorioRepository _laboratorioRepository;
         private readonly IFamiliaRepository _familiaRepository;

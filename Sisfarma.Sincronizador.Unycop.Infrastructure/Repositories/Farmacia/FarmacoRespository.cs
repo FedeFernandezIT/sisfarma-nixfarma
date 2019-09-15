@@ -27,8 +27,6 @@ namespace Sisfarma.Sincronizador.Nixfarma.Infrastructure.Repositories.Farmacia
         private readonly ITarifaRepository _tarifaRepository;
         private readonly IEmpresaRepository _empresaRepository;
 
-        private readonly decimal _factorCentecimal = 0.01m;
-
         public FarmacoRespository(LocalConfig config)
             : base(config)
         { }
@@ -139,20 +137,6 @@ namespace Sisfarma.Sincronizador.Nixfarma.Infrastructure.Repositories.Farmacia
             }
         }
 
-        public IEnumerable<Farmaco> GetAllByFechaUltimaEntradaGreaterOrEqual(DateTime fecha)
-        {
-            var rs = Enumerable.Empty<DTO.Farmaco>();
-            using (var db = FarmaciaContext.Farmacos())
-            {
-                var sql = @"select top 999 ID_Farmaco as Id, Familia, CategoriaId, SubcategoriaId, Fecha_U_Entrada as FechaUltimaEntrada, Fecha_U_Salida as FechaUltimaSalida, Ubicacion, PC_U_Entrada as PrecioUnicoEntrada, PCMedio as PrecioMedio, BolsaPlastico, PVP, IVA, Stock, Existencias, Denominacion, Laboratorio, FechaBaja, Fecha_Caducidad as FechaCaducidad from Farmacos WHERE Fecha_U_Entrada >= @fecha ORDER BY Fecha_U_Entrada ASC";
-                rs = db.Database.SqlQuery<DTO.Farmaco>(sql,
-                    new OleDbParameter("fecha", fecha.ToDateInteger("yyyyMMdd")))
-                    .ToList();
-            }
-
-            return rs.Select(GenerarFarmaco);
-        }
-
         public IEnumerable<DTO.Farmaco> GetAllByFechaUltimaEntradaGreaterOrEqualAsDTO(DateTime fecha)
         {
             var farmacos = new List<DTO.Farmaco>();
@@ -248,20 +232,6 @@ namespace Sisfarma.Sincronizador.Nixfarma.Infrastructure.Repositories.Farmacia
                 conn.Close();
                 conn.Dispose();
             }
-        }
-
-        public IEnumerable<Farmaco> GetAllByFechaUltimaSalidaGreaterOrEqual(DateTime fecha)
-        {
-            var rs = Enumerable.Empty<DTO.Farmaco>();
-            using (var db = FarmaciaContext.Farmacos())
-            {
-                var sql = @"select top 999 ID_Farmaco as Id, Familia, CategoriaId, SubcategoriaId, Fecha_U_Entrada as FechaUltimaEntrada, Fecha_U_Salida as FechaUltimaSalida, Ubicacion, PC_U_Entrada as PrecioUnicoEntrada, PCMedio as PrecioMedio, BolsaPlastico, PVP, IVA, Stock, Existencias, Denominacion, Laboratorio, FechaBaja, Fecha_Caducidad as FechaCaducidad from Farmacos WHERE Fecha_U_Salida >= @fecha ORDER BY Fecha_U_Salida ASC";
-                rs = db.Database.SqlQuery<DTO.Farmaco>(sql,
-                    new OleDbParameter("fecha", fecha.ToDateInteger("yyyyMMdd")))
-                    .ToList();
-            }
-
-            return rs.Select(GenerarFarmaco);
         }
 
         public IEnumerable<DTO.Farmaco> GetAllByFechaUltimaSalidaGreaterOrEqualAsDTO(DateTime fecha)
@@ -361,20 +331,6 @@ namespace Sisfarma.Sincronizador.Nixfarma.Infrastructure.Repositories.Farmacia
             }
         }
 
-        public IEnumerable<Farmaco> GetAllWithoutStockByIdGreaterOrEqual(string codigo)
-        {
-            var rs = Enumerable.Empty<DTO.Farmaco>();
-            using (var db = FarmaciaContext.Farmacos())
-            {
-                var sql = @"select top 999 ID_Farmaco as Id, Familia, CategoriaId, SubcategoriaId, Fecha_U_Entrada as FechaUltimaEntrada, Fecha_U_Salida as FechaUltimaSalida, Ubicacion, PC_U_Entrada as PrecioUnicoEntrada, PCMedio as PrecioMedio, BolsaPlastico, PVP, IVA, Stock, Existencias, Denominacion, Laboratorio, FechaBaja, Fecha_Caducidad as FechaCaducidad from Farmacos WHERE ID_Farmaco >= @codigo AND (existencias <= 0 OR existencias IS NULL) ORDER BY ID_Farmaco ASC";
-                rs = db.Database.SqlQuery<DTO.Farmaco>(sql,
-                    new OleDbParameter("codigo", int.Parse(codigo)))
-                    .ToList();
-            }
-
-            return rs.Select(GenerarFarmaco);
-        }
-
         public IEnumerable<DTO.Farmaco> GetAllWithoutStockByIdGreaterAsDTO(string codArticu)
         {
             var farmacos = new List<DTO.Farmaco>();
@@ -472,20 +428,6 @@ namespace Sisfarma.Sincronizador.Nixfarma.Infrastructure.Repositories.Farmacia
             }
         }
 
-        public IEnumerable<Farmaco> GetWithStockByIdGreaterOrEqual(string codigo)
-        {
-            var rs = Enumerable.Empty<DTO.Farmaco>();
-            using (var db = FarmaciaContext.Farmacos())
-            {
-                var sql = @"select top 999 ID_Farmaco as Id, Familia, CategoriaId, SubcategoriaId, Fecha_U_Entrada as FechaUltimaEntrada, Fecha_U_Salida as FechaUltimaSalida, Ubicacion, PC_U_Entrada as PrecioUnicoEntrada, PCMedio as PrecioMedio, BolsaPlastico, PVP, IVA, Stock, Existencias, Denominacion, Laboratorio, FechaBaja, Fecha_Caducidad as FechaCaducidad from Farmacos WHERE ID_Farmaco >= @codigo AND existencias > 0 ORDER BY ID_Farmaco ASC";
-                rs = db.Database.SqlQuery<DTO.Farmaco>(sql,
-                    new OleDbParameter("codigo", int.Parse(codigo)))
-                    .ToList();
-            }
-
-            return rs.Select(GenerarFarmaco);
-        }
-
         public IEnumerable<DTO.Farmaco> GetWithStockByIdGreaterAsDTO(string codArticu)
         {
             var farmacos = new List<DTO.Farmaco>();
@@ -580,32 +522,6 @@ namespace Sisfarma.Sincronizador.Nixfarma.Infrastructure.Repositories.Farmacia
             {
                 conn.Close();
                 conn.Dispose();
-            }
-        }
-
-        public bool AnyGraterThatDoesnHaveStock(string codigo)
-        {
-            using (var db = FarmaciaContext.Farmacos())
-            {
-                var sql = @"select top 1 ID_Farmaco as Id FROM Farmacos WHERE ID_Farmaco > @codigo AND existencias <= 0 ORDER BY ID_Farmaco ASC";
-                var rs = db.Database.SqlQuery<DTO.Farmaco>(sql,
-                    new OleDbParameter("codigo", int.Parse(codigo)))
-                    .FirstOrDefault();
-
-                return rs != null;
-            }
-        }
-
-        public bool AnyGreaterThatHasStock(string codigo)
-        {
-            using (var db = FarmaciaContext.Farmacos())
-            {
-                var sql = @"select top 1 ID_Farmaco as Id FROM Farmacos WHERE ID_Farmaco > @codigo AND existencias > 0 ORDER BY ID_Farmaco ASC";
-                var rs = db.Database.SqlQuery<DTO.Farmaco>(sql,
-                    new OleDbParameter("codigo", int.Parse(codigo)))
-                    .FirstOrDefault();
-
-                return rs != null;
             }
         }
 
