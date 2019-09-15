@@ -17,9 +17,19 @@ namespace Sisfarma.Sincronizador.Nixfarma.Infrastructure.ExternalServices.Sisfar
             : base(restClient, config)
         { }
 
-        public bool Exists(int venta, int linea)
+        public bool Exists(long venta)
         {
-            throw new NotImplementedException();
+            try
+            {
+                return _restClient
+                    .Resource(_config.Puntos.Exists
+                        .Replace("{venta}", $"{venta}"))
+                    .SendGet<bool>();
+            }
+            catch (RestClientNotFoundException)
+            {
+                return false;
+            }
         }
 
         public bool ExistsGreatThanOrEqual(DateTime fecha, string empresa)

@@ -40,6 +40,8 @@ namespace Sisfarma.Sincronizador.Infrastructure.Fisiotes
 
         public ProgramacionResource Programacion { get; set; }
 
+        public VentaResource Ventas { get; set; }
+
         public static FisiotesConfig TestConfig(string remoteServer, string token)
         {
             return new FisiotesConfig
@@ -82,7 +84,8 @@ namespace Sisfarma.Sincronizador.Infrastructure.Fisiotes
                     Update = "api/puntos/update",
                     Insert = "api/puntos/createUpdate",
                     InsertActualizarVenta = "api/puntos/createUpdate/actualizarVenta/1",
-                    Delete = "api/puntos/delete"
+                    Delete = "api/puntos/delete",
+                    Exists = "api/puntos/exists/venta/{venta}"
                 },
 
                 Configuraciones = new ConfiguracionResource
@@ -183,10 +186,26 @@ namespace Sisfarma.Sincronizador.Infrastructure.Fisiotes
                 {
                     Encendido = "api/programacion/encendido",
                     Apagado = "api/programacion/apagado"
+                },
+
+                Ventas = new VentaResource
+                {
+                    InsertVentaPendiente = "api/venta/createUpdate",
+                    GetAllPendientes = "api/ventas/pendientes",
+                    DeleteVentaPendiente = "api/venta/delete",
                 }
             };
         }
     }
+}
+
+public class VentaResource
+{
+    public string InsertVentaPendiente { get; set; }
+
+    public string GetAllPendientes { get; set; }
+
+    public string DeleteVentaPendiente { get; set; }
 }
 
 public class CategoriaResource
@@ -251,6 +270,8 @@ public class PuntoResource
     public string GetPuntosCanjeadosByDni { get; set; }
 
     public string Delete { get; set; }
+
+    public string Exists { get; set; }
 }
 
 public class ConfiguracionResource

@@ -42,6 +42,8 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="ExternalServices\Fisiotes\DTO\VentasPendientes\VentaPendiente.cs" />
+    <Compile Include="ExternalServices\Fisiotes\IVentasExternalService.cs" />
     <Compile Include="Repositories\Farmacia\IEncargosRepository.cs" />
     <Compile Include="Repositories\Farmacia\IFarmacosRepository.cs" />
     <Compile Include="Repositories\Farmacia\IListaRepository.cs" />

@@ -35,6 +35,8 @@ namespace Sisfarma.Sincronizador.Domain.Core.Services
         IPuntosPendientesExternalService PuntosPendientes { get; }
 
         ISinonimosExternalService Sinonimos { get; }
+
+        IVentasExternalService Ventas { get; }
     }
 
     public class SisfarmaService : ISisfarmaService
@@ -69,6 +71,8 @@ namespace Sisfarma.Sincronizador.Domain.Core.Services
 
         public IProgramacionExternalService Programacion { get; set; }
 
+        public IVentasExternalService Ventas { get; set; }
+
         public SisfarmaService()
         {
         }
@@ -88,7 +92,8 @@ namespace Sisfarma.Sincronizador.Domain.Core.Services
             IFamiliasExternalService familias,
             IFaltasExternalService faltas,
             IProveedoresExternalService proveedores,
-            IProgramacionExternalService programacion)
+            IProgramacionExternalService programacion,
+            IVentasExternalService ventas)
         {
             Clientes = clientes ?? throw new ArgumentNullException(nameof(clientes));
             Huecos = huecos ?? throw new ArgumentNullException(nameof(huecos));
@@ -105,6 +110,7 @@ namespace Sisfarma.Sincronizador.Domain.Core.Services
             Faltas = faltas ?? throw new ArgumentNullException(nameof(faltas));
             Proveedores = proveedores ?? throw new ArgumentNullException(nameof(proveedores));
             Programacion = programacion ?? throw new ArgumentNullException(nameof(programacion));
+            Ventas = ventas ?? throw new ArgumentNullException(nameof(ventas));
         }
 
         public SisfarmaService(string host, string token)

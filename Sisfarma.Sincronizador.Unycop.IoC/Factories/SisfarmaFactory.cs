@@ -1,5 +1,7 @@
 ﻿using System;
+using Sisfarma.Sincronizador.Domain.Core.ExternalServices.Fisiotes;
 using Sisfarma.Sincronizador.Domain.Core.Services;
+using Sisfarma.Sincronizador.Infrastructure.ExternalService.Fisiotes;
 using Sisfarma.Sincronizador.Nixfarma.Infrastructure.ExternalServices;
 using Sisfarma.Sincronizador.Nixfarma.Infrastructure.ExternalServices.Sisfarma;
 
@@ -28,6 +30,7 @@ namespace Sisfarma.Sincronizador.Unycop.Domain.Core.Factories
             var faltas = new FaltasExternalService(new RestClient.RestSharp.RestClient(), INF.FisiotesConfig.TestConfig(_host, _token));
             var pedidos = new PedidosExternalService(new RestClient.RestSharp.RestClient(), INF.FisiotesConfig.TestConfig(_host, _token));
             var proveedores = new INF.ProveedoresExternalService(new RestClient.RestSharp.RestClient(), INF.FisiotesConfig.TestConfig(_host, _token));
+            var ventas = new VentasExternalService(new RestClient.RestSharp.RestClient(), INF.FisiotesConfig.TestConfig(_host, _token));
 
             return new SisfarmaService(
                 clientes: clientes,
@@ -43,7 +46,8 @@ namespace Sisfarma.Sincronizador.Unycop.Domain.Core.Factories
                 familias: familias,
                 faltas: faltas,
                 proveedores: proveedores,
-                programacion: programacion);
+                programacion: programacion,
+                ventas: ventas);
         }
 
         public static void Setup(string host, string token)

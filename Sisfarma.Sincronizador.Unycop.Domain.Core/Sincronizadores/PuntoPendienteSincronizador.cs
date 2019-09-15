@@ -1,4 +1,5 @@
 ﻿using Sisfarma.Sincronizador.Core.Extensions;
+using Sisfarma.Sincronizador.Domain.Core.ExternalServices.Fisiotes.DTO.VentasPendientes;
 using Sisfarma.Sincronizador.Domain.Core.Services;
 using Sisfarma.Sincronizador.Domain.Entities.Farmacia;
 using Sisfarma.Sincronizador.Domain.Entities.Fisiotes;
@@ -74,19 +75,25 @@ namespace Sisfarma.Sincronizador.Unycop.Domain.Core.Sincronizadores
                 if (venta.ClienteId > 0)
                     venta.Cliente = _farmacia.Clientes.GetOneOrDefaultById(venta.ClienteId, cargarPuntosSisfarma);
 
-                //venta.VendedorNombre = _farmacia.Vendedores.GetOneOrDefaultById(venta.VendedorId)?.Nombre;
-                venta.Detalle = _farmacia.Ventas.GetDetalleDeVentaByVentaId(venta.Operacion, "EMP1");
-
-                if (venta.HasCliente() && _debeCopiarClientes)
-                    InsertOrUpdateCliente(venta.Cliente);
-
-                var puntosPendientes = GenerarPuntosPendientes(venta);
-                foreach (var puntoPendiente in puntosPendientes)
+                if (venta.FechaFin.HasValue)
                 {
-                    _sisfarma.PuntosPendientes.Sincronizar(puntoPendiente);
-                }
+                    //venta.VendedorNombre = _farmacia.Vendedores.GetOneOrDefaultById(venta.VendedorId)?.Nombre;
+                    venta.Detalle = _farmacia.Ventas.GetDetalleDeVentaByVentaId(venta.Operacion, "EMP1");
 
-                _timestampUltimaVenta = venta.FechaHora;
+                    if (venta.HasCliente() && _debeCopiarClientes)
+                        InsertOrUpdateCliente(venta.Cliente);
+                    var puntosPendientes = GenerarPuntosPendientes(venta);
+                    foreach (var puntoPendiente in puntosPendientes)
+                    {
+                        _sisfarma.PuntosPendientes.Sincronizar(puntoPendiente);
+                    }
+
+                    _timestampUltimaVenta = venta.FechaHora;
+                }
+                else
+                {
+                    _sisfarma.Ventas.Sincronizar(new VentaPendiente { idventa = venta.Operacion, empresa = "EMP1" });
+                }
             }
         }
 
@@ -275,19 +282,25 @@ namespace Sisfarma.Sincronizador.Unycop.Domain.Core.Sincronizadores
                 if (venta.ClienteId > 0)
                     venta.Cliente = _farmacia.Clientes.GetOneOrDefaultById(venta.ClienteId, cargarPuntosSisfarma);
 
-                //venta.VendedorNombre = _farmacia.Vendedores.GetOneOrDefaultById(venta.VendedorId)?.Nombre;
-                venta.Detalle = _farmacia.Ventas.GetDetalleDeVentaByVentaId(venta.Operacion, "EMP2");
-
-                if (venta.HasCliente() && _debeCopiarClientes)
-                    InsertOrUpdateCliente(venta.Cliente);
-
-                var puntosPendientes = GenerarPuntosPendientes(venta);
-                foreach (var puntoPendiente in puntosPendientes)
+                if (venta.FechaFin.HasValue)
                 {
-                    _sisfarma.PuntosPendientes.Sincronizar(puntoPendiente);
-                }
+                    //venta.VendedorNombre = _farmacia.Vendedores.GetOneOrDefaultById(venta.VendedorId)?.Nombre;
+                    venta.Detalle = _farmacia.Ventas.GetDetalleDeVentaByVentaId(venta.Operacion, "EMP2");
 
-                _timestampUltimaVenta = venta.FechaHora;
+                    if (venta.HasCliente() && _debeCopiarClientes)
+                        InsertOrUpdateCliente(venta.Cliente);
+                    var puntosPendientes = GenerarPuntosPendientes(venta);
+                    foreach (var puntoPendiente in puntosPendientes)
+                    {
+                        _sisfarma.PuntosPendientes.Sincronizar(puntoPendiente);
+                    }
+
+                    _timestampUltimaVenta = venta.FechaHora;
+                }
+                else
+                {
+                    _sisfarma.Ventas.Sincronizar(new VentaPendiente { idventa = venta.Operacion, empresa = "EMP2" });
+                }
             }
         }
 

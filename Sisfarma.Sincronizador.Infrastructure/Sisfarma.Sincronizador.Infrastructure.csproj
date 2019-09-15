@@ -58,6 +58,7 @@
     <Compile Include="ExternalService\RestClientServices\Fisiotes\ProveedoresExternalService.cs" />
     <Compile Include="ExternalService\RestClientServices\Fisiotes\PuntosPendientesExternalService.cs" />
     <Compile Include="ExternalService\RestClientServices\Fisiotes\SinonimosExternalService.cs" />
+    <Compile Include="ExternalService\RestClientServices\Fisiotes\VentaExternalService.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>
   <ItemGroup>

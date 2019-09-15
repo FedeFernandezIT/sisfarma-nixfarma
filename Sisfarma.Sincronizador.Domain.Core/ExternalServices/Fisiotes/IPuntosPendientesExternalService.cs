@@ -7,7 +7,7 @@ namespace Sisfarma.Sincronizador.Domain.Core.ExternalServices.Fisiotes
 {
     public interface IPuntosPendientesExternalService : IPuntosPendientesExternalServiceNew
     {
-        bool Exists(int venta, int linea);
+        bool Exists(long venta);
 
         bool ExistsGreatThanOrEqual(DateTime fecha, string empresa);
 
