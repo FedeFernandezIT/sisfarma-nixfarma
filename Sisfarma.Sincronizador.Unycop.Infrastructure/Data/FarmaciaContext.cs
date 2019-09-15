@@ -1,10 +1,7 @@
 ﻿using Oracle.DataAccess.Client;
 using Sisfarma.Sincronizador.Core.Config;
 using System;
-using System.Collections.Generic;
 using System.Data.Entity;
-using System.IO;
-using System.Linq;
 
 namespace Sisfarma.Sincronizador.Nixfarma.Infrastructure.Data
 {

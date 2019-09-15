@@ -1,6 +1,4 @@
-﻿using System.Collections.Generic;
-
-namespace Sisfarma.Sincronizador.Infrastructure.Fisiotes
+﻿namespace Sisfarma.Sincronizador.Infrastructure.Fisiotes
 {
     public class FisiotesConfig
     {

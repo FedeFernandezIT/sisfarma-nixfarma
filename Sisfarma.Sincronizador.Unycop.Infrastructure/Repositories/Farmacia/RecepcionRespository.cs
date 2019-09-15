@@ -1,17 +1,12 @@
 ﻿using Sisfarma.Sincronizador.Core.Config;
 using Sisfarma.Sincronizador.Domain.Core.Repositories.Farmacia;
-using Sisfarma.Sincronizador.Domain.Entities.Farmacia;
 using Sisfarma.Sincronizador.Nixfarma.Infrastructure.Data;
 using Sisfarma.Sincronizador.Nixfarma.Infrastructure.Repositories.Farmacia.DTO;
 using System;
 using System.Collections.Generic;
-using System.Data.OleDb;
-using System.Data.SqlClient;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 using DC = Sisfarma.Sincronizador.Domain.Core.Repositories.Farmacia;
+
 using DE = Sisfarma.Sincronizador.Domain.Entities.Farmacia;
 
 namespace Sisfarma.Sincronizador.Nixfarma.Infrastructure.Repositories.Farmacia

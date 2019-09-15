@@ -1,8 +1,5 @@
-﻿using Sisfarma.Sincronizador.Core.Extensions;
-using Sisfarma.Sincronizador.Domain.Core.Services;
+﻿using Sisfarma.Sincronizador.Domain.Core.Services;
 using Sisfarma.Sincronizador.Domain.Core.Sincronizadores.SuperTypes;
-using Sisfarma.Sincronizador.Domain.Entities.Fisiotes;
-using System.Threading.Tasks;
 
 namespace Sisfarma.Sincronizador.Domain.Core.Sincronizadores
 {

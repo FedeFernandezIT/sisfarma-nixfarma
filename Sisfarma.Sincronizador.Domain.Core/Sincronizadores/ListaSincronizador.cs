@@ -1,8 +1,6 @@
 ﻿using Sisfarma.Sincronizador.Domain.Core.Services;
 using Sisfarma.Sincronizador.Domain.Core.Sincronizadores.SuperTypes;
 using System;
-using System.Linq;
-using System.Threading.Tasks;
 
 namespace Sisfarma.Sincronizador.Domain.Core.Sincronizadores
 {

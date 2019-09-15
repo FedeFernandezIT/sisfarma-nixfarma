@@ -4,7 +4,6 @@ using Sisfarma.Sincronizador.Domain.Entities.Farmacia;
 using Sisfarma.Sincronizador.Nixfarma.Infrastructure.Data;
 using System;
 using System.Collections.Generic;
-using System.Data.OleDb;
 using System.Data.SqlClient;
 using System.Data.SqlTypes;
 using System.Linq;

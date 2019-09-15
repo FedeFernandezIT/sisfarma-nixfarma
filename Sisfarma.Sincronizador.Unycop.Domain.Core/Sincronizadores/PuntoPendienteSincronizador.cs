@@ -3,7 +3,6 @@ using Sisfarma.Sincronizador.Domain.Core.ExternalServices.Fisiotes.DTO.VentasPen
 using Sisfarma.Sincronizador.Domain.Core.Services;
 using Sisfarma.Sincronizador.Domain.Entities.Farmacia;
 using Sisfarma.Sincronizador.Domain.Entities.Fisiotes;
-using Sisfarma.Sincronizador.Nixfarma.Infrastructure.Repositories.Farmacia;
 using System;
 using System.Collections.Generic;
 using System.Linq;

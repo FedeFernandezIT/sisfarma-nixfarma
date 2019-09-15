@@ -2,8 +2,6 @@
 using Sisfarma.Sincronizador.Domain.Core.Sincronizadores.SuperTypes;
 using Sisfarma.Sincronizador.Domain.Entities.Fisiotes;
 using System;
-using System.Linq;
-using System.Threading.Tasks;
 
 namespace Sisfarma.Sincronizador.Domain.Core.Sincronizadores
 {

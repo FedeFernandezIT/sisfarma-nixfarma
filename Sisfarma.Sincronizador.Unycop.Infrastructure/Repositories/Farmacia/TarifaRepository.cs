@@ -1,8 +1,4 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 using Sisfarma.Sincronizador.Nixfarma.Infrastructure.Data;
 
 namespace Sisfarma.Sincronizador.Nixfarma.Infrastructure.Repositories.Farmacia

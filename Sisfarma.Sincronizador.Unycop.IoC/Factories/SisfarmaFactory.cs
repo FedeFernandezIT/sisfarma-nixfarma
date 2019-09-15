@@ -1,5 +1,4 @@
 ﻿using System;
-using Sisfarma.Sincronizador.Domain.Core.ExternalServices.Fisiotes;
 using Sisfarma.Sincronizador.Domain.Core.Services;
 using Sisfarma.Sincronizador.Infrastructure.ExternalService.Fisiotes;
 using Sisfarma.Sincronizador.Nixfarma.Infrastructure.ExternalServices;

@@ -4,8 +4,6 @@ using Sisfarma.Sincronizador.Core.Helpers;
 using Sisfarma.Sincronizador.Domain.Core.Services;
 using Sisfarma.Sincronizador.Domain.Entities.Fisiotes;
 using System;
-using System.Configuration;
-using System.IO;
 using System.Threading;
 using System.Threading.Tasks;
 using System.Windows.Forms;

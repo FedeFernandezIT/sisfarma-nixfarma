@@ -1,5 +1,4 @@
-﻿using Sisfarma.Sincronizador.Core.Config;
-using Sisfarma.Sincronizador.Domain.Core.Sincronizadores.SuperTypes;
+﻿using Sisfarma.Sincronizador.Domain.Core.Sincronizadores.SuperTypes;
 using System;
 using System.Collections.Concurrent;
 using System.Collections.Generic;
