@@ -1,4 +1,7 @@
-﻿using Sisfarma.Sincronizador.Domain.Core.Services;
+﻿using System;
+using Sisfarma.Sincronizador.Core.Extensions;
+using Sisfarma.Sincronizador.Domain.Core.Services;
+using Sisfarma.Sincronizador.Domain.Entities.Fisiotes;
 using Sisfarma.Sincronizador.Infrastructure.Fisiotes.DTO;
 using DC = Sisfarma.Sincronizador.Domain.Core.Sincronizadores;
 
@@ -6,9 +9,23 @@ namespace Sisfarma.Sincronizador.Unycop.Domain.Core.Sincronizadores
 {
     public class PuntoPendienteActualizacionSincronizador : DC.PuntoPendienteActualizacionSincronizador
     {
-        public PuntoPendienteActualizacionSincronizador(IFarmaciaService farmacia, ISisfarmaService fisiotes) 
+        private int _anioInicio;
+
+        public PuntoPendienteActualizacionSincronizador(IFarmaciaService farmacia, ISisfarmaService fisiotes)
             : base(farmacia, fisiotes)
         { }
+
+        public override void LoadConfiguration()
+        {
+            base.LoadConfiguration();
+            _anioInicio = ConfiguracionPredefinida[Configuracion.FIELD_ANIO_INICIO]
+                .ToIntegerOrDefault(@default: DateTime.Now.Year - 2);
+        }
+
+        public override void PreSincronizacion()
+        {
+            base.PreSincronizacion();
+        }
 
         public override void Process()
         {
@@ -17,26 +34,30 @@ namespace Sisfarma.Sincronizador.Unycop.Domain.Core.Sincronizadores
             {
                 _cancellationToken.ThrowIfCancellationRequested();
 
-                var venta = _farmacia.Ventas.GetOneOrDefaultById(pto.VentaId);
+                var ventaSerial = pto.VentaId.ToString();
+                var numeroVenta = long.Parse(ventaSerial.SubstringEnd(5));
+                var empresa = ventaSerial.Substring(ventaSerial.Length - 5) == "00001" ? "EMP1" : "EMP2";
+                var venta = _farmacia.Ventas.GetOneOrDefaultById(numeroVenta, empresa, _anioInicio);
                 if (venta != null)
                 {
-                    foreach (var item in venta.Detalle)
+                    var detalle = _farmacia.Ventas.GetDetalleDeVentaPendienteByVentaId(numeroVenta, empresa);
+                    foreach (var item in detalle)
                     {
-                        _sisfarma.PuntosPendientes.Sincronizar(new UpdatePuntacion
+                        if (item.Situacion != "A")
                         {
-                            tipoPago = venta.Tipo,
-                            proveedor = item.Farmaco.Proveedor?.Nombre ?? string.Empty,
-                            idventa = pto.VentaId,
-                            cod_nacional = item.Farmaco.Codigo
-                        });
+                            _sisfarma.PuntosPendientes.Sincronizar(new UpdatePuntuacion
+                            {
+                                tipoPago = venta.TipoOperacion,
+                                proveedor = item.Farmaco.Proveedor?.Nombre ?? string.Empty,
+                                idventa = pto.VentaId,
+                                idnlinea = item.Linea,
+                            });
+                        }
+                        _sisfarma.PuntosPendientes.Sincronizar(new DeletePuntuacion { idventa = pto.VentaId, idnlinea = item.Linea });
                     }
                 }
-                else _sisfarma.PuntosPendientes.Sincronizar(new UpdatePuntacion
-                {
-                    tipoPago = venta.Tipo,
-                    idventa = pto.VentaId
-                });
+                else _sisfarma.PuntosPendientes.Sincronizar(new DeletePuntuacion { idventa = pto.VentaId });
             }
-        }        
+        }
     }
 }

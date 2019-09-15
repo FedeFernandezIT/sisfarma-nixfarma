@@ -69,81 +69,58 @@ namespace Sisfarma.Sincronizador.Nixfarma.Infrastructure.Repositories.Farmacia
             _vendedoresRepository = vendedoresRepository ?? throw new ArgumentNullException(nameof(vendedoresRepository));
         }
 
-        public Venta GetOneOrDefaultById(long id)
+        public Venta GetOneOrDefaultById(long id, string empresa, int anio)
         {
-            var year = int.Parse($"{id}".Substring(0, 4));
-            var ventaId = int.Parse($"{id}".Substring(4));
+            var conn = FarmaciaContext.GetConnection();
 
-            DTO.Venta ventaAccess;
             try
             {
-                using (var db = FarmaciaContext.VentasByYear(year))
-                {
-                    var sql = @"SELECT ID_VENTA as Id, Fecha, NPuesto as Puesto, Cliente, Vendedor, Descuento, Pago, Tipo, Importe FROM ventas WHERE ID_VENTA = @id";
-                    ventaAccess = db.Database.SqlQuery<DTO.Venta>(sql,
-                        new OleDbParameter("id", ventaId))
-                        .FirstOrDefault();
-                }
-            }
-            catch (FarmaciaContextException)
-            {
-                ventaAccess = null;
-            }
+                var sql = $@"SELECT *
+                    FROM appul.ah_ventas
+                    WHERE emp_codigo = '{empresa}'
+                        AND NOT fecha_fin IS NULL
+                        AND situacion = 'N'
+                        AND fecha_venta >= to_date('01/01/{anio}', 'DD/MM/YYYY')
+                        AND operacion = '{id}'";
 
-            if (ventaAccess == null)
+                conn.Open();
+                var cmd = conn.CreateCommand();
+                cmd.CommandText = sql;
+                var reader = cmd.ExecuteReader();
+
+                if (!reader.Read())
+                    return null;
+
+                var tipoOperacion = Convert.ToString(reader["TIPO_OPERACION"]);
+                return new Venta { TipoOperacion = tipoOperacion };
+            }
+            catch (Exception ex)
+            {
                 return null;
-
-            var venta = new Venta
-            {
-                Id = ventaAccess.Id,
-                Tipo = ventaAccess.Tipo.ToString(),
-                FechaHora = ventaAccess.Fecha,
-                Puesto = ventaAccess.Puesto.ToString(),
-                ClienteId = ventaAccess.Cliente,
-                VendedorId = ventaAccess.Vendedor,
-                TotalDescuento = ventaAccess.Descuento * _factorCentecimal,
-                TotalBruto = ventaAccess.Pago * _factorCentecimal,
-                Importe = ventaAccess.Importe * _factorCentecimal,
-            };
-
-            if (ventaAccess.Cliente > 0)
-                venta.Cliente = _clientesRepository.GetOneOrDefaultById(ventaAccess.Cliente, false); // TODO verifca hacer
-
-            var ticket = _ticketRepository.GetOneOrdefaultByVentaId(ventaAccess.Id, year);
-            if (ticket != null)
-            {
-                venta.Ticket = new Ticket
-                {
-                    Numero = ticket.Numero,
-                    Serie = ticket.Serie
-                };
             }
-
-            venta.VendedorNombre = _vendedoresRepository.GetOneOrDefaultById(ventaAccess.Vendedor)?.Nombre;
-            venta.Detalle = GetDetalleDeVentaByVentaId(year, ventaAccess.Id);
-
-            return venta;
+            finally
+            {
+                conn.Close();
+                conn.Dispose();
+            }
         }
 
-        public List<Venta> GetAllByIdGreaterOrEqual(int year, long value)
+        public List<Venta> GetAllByIdGreaterOrEqual(int year, long value, string empresa)
         {
+            var conn = FarmaciaContext.GetConnection();
+
             try
             {
                 var sql = $@"SELECT
                                 FECHA_VENTA, FECHA_FIN, CLI_CODIGO, TIPO_OPERACION, OPERACION, PUESTO, USR_CODIGO, IMPORTE_VTA_E, EMP_CODIGO
                                 FROM appul.ah_ventas
                                 WHERE ROWNUM <= 999
-                                    AND emp_codigo = 'EMP1'
+                                    AND emp_codigo = '{empresa}'
                                     AND situacion = 'N'
                                     AND fecha_venta >= to_date('01/01/{year}', 'DD/MM/YYYY')
                                     AND fecha_venta >= to_date('01/01/{year} 00:00:00', 'DD/MM/YYYY HH24:MI:SS')
                                     ORDER BY fecha_venta ASC";
 
-                string connectionString = @"User Id=""CONSU""; Password=""consu"";" +
-                @"Data Source=(DESCRIPTION=(ADDRESS_LIST=(ADDRESS=(PROTOCOL=IPC)(KEY=DP9))" +
-                    "(ADDRESS=(PROTOCOL=TCP)(HOST=192.168.0.30)(PORT=1521)))(CONNECT_DATA=(INSTANCE_NAME=DP9)(SERVICE_NAME=ORACLE9)))";
-
-                var conn = new OracleConnection(connectionString);
                 conn.Open();
                 var cmd = conn.CreateCommand();
                 cmd.CommandText = sql;
@@ -181,6 +158,11 @@ namespace Sisfarma.Sincronizador.Nixfarma.Infrastructure.Repositories.Farmacia
             catch (Exception ex)
             {
                 return new List<Venta>();
+            }
+            finally
+            {
+                conn.Close();
+                conn.Dispose();
             }
         }
 
@@ -320,7 +302,7 @@ namespace Sisfarma.Sincronizador.Nixfarma.Infrastructure.Repositories.Farmacia
             return ventas;
         }
 
-        public List<VentaDetalle> GetDetalleDeVentaByVentaId(long venta)
+        public List<VentaDetalle> GetDetalleDeVentaByVentaId(long venta, string empresa)
         {
             var conn = FarmaciaContext.GetConnection();
 
@@ -333,7 +315,7 @@ namespace Sisfarma.Sincronizador.Nixfarma.Infrastructure.Repositories.Farmacia
                                 PVP_ORIGINAL_E, PVP_APORTACION_E, IMP_DTO_E,
                                 ART_CODIGO, DESCRIPCION, UNIDADES
                                 FROM appul.ah_venta_lineas
-                                WHERE emp_codigo = 'EMP1' AND situacion = 'N' AND vta_operacion='{venta}'";
+                                WHERE emp_codigo = '{empresa}' AND situacion = 'N' AND vta_operacion='{venta}'";
 
                 var cmd = conn.CreateCommand();
                 cmd.CommandText = sql;
@@ -516,6 +498,110 @@ namespace Sisfarma.Sincronizador.Nixfarma.Infrastructure.Repositories.Farmacia
                     .FirstOrDefault();
 
                 return rs != null ? new Ticket { Numero = rs.Numero, Serie = rs.Serie } : null;
+            }
+        }
+
+        public List<VentaDetalle> GetDetalleDeVentaPendienteByVentaId(long venta, string empresa)
+        {
+            var conn = FarmaciaContext.GetConnection();
+
+            try
+            {
+                conn.Open();
+                var sql = $@"SELECT
+                                VTA_OPERACION, LINEA_VENTA,
+                                ENT_CODIGO, ENTTP_TIPO,
+                                PVP_ORIGINAL_E, PVP_APORTACION_E, IMP_DTO_E,
+                                ART_CODIGO, DESCRIPCION, UNIDADES, SITUACION
+                                FROM appul.ah_venta_lineas
+                                WHERE emp_codigo = '{empresa}' AND vta_operacion='{venta}'";
+
+                var cmd = conn.CreateCommand();
+                cmd.CommandText = sql;
+                var reader = cmd.ExecuteReader();
+
+                var detalle = new List<VentaDetalle>();
+                while (reader.Read())
+                {
+                    var vtaOperacion = Convert.ToInt64(reader["VTA_OPERACION"]);
+                    var lineaVenta = Convert.ToInt32(reader["LINEA_VENTA"]);
+                    var entCodigo = !Convert.IsDBNull(reader["ENT_CODIGO"]) ? (int?)Convert.ToInt32(reader["ENT_CODIGO"]) : null;
+                    var enttpTipo = !Convert.IsDBNull(reader["ENTTP_TIPO"]) ? (int?)Convert.ToInt32(reader["ENTTP_TIPO"]) : null; ;
+                    var pvpOriginalE = !Convert.IsDBNull(reader["PVP_ORIGINAL_E"]) ? Convert.ToDecimal(reader["PVP_ORIGINAL_E"]) : 0;
+                    var pvpAportacionE = !Convert.IsDBNull(reader["PVP_APORTACION_E"]) ? Convert.ToDecimal(reader["PVP_APORTACION_E"]) : 0;
+                    var impDtoE = !Convert.IsDBNull(reader["IMP_DTO_E"]) ? Convert.ToDecimal(reader["IMP_DTO_E"]) : 0;
+                    var artCodigo = Convert.ToString(reader["ART_CODIGO"]);
+                    var unidades = Convert.ToInt32(reader["UNIDADES"]);
+                    var situacion = Convert.ToString(reader["SITUACION"]);
+                    var descripcion = Convert.ToString(reader["DESCRIPCION"]);
+
+                    var ventaDetalle = new VentaDetalle
+                    {
+                        VentaId = vtaOperacion,
+                        Linea = lineaVenta,
+                        Receta = !entCodigo.HasValue ? string.Empty
+                            : !enttpTipo.HasValue ? entCodigo.Value.ToString()
+                            : $"{entCodigo.Value} {enttpTipo.Value}",
+                        PVP = pvpOriginalE,
+                        Precio = pvpAportacionE,
+                        Descuento = impDtoE,
+                        Cantidad = unidades,
+                        Situacion = situacion
+                    };
+
+                    var farmaco = _farmacoRepository.GetOneOrDefaultById(artCodigo);
+                    if (farmaco != null)
+                    {
+                        var proveedor = _proveedorRepository.GetOneOrDefaultByCodigoNacional(artCodigo);
+                        var categoria = _categoriaRepository.GetOneOrDefaultById(artCodigo);
+
+                        Familia familia = null;
+                        Familia superFamilia = null;
+                        if (string.IsNullOrWhiteSpace(farmaco.SubFamilia))
+                        {
+                            familia = new Familia { Nombre = string.Empty };
+                            superFamilia = _familiaRepository.GetOneOrDefaultById(farmaco.Familia)
+                                ?? new Familia { Nombre = string.Empty };
+                        }
+                        else
+                        {
+                            familia = _familiaRepository.GetSubFamiliaOneOrDefault(farmaco.Familia, farmaco.SubFamilia)
+                                ?? new Familia { Nombre = string.Empty };
+                            superFamilia = _familiaRepository.GetOneOrDefaultById(farmaco.Familia)
+                                ?? new Familia { Nombre = string.Empty };
+                        }
+
+                        var laboratorio = !farmaco.Laboratorio.HasValue ? new Laboratorio { Codigo = string.Empty, Nombre = "<Sin Laboratorio>" }
+                            : _laboratorioRepository.GetOneOrDefaultByCodigo(farmaco.Laboratorio.Value, farmaco.Clase, farmaco.ClaseBot)
+                                ?? new Laboratorio { Codigo = string.Empty, Nombre = "<Sin Laboratorio>" };
+
+                        ventaDetalle.Farmaco = new Farmaco
+                        {
+                            Codigo = artCodigo,
+                            PrecioCoste = farmaco.PUC,
+                            CodigoBarras = farmaco.CodigoBarras,
+                            Proveedor = proveedor,
+                            Categoria = categoria,
+                            Familia = familia,
+                            SuperFamilia = superFamilia,
+                            Laboratorio = laboratorio,
+                            Denominacion = farmaco.Denominacion,
+                            Ubicacion = farmaco.Ubicacion
+                        };
+                    }
+                    detalle.Add(ventaDetalle);
+                }
+
+                return detalle;
+            }
+            catch (Exception ex)
+            {
+                return new List<VentaDetalle>();
+            }
+            finally
+            {
+                conn.Close();
+                conn.Dispose();
             }
         }
     }

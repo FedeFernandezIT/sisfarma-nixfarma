@@ -208,41 +208,44 @@ namespace Sisfarma.Sincronizador.Nixfarma.Infrastructure.ExternalServices.Sisfar
             throw new NotImplementedException();
         }
 
-        public void Sincronizar(UpdatePuntacion pp)
+        public void Sincronizar(UpdatePuntuacion pp)
         {
-            if (pp.cod_nacional == null)
+            var set = new
             {
-                var set = new
-                {
-                    pp.tipoPago,
-                    actualizado = 1
-                };
+                pp.tipoPago,
+                pp.proveedor,
+                actualizado = 1
+            };
 
-                var where = new { idventa = pp.idventa };
+            var where = new { idventa = pp.idventa, idnlinea = pp.idnlinea };
 
+            _restClient
+               .Resource(_config.Puntos.Update)
+               .SendPut(new
+               {
+                   puntos = new { set, where }
+               });
+        }
+
+        public void Sincronizar(DeletePuntuacion pp)
+        {
+            if (pp.idnlinea > 0)
+            {
                 _restClient
                    .Resource(_config.Puntos.Update)
-                   .SendPut(new
+                   .SendDelete(new
                    {
-                       puntos = new { set, where }
+                       id = pp.idventa,
+                       linea = pp.idnlinea
                    });
             }
             else
             {
-                var set = new
-                {
-                    pp.tipoPago,
-                    pp.proveedor,
-                    actualizado = 1
-                };
-
-                var where = new { idventa = pp.idventa, cod_nacional = pp.cod_nacional };
-
                 _restClient
                    .Resource(_config.Puntos.Update)
-                   .SendPut(new
+                   .SendDelete(new
                    {
-                       puntos = new { set, where }
+                       id = pp.idventa
                    });
             }
         }

@@ -75,7 +75,7 @@ namespace Sisfarma.Sincronizador.Unycop.Domain.Core.Sincronizadores
                     venta.Cliente = _farmacia.Clientes.GetOneOrDefaultById(venta.ClienteId, cargarPuntosSisfarma);
 
                 //venta.VendedorNombre = _farmacia.Vendedores.GetOneOrDefaultById(venta.VendedorId)?.Nombre;
-                venta.Detalle = _farmacia.Ventas.GetDetalleDeVentaByVentaId(venta.Operacion);
+                venta.Detalle = _farmacia.Ventas.GetDetalleDeVentaByVentaId(venta.Operacion, "EMP1");
 
                 if (venta.HasCliente() && _debeCopiarClientes)
                     InsertOrUpdateCliente(venta.Cliente);
@@ -279,7 +279,7 @@ namespace Sisfarma.Sincronizador.Unycop.Domain.Core.Sincronizadores
                     venta.Cliente = _farmacia.Clientes.GetOneOrDefaultById(venta.ClienteId, cargarPuntosSisfarma);
 
                 //venta.VendedorNombre = _farmacia.Vendedores.GetOneOrDefaultById(venta.VendedorId)?.Nombre;
-                venta.Detalle = _farmacia.Ventas.GetDetalleDeVentaByVentaId(venta.Operacion);
+                venta.Detalle = _farmacia.Ventas.GetDetalleDeVentaByVentaId(venta.Operacion, "EMP2");
 
                 if (venta.HasCliente() && _debeCopiarClientes)
                     InsertOrUpdateCliente(venta.Cliente);

@@ -96,6 +96,8 @@ namespace Sisfarma.Sincronizador.Domain.Entities.Farmacia
 
         public Farmaco Farmaco { get; set; }
 
+        public string Situacion { get; set; }
+
         public bool HasFarmaco() => Farmaco != null;
     }
 

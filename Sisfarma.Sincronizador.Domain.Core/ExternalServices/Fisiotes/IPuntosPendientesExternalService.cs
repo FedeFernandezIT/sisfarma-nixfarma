@@ -43,7 +43,9 @@ namespace Sisfarma.Sincronizador.Domain.Core.ExternalServices.Fisiotes
 
         void Update(string tipoPago, string proveedor, float? dtoLinea, float? dtoVenta, float redencion, long venta, long linea);
 
-        void Sincronizar(UpdatePuntacion pp);
+        void Sincronizar(UpdatePuntuacion pp);
+
+        void Sincronizar(DeletePuntuacion pp);
 
         void Sincronizar(UpdateTicket tk);
     }

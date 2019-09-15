@@ -291,7 +291,7 @@ namespace Sisfarma.Sincronizador.Infrastructure.Fisiotes
                 });
         }
 
-        public void UpdatePuntacion(UpdatePuntacion pp)
+        public void UpdatePuntacion(UpdatePuntuacion pp)
         {
             var set = new
             {

@@ -73,11 +73,11 @@ namespace Sisfarma.Sincronizador.Unycop.Domain.Core.Sincronizadores
             if (_sisfarma.PuntosPendientes.AnyWithoutPagoGreaterThanVentaId(_ultimaVenta))
             {
                 var year = int.Parse($"{_ultimaVenta}".Substring(0, 4));
-                var ventaId = int.Parse($"{_ultimaVenta}".Substring(4));
+                var ventaId = long.Parse($"{_ultimaVenta}".Substring(4));
 
                 _aniosProcesados.Add(year);
 
-                var ventas = _farmacia.Ventas.GetAllByIdGreaterOrEqual(year, ventaId);
+                var ventas = _farmacia.Ventas.GetAllByIdGreaterOrEqual(year, ventaId, "");
 
                 if (!ventas.Any())
                 {
@@ -109,7 +109,7 @@ namespace Sisfarma.Sincronizador.Unycop.Domain.Core.Sincronizadores
                     }
 
                     venta.VendedorNombre = _farmacia.Vendedores.GetOneOrDefaultById(venta.VendedorId)?.Nombre;
-                    venta.Detalle = _farmacia.Ventas.GetDetalleDeVentaByVentaId($"{venta.FechaHora.Year}{venta.Id}".ToIntegerOrDefault());
+                    venta.Detalle = _farmacia.Ventas.GetDetalleDeVentaByVentaId($"{venta.FechaHora.Year}{venta.Id}".ToIntegerOrDefault(), null);
 
                     if (venta.HasCliente())
                     {

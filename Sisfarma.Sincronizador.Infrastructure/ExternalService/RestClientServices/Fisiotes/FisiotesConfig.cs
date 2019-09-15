@@ -81,7 +81,8 @@ namespace Sisfarma.Sincronizador.Infrastructure.Fisiotes
                     ExistsByFechaGreatThanOrEqual = "api/puntos/exists_greater_equal/ejercicio/{year}/fechaVenta/{fecha}",
                     Update = "api/puntos/update",
                     Insert = "api/puntos/createUpdate",
-                    InsertActualizarVenta = "api/puntos/createUpdate/actualizarVenta/1"
+                    InsertActualizarVenta = "api/puntos/createUpdate/actualizarVenta/1",
+                    Delete = "api/puntos/delete"
                 },
 
                 Configuraciones = new ConfiguracionResource
@@ -248,6 +249,8 @@ public class PuntoResource
     public string GetPuntosByDni { get; internal set; }
 
     public string GetPuntosCanjeadosByDni { get; set; }
+
+    public string Delete { get; set; }
 }
 
 public class ConfiguracionResource
