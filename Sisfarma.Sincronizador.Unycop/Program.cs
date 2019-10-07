@@ -213,7 +213,7 @@ namespace Sisfarma.Sincronizador.Unycop
 
             try
             {
-                var restClient = new RestClient.RestSharp.RestClient();
+                var restClient = new RestClient.WebClient.RestClient();
 
                 var config = FisiotesConfig.TestConfig(server, token);
 
