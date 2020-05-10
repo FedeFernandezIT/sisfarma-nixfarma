@@ -94,7 +94,7 @@ namespace Sisfarma.Sincronizador.Infrastructure.Fisiotes
                 return _restClient
                     .Resource(_config.Puntos.ExistsByFechaGreatThanOrEqual
                         .Replace("{year}", $"{year}")
-                        .Replace("{fecha}", $"{fechaVenta})"))
+                        .Replace("{fecha}", $"{fechaVenta}"))
                     .SendGet<bool>();
             }
             catch (RestClientNotFoundException)
