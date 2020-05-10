@@ -25,11 +25,11 @@ namespace Sisfarma.RestClient.WebClient.Factories
                 restResponse.RequestMessage.ToRestClientRequest(restClient.BaseAddress),
                 restResponse.ToRestClientRequest());
 
-        public static RestClientException CreateFailedException(HttpClient restClient, HttpResponseMessage restResponse)
-            => RestClientException.Create(restResponse.StatusCode,
-                restResponse.ReasonPhrase,
-                restResponse.RequestMessage.ToRestClientRequest(restClient.BaseAddress),
-                restResponse.ToRestClientRequest());
+        public static RestClientException CreateFailedException(HttpClient restClient, Request request, Response response, HttpResponseMessage httpResponse)
+            => RestClientException.Create(httpResponse.StatusCode,
+                httpResponse.ReasonPhrase,
+                request,
+                response);
 
         public static Exception CreateFailedException(HttpClient restClient, HttpRequestMessage requestMessage, HttpRequestException ex)
         {

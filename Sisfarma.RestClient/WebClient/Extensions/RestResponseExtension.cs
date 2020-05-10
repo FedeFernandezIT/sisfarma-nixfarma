@@ -6,7 +6,7 @@ namespace Sisfarma.RestClient.WebClient.Extensions
     {
         public static Response ToRestClientRequest(this HttpResponseMessage @this)
         {
-            var body = @this.Content.ReadAsStringAsync().Result;
+            var body = @this.Content != null ? @this.Content.ReadAsStringAsync().Result : "";
             return new Response(body, (int)@this.StatusCode);
         }
     }
