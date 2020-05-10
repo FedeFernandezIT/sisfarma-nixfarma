@@ -17,10 +17,7 @@ namespace Sisfarma.Sincronizador.Unycop.Domain.Core.Sincronizadores
         {
         }
 
-        public override void PreSincronizacion()
-        {
-        }
-
+        
         public override void Process()
         {
             // _isEmpty se carga en PreSincronizacion()
