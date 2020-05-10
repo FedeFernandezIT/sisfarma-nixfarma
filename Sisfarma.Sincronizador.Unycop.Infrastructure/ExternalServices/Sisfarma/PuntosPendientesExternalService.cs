@@ -181,12 +181,7 @@ namespace Sisfarma.Sincronizador.Nixfarma.Infrastructure.ExternalServices.Sisfar
                 sistema = pp.Sistema,
                 dtoLinea = pp.LineaDescuento,
                 dtoVenta = pp.VentaDescuento,
-                actualizado = "1",
-                numTicket = pp.TicketNumero ?? 0,
-                serie = pp.Serie,
-                superFamiliaAux = pp.SuperFamiliaAux,
-                familiaAux = pp.FamiliaAux,
-                cambioClasificacion = pp.CambioClasificacion,
+                actualizado = "1",           
                 ubicacion = pp.Ubicacion
             };
 
