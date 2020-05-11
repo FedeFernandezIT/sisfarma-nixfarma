@@ -73,10 +73,7 @@ namespace Sisfarma.Sincronizador.Nixfarma.Infrastructure.ExternalServices.Sisfar
                 puc = ff.puc,
                 sistema = ff.sistema,
                 categoria = ff.categoria.Strip(),
-                subcategoria = ff.subcategoria.Strip(),
-                superFamiliaAux = ff.superFamiliaAux.Strip(),
-                familiaAux = ff.familiaAux.Strip(),
-                cambioClasificacion = ff.cambioClasificacion.ToInteger()
+                subcategoria = ff.subcategoria.Strip()                
             };
 
             _restClient
