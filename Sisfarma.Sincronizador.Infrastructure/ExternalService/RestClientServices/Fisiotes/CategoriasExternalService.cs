@@ -54,8 +54,7 @@ namespace Sisfarma.Sincronizador.Infrastructure.Fisiotes
             {
                 categoria = cc.categoria.Strip(),
                 padre = cc.padre.Strip(),
-                prestashopPadreId = cc.prestashopPadreId,
-                tipo = cc.tipo
+                prestashopPadreId = cc.prestashopPadreId                
             };
 
             _restClient
