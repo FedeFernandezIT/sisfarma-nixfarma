@@ -64,9 +64,9 @@ namespace Sisfarma.RestClient.WebClient
         {
             _request.Method = HttpMethod.Get;
 
-            Logging.WriteToFileThreadSafe(DateTime.Now.ToString("o") + " " + _request.ToRestClientRequest(_restClient.BaseAddress).ToString(), FILE_LOG);
+            //Logging.WriteToFileThreadSafe(DateTime.Now.ToString("o") + " " + _request.ToRestClientRequest(_restClient.BaseAddress).ToString(), FILE_LOG);
             var response = await _restClient.SendAsync(_request);
-            Logging.WriteToFileThreadSafe(DateTime.Now.ToString("o") + " " + response.ToRestClientRequest().ToString(), FILE_LOG);
+            //Logging.WriteToFileThreadSafe(DateTime.Now.ToString("o") + " " + response.ToRestClientRequest().ToString(), FILE_LOG);
 
             var json = await response.Content.ReadAsStringAsync();
             return Newtonsoft.Json.JsonConvert.DeserializeObject<T>(json);
@@ -81,9 +81,9 @@ namespace Sisfarma.RestClient.WebClient
             _request.Content = new StringContent(Newtonsoft.Json.JsonConvert.SerializeObject(body), Encoding.UTF8, "application/json");
             _request.Method = HttpMethod.Post;
 
-            Logging.WriteToFileThreadSafe(DateTime.Now.ToString("o") + " " + _request.ToRestClientRequest(_restClient.BaseAddress).ToString(), FILE_LOG);
+            //Logging.WriteToFileThreadSafe(DateTime.Now.ToString("o") + " " + _request.ToRestClientRequest(_restClient.BaseAddress).ToString(), FILE_LOG);
             var response = await _restClient.SendAsync(_request);
-            Logging.WriteToFileThreadSafe(DateTime.Now.ToString("o") + " " + response.ToRestClientRequest().ToString(), FILE_LOG);
+            //Logging.WriteToFileThreadSafe(DateTime.Now.ToString("o") + " " + response.ToRestClientRequest().ToString(), FILE_LOG);
 
             var json = await response.Content.ReadAsStringAsync();
             return Newtonsoft.Json.JsonConvert.DeserializeObject<T>(json);
@@ -96,9 +96,9 @@ namespace Sisfarma.RestClient.WebClient
             _request.Content = new StringContent(Newtonsoft.Json.JsonConvert.SerializeObject(body), Encoding.UTF8, "application/json");
             _request.Method = HttpMethod.Put;
 
-            Logging.WriteToFileThreadSafe(DateTime.Now.ToString("o") + " " + _request.ToRestClientRequest(_restClient.BaseAddress).ToString(), FILE_LOG);
+            //Logging.WriteToFileThreadSafe(DateTime.Now.ToString("o") + " " + _request.ToRestClientRequest(_restClient.BaseAddress).ToString(), FILE_LOG);
             var response = _restClient.SendAsync(_request).Result;
-            Logging.WriteToFileThreadSafe(DateTime.Now.ToString("o") + " " + response.ToRestClientRequest().ToString(), FILE_LOG);
+            //Logging.WriteToFileThreadSafe(DateTime.Now.ToString("o") + " " + response.ToRestClientRequest().ToString(), FILE_LOG);
 
             var json = response.Content.ReadAsStringAsync().Result;
             return Newtonsoft.Json.JsonConvert.DeserializeObject<T>(json);
@@ -125,10 +125,10 @@ namespace Sisfarma.RestClient.WebClient
             {
                 _request.Method = method;
                 var req = _request.ToRestClientRequest(_restClient.BaseAddress);
-                Logging.WriteToFileThreadSafe(DateTime.Now.ToString("o") + " " + req.ToString(), FILE_LOG);
+                //Logging.WriteToFileThreadSafe(DateTime.Now.ToString("o") + " " + req.ToString(), FILE_LOG);
                 HttpResponseMessage response = _restClient.SendAsync(_request).Result;
                 var resp = response.ToRestClientRequest();
-                Logging.WriteToFileThreadSafe(DateTime.Now.ToString("o") + " " + resp.ToString(), FILE_LOG);
+                //Logging.WriteToFileThreadSafe(DateTime.Now.ToString("o") + " " + resp.ToString(), FILE_LOG);
 
                 if (response.IsSuccessStatusCode)
                     return Deserialize<T>(response);
@@ -143,8 +143,8 @@ namespace Sisfarma.RestClient.WebClient
             }
             catch (HttpRequestException ex)
             {
-                Logging.WriteToFileThreadSafe(DateTime.Now.ToString("o") + " ERROR: " + _request.ToRestClientRequest(_restClient.BaseAddress).ToString(), FILE_LOG);
-                Logging.WriteToFileThreadSafe(DateTime.Now.ToString("o") + " EXCEP: " + ex.Message, FILE_LOG);
+                //Logging.WriteToFileThreadSafe(DateTime.Now.ToString("o") + " ERROR: " + _request.ToRestClientRequest(_restClient.BaseAddress).ToString(), FILE_LOG);
+                //Logging.WriteToFileThreadSafe(DateTime.Now.ToString("o") + " EXCEP: " + ex.Message, FILE_LOG);
                 throw RestClientFactory.CreateFailedException(_restClient, _request, ex);
             }
         }
@@ -157,10 +157,10 @@ namespace Sisfarma.RestClient.WebClient
             {
                 _request.Content = new StringContent(Newtonsoft.Json.JsonConvert.SerializeObject(body), Encoding.UTF8, "application/json");
                 var req = _request.ToRestClientRequest(_restClient.BaseAddress);
-                Logging.WriteToFileThreadSafe(DateTime.Now.ToString("o") + " " + req.ToString(), FILE_LOG);
+                //Logging.WriteToFileThreadSafe(DateTime.Now.ToString("o") + " " + req.ToString(), FILE_LOG);
                 var response = _restClient.SendAsync(_request).Result;
                 var resp = response.ToRestClientRequest();
-                Logging.WriteToFileThreadSafe(DateTime.Now.ToString("o") + " " + resp.ToString(), FILE_LOG);
+                //Logging.WriteToFileThreadSafe(DateTime.Now.ToString("o") + " " + resp.ToString(), FILE_LOG);
 
                 var errorMessage = response.Content.ReadAsStringAsync().Result;                
 
@@ -174,8 +174,8 @@ namespace Sisfarma.RestClient.WebClient
             }
             catch (HttpRequestException ex)
             {
-                Logging.WriteToFileThreadSafe(DateTime.Now.ToString("o") + " ERROR: " + _request.ToRestClientRequest(_restClient.BaseAddress).ToString(), FILE_LOG);
-                Logging.WriteToFileThreadSafe(DateTime.Now.ToString("o") + " EXCEP: " + ex.Message, FILE_LOG);
+                //Logging.WriteToFileThreadSafe(DateTime.Now.ToString("o") + " ERROR: " + _request.ToRestClientRequest(_restClient.BaseAddress).ToString(), FILE_LOG);
+                //Logging.WriteToFileThreadSafe(DateTime.Now.ToString("o") + " EXCEP: " + ex.Message, FILE_LOG);
                 throw RestClientFactory.CreateFailedException(_restClient, _request, ex);
             }
         }
@@ -188,10 +188,10 @@ namespace Sisfarma.RestClient.WebClient
             {
                 _request.Content = new StringContent(Newtonsoft.Json.JsonConvert.SerializeObject(body), Encoding.UTF8, "application/json");
                 var req = _request.ToRestClientRequest(_restClient.BaseAddress);
-                Logging.WriteToFileThreadSafe(DateTime.Now.ToString("o") + " " + req.ToString(), FILE_LOG);
+                //Logging.WriteToFileThreadSafe(DateTime.Now.ToString("o") + " " + req.ToString(), FILE_LOG);
                 var response = _restClient.SendAsync(_request).Result;
                 var resp = response.ToRestClientRequest();
-                Logging.WriteToFileThreadSafe(DateTime.Now.ToString("o") + " " + resp.ToString(), FILE_LOG);
+                //Logging.WriteToFileThreadSafe(DateTime.Now.ToString("o") + " " + resp.ToString(), FILE_LOG);
 
                 if (response.IsSuccessStatusCode)
                     return Deserialize<T>(response);
@@ -206,8 +206,8 @@ namespace Sisfarma.RestClient.WebClient
             }
             catch (HttpRequestException ex)
             {
-                Logging.WriteToFileThreadSafe(DateTime.Now.ToString("o") + " ERROR: " + _request.ToRestClientRequest(_restClient.BaseAddress).ToString(), FILE_LOG);
-                Logging.WriteToFileThreadSafe(DateTime.Now.ToString("o") + " EXCEP: " + ex.Message, FILE_LOG);
+                //Logging.WriteToFileThreadSafe(DateTime.Now.ToString("o") + " ERROR: " + _request.ToRestClientRequest(_restClient.BaseAddress).ToString(), FILE_LOG);
+                //Logging.WriteToFileThreadSafe(DateTime.Now.ToString("o") + " EXCEP: " + ex.Message, FILE_LOG);
                 throw RestClientFactory.CreateFailedException(_restClient, _request, ex);
             }
         }
@@ -221,8 +221,8 @@ namespace Sisfarma.RestClient.WebClient
             }
             catch (Exception ex)
             {
-                Logging.WriteToFileThreadSafe(DateTime.Now.ToString("o") + " ERROR: " + _request.ToRestClientRequest(_restClient.BaseAddress).ToString(), FILE_LOG);
-                Logging.WriteToFileThreadSafe(DateTime.Now.ToString("o") + " EXCEP: " + ex.Message, FILE_LOG);
+                //Logging.WriteToFileThreadSafe(DateTime.Now.ToString("o") + " ERROR: " + _request.ToRestClientRequest(_restClient.BaseAddress).ToString(), FILE_LOG);
+                //Logging.WriteToFileThreadSafe(DateTime.Now.ToString("o") + " EXCEP: " + ex.Message, FILE_LOG);
                 throw RestClientFactory.CreateErrorException(_restClient, response, ex);
             }
         }
