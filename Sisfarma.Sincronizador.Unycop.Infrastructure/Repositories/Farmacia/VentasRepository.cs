@@ -208,7 +208,7 @@ namespace Sisfarma.Sincronizador.Nixfarma.Infrastructure.Repositories.Farmacia
             }
             finally
             {
-                conn.Clone();
+                conn.Close();
                 conn.Dispose();
             }
         }
@@ -282,7 +282,7 @@ namespace Sisfarma.Sincronizador.Nixfarma.Infrastructure.Repositories.Farmacia
             }
             finally
             {
-                conn.Clone();
+                conn.Close();
                 conn.Dispose();
             }
         }
