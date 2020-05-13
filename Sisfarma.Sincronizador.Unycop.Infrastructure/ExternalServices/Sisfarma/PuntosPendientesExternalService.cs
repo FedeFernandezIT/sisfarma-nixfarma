@@ -175,7 +175,6 @@ namespace Sisfarma.Sincronizador.Nixfarma.Infrastructure.ExternalServices.Sisfar
                 superFamilia = pp.SuperFamilia,
                 pvp = pp.PVP,
                 puc = pp.PUC,
-                pago = pp.Pago,
                 categoria = pp.Categoria,
                 subcategoria = pp.Subcategoria,
                 sistema = pp.Sistema,
