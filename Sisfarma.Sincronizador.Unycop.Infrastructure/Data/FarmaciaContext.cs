@@ -46,7 +46,7 @@ namespace Sisfarma.Sincronizador.Nixfarma.Infrastructure.Data
 
         public static OracleConnection GetConnection()
         {
-            string connectionString = $@"User Id=""{_user.ToUpper()}""; Password=""{_password}"";" +
+            string connectionString = $@"User Id=""{_user.ToUpper()}""; Password=""{_password}""; Enlist=false; Pooling=true;" +
                 @"Data Source=(DESCRIPTION=(ADDRESS_LIST=(ADDRESS=(PROTOCOL=IPC)(KEY=DP9))" +
                     $@"(ADDRESS=(PROTOCOL=TCP)(HOST={_localServer})(PORT=1521)))(CONNECT_DATA=(INSTANCE_NAME=DP9)(SERVICE_NAME=ORACLE9)))";
 
