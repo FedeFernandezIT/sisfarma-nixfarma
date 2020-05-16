@@ -451,7 +451,7 @@ namespace Sisfarma.Sincronizador.Nixfarma.Infrastructure.Repositories.Farmacia
                     WHERE a.codigo > '{codArticu.PadLeft(6, '0')}'
                     GROUP BY a.codigo, a.precio_lab_euros, a.Pvp_euros, a.famsb_codigo, a.fam_codigo,
                             a.descripcion, a.lab_codigo, a.clase, a.clase_bot, a.imp_codigo, a.ean_13, a.Fecha_Baja
-                    HAVING NVL(sum(e.actuales),0) > 0 ORDER BY a.codigo ASC) 0
+                    HAVING NVL(sum(e.actuales),0) > 0 ORDER BY a.codigo ASC) o
                     WHERE rownum <= 999";
 
                 conn.Open();
