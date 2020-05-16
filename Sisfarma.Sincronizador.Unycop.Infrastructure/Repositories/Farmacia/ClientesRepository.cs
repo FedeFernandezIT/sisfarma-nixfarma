@@ -23,11 +23,7 @@ namespace Sisfarma.Sincronizador.Nixfarma.Infrastructure.Repositories.Farmacia
 
         public List<Cliente> GetGreatThanIdAsDTO(long id, bool cargarPuntosSisfarma)
         {
-            string connectionString = @"User Id=""CONSU""; Password=""consu"";" +
-                @"Data Source=(DESCRIPTION=(ADDRESS_LIST=(ADDRESS=(PROTOCOL=IPC)(KEY=DP9))" +
-                    "(ADDRESS=(PROTOCOL=TCP)(HOST=192.168.0.30)(PORT=1521)))(CONNECT_DATA=(INSTANCE_NAME=DP9)(SERVICE_NAME=ORACLE9)))";
-
-            var conn = new OracleConnection(connectionString);
+            var conn = FarmaciaContext.GetConnection();            
 
             try
             {
@@ -146,6 +142,7 @@ namespace Sisfarma.Sincronizador.Nixfarma.Infrastructure.Repositories.Farmacia
             finally
             {
                 conn.Close();
+                conn.Dispose();
             }
         }
 
