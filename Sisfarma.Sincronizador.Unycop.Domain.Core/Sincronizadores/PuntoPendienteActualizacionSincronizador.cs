@@ -53,7 +53,7 @@ namespace Sisfarma.Sincronizador.Unycop.Domain.Core.Sincronizadores
                                 idnlinea = item.Linea,
                             });
                         }
-                        _sisfarma.PuntosPendientes.Sincronizar(new DeletePuntuacion { idventa = pto.VentaId, idnlinea = item.Linea });
+                        else _sisfarma.PuntosPendientes.Sincronizar(new DeletePuntuacion { idventa = pto.VentaId, idnlinea = item.Linea });
                     }
                 }
                 else _sisfarma.PuntosPendientes.Sincronizar(new DeletePuntuacion { idventa = pto.VentaId });
