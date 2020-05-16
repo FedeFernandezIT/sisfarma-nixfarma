@@ -217,7 +217,7 @@ namespace Sisfarma.Sincronizador.Unycop.Domain.Core.Sincronizadores
         {
             var cargarPuntosSisfarma = _cargarPuntos == "si";
             var fechaActual = DateTime.Now.Date;
-            if (!FechaConfiguracionIsValid(fechaActual, Configuracion.FIELD_POR_DONDE_VOY_VENTA_MES_EMP1))
+            if (!FechaConfiguracionIsValid(fechaActual, Configuracion.FIELD_POR_DONDE_VOY_VENTA_MES_EMP2))
                 return;
 
             var fechaInicial = CalcularFechaInicialDelProceso(fechaActual);
@@ -225,7 +225,7 @@ namespace Sisfarma.Sincronizador.Unycop.Domain.Core.Sincronizadores
                 return;
 
             var ventaIdConfiguracion = _sisfarma.Configuraciones
-                .GetByCampo(Configuracion.FIELD_POR_DONDE_VOY_VENTA_MES_ID_EMP1)
+                .GetByCampo(Configuracion.FIELD_POR_DONDE_VOY_VENTA_MES_ID_EMP2)
                     .ToIntegerOrDefault();
 
             var ventas = _farmacia.Ventas.GetAllByIdGreaterOrEqual(ventaIdConfiguracion, fechaInicial, "EMP2");
@@ -250,8 +250,8 @@ namespace Sisfarma.Sincronizador.Unycop.Domain.Core.Sincronizadores
                 }
             }
 
-            _sisfarma.Configuraciones.Update(Configuracion.FIELD_POR_DONDE_VOY_VENTA_MES_ID_EMP1, "0");
-            _sisfarma.Configuraciones.Update(Configuracion.FIELD_POR_DONDE_VOY_VENTA_MES_EMP1, fechaActual.ToString("yyyy-MM-dd"));
+            _sisfarma.Configuraciones.Update(Configuracion.FIELD_POR_DONDE_VOY_VENTA_MES_ID_EMP2, "0");
+            _sisfarma.Configuraciones.Update(Configuracion.FIELD_POR_DONDE_VOY_VENTA_MES_EMP2, fechaActual.ToString("yyyy-MM-dd"));
         }
 
         private DateTime CalcularFechaInicialDelProceso(DateTime fechaActual)
