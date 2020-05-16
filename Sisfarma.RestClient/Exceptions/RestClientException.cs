@@ -44,7 +44,7 @@ namespace Sisfarma.RestClient.Exceptions
             switch (statusCode)
             {
                 case HttpStatusCode.NotFound:
-                    return new RestClientNotFoundException(statusDescription);
+                    return new RestClientNotFoundException(statusDescription, request, response);
                 
                 default:
                     return new RestClientException(statusCode, statusDescription, request, response);

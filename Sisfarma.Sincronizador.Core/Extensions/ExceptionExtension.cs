@@ -11,7 +11,7 @@ namespace Sisfarma.Sincronizador.Core.Extensions
 
         public static string ToLogErrorMessage(this RestClientException @this)
             => $"Fecha UTC: {DateTime.UtcNow.ToIsoString()}{Environment.NewLine}" +
-                $"Request: {@this.Request.ToString()}{Environment.NewLine}Response: {@this.Response.ToString()}{Environment.NewLine}" +
+                $"Request: {@this.Request?.ToString()}{Environment.NewLine}Response: {@this.Response?.ToString()}{Environment.NewLine}" +
                 $"Message: {@this.Message}{Environment.NewLine}StackTrace: {@this.StackTrace}";
     }
 }
