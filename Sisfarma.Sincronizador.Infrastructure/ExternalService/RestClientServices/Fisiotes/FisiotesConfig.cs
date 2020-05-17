@@ -189,7 +189,7 @@
                 Ventas = new VentaResource
                 {
                     InsertVentaPendiente = "api/venta/createUpdate",
-                    GetAllPendientes = "api/ventas/pendientes",
+                    GetAllPendientes = "api/venta/pendientes",
                     DeleteVentaPendiente = "api/venta/delete",
                 }
             };

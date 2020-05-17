@@ -44,8 +44,8 @@ namespace Sisfarma.Sincronizador.Unycop.Domain.Core.Sincronizadores
             _verCategorias = ConfiguracionPredefinida[Configuracion.FIELD_VER_CATEGORIAS];
             _puntosDeSisfarma = ConfiguracionPredefinida[Configuracion.FIELD_PUNTOS_SISFARMA];
             _cargarPuntos = ConfiguracionPredefinida[Configuracion.FIELD_CARGAR_PUNTOS] ?? "no";
-            _debeCopiarClientes = _copiarClientes.ToLower().Equals("si") || string.IsNullOrWhiteSpace(_copiarClientes);
             _copiarClientes = ConfiguracionPredefinida[Configuracion.FIELD_COPIAS_CLIENTES];
+            _debeCopiarClientes = _copiarClientes.ToLower().Equals("si") || string.IsNullOrWhiteSpace(_copiarClientes);
             _perteneceFarmazul = bool.Parse(ConfiguracionPredefinida[Configuracion.FIELD_ES_FARMAZUL]);
             _filtrosResidencia = ConfiguracionPredefinida[Configuracion.FIELD_FILTROS_RESIDENCIA];
         }
@@ -69,7 +69,7 @@ namespace Sisfarma.Sincronizador.Unycop.Domain.Core.Sincronizadores
                 foreach (var venta in ventas)
                 {
                     var empresaSerial = empresa == "EMP1" ? "00001" : "00002";
-                    var existe = _sisfarma.PuntosPendientes.Exists(long.Parse($"{numeroVenta}{empresa}"));
+                    var existe = _sisfarma.PuntosPendientes.Exists(long.Parse($"{numeroVenta}{empresaSerial}"));
                     if (existe)
                     {
                         var detalle = _farmacia.Ventas.GetDetalleDeVentaPendienteByVentaId(numeroVenta, empresa);
