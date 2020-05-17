@@ -12,7 +12,7 @@ namespace Sisfarma.Sincronizador.Core.Helpers
                 return string.IsNullOrWhiteSpace(fecha)
                     ? DateTime.Now.AddDays(-7)
                         : (DateTime.Now - DateTime.ParseExact(fecha, "yyyy-dd-MM", CultureInfo.InvariantCulture)).TotalDays > 7
-                            ? DateTime.ParseExact(fecha, "yyyy-dd-MM", CultureInfo.InvariantCulture)//DateTime.Now.AddDays(-7)
+                            ? DateTime.Now.AddDays(-7) // TODO para test viejos usar la fecha recibida
                             : DateTime.ParseExact(fecha, "yyyy-dd-MM", CultureInfo.InvariantCulture);
             }
             catch (Exception)
