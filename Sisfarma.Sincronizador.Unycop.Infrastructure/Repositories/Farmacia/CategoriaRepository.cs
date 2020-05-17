@@ -38,6 +38,9 @@ namespace Sisfarma.Sincronizador.Nixfarma.Infrastructure.Repositories.Farmacia
                 if (reader.Read())
                     nombre = Convert.ToString(reader["DESCRIPCION"]) ?? string.Empty;
 
+                reader.Close();
+                reader.Dispose();
+
                 return new Categoria { Nombre = nombre };
             }
             catch (Exception ex)

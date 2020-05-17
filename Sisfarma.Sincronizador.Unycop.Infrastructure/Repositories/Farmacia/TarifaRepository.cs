@@ -25,8 +25,15 @@ namespace Sisfarma.Sincronizador.Nixfarma.Infrastructure.Repositories.Farmacia
                 if (reader.Read())
                 {
                     var rValorImp = !Convert.IsDBNull(reader["valor_imp"]) ? (decimal?)Convert.ToDecimal(reader["valor_imp"]) : null;
+                    
+                    reader.Close();
+                    reader.Dispose();
+                    
                     return rValorImp;
                 }
+
+                reader.Close();
+                reader.Dispose();
 
                 return null;
             }

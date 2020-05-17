@@ -111,8 +111,13 @@ namespace Sisfarma.Sincronizador.Nixfarma.Infrastructure.Repositories.Farmacia
 
                         rs.Add(dto);
                     }
+
+                    readerLineaEncargo.Close();
+                    readerLineaEncargo.Dispose();
                 }
 
+                reader.Close();
+                reader.Dispose();
                 return rs.Select(GenerarEncargo);
             }
             catch (Exception ex)

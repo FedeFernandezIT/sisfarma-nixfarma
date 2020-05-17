@@ -63,6 +63,9 @@ namespace Sisfarma.Sincronizador.Nixfarma.Infrastructure.Repositories.Farmacia
                     pedidos.Add(pedido);
                 }
 
+                reader.Close();
+                reader.Dispose();
+
                 return pedidos;
             }
             catch (Exception ex)
@@ -117,6 +120,9 @@ namespace Sisfarma.Sincronizador.Nixfarma.Infrastructure.Repositories.Farmacia
 
                     pedidos.Add(pedido);
                 }
+
+                reader.Close();
+                reader.Dispose();
 
                 return pedidos;
             }
@@ -217,6 +223,9 @@ namespace Sisfarma.Sincronizador.Nixfarma.Infrastructure.Repositories.Farmacia
 
                     detalle.Add(item);
                 }
+
+                reader.Close();
+                reader.Dispose();
 
                 return detalle;
             }

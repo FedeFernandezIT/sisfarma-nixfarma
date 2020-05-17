@@ -69,7 +69,11 @@ namespace Sisfarma.Sincronizador.Nixfarma.Infrastructure.Repositories.Farmacia
                 var reader = cmd.ExecuteReader();
 
                 if (!reader.Read())
+                {
+                    reader.Close();
+                    reader.Dispose();
                     return null;
+                }                    
 
                 var ean13 = Convert.ToString(reader["EAN_13"]);
                 var precioLabEuros = !Convert.IsDBNull(reader["PRECIO_LAB_EUROS"]) ? Convert.ToDecimal(reader["PRECIO_LAB_EUROS"]) : 0;
@@ -93,6 +97,8 @@ namespace Sisfarma.Sincronizador.Nixfarma.Infrastructure.Repositories.Farmacia
                     ClaseBot = claseBot,
                     Denominacion = descripcion
                 };
+
+                reader.Close();
 
                 // cargar precios
                 sql = $@"SELECT
@@ -120,6 +126,9 @@ namespace Sisfarma.Sincronizador.Nixfarma.Infrastructure.Repositories.Farmacia
 
                 farmaco.Ubicacion = ubicacion;
                 farmaco.PrecioMedio = pvpEuros;
+
+                reader.Close();
+                reader.Dispose();
 
                 return farmaco;
             }
@@ -218,6 +227,9 @@ namespace Sisfarma.Sincronizador.Nixfarma.Infrastructure.Repositories.Farmacia
                     farmacos.Add(farmaco);
                 }
 
+                reader.Close();
+                reader.Dispose();
+
                 return farmacos;
             }
             catch (Exception ex)
@@ -314,6 +326,9 @@ namespace Sisfarma.Sincronizador.Nixfarma.Infrastructure.Repositories.Farmacia
 
                     farmacos.Add(farmaco);
                 }
+
+                reader.Close();
+                reader.Dispose();
 
                 return farmacos;
             }
@@ -412,6 +427,9 @@ namespace Sisfarma.Sincronizador.Nixfarma.Infrastructure.Repositories.Farmacia
                     farmacos.Add(farmaco);
                 }
 
+                reader.Close();
+                reader.Dispose();
+
                 return farmacos;
             }
             catch (Exception ex)
@@ -508,6 +526,9 @@ namespace Sisfarma.Sincronizador.Nixfarma.Infrastructure.Repositories.Farmacia
 
                     farmacos.Add(farmaco);
                 }
+
+                reader.Close();
+                reader.Dispose();
 
                 return farmacos;
             }

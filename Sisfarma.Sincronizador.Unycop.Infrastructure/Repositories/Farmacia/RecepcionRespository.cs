@@ -69,6 +69,9 @@ namespace Sisfarma.Sincronizador.Nixfarma.Infrastructure.Repositories.Farmacia
                     var rImportePvp = Convert.ToDecimal(reader["importePvp"]);
                     var rImportePuc = Convert.ToDecimal(reader["importePuc"]);
 
+                    reader.Close();
+                    reader.Dispose();
+
                     return new RecepcionTotales
                     {
                         Lineas = rNumLineas,
@@ -76,6 +79,9 @@ namespace Sisfarma.Sincronizador.Nixfarma.Infrastructure.Repositories.Farmacia
                         PUC = rImportePuc
                     };
                 }
+
+                reader.Close();
+                reader.Dispose();
 
                 return new RecepcionTotales();
             }
@@ -137,6 +143,9 @@ namespace Sisfarma.Sincronizador.Nixfarma.Infrastructure.Repositories.Farmacia
                     recepciones.Add(pedido);
                 }
 
+                reader.Close();
+                reader.Dispose();
+
                 return recepciones;
             }
             catch (Exception ex)
@@ -197,6 +206,9 @@ namespace Sisfarma.Sincronizador.Nixfarma.Infrastructure.Repositories.Farmacia
                     recepciones.Add(pedido);
                 }
 
+                reader.Close();
+                reader.Dispose();
+
                 return recepciones;
             }
             catch (Exception ex)
@@ -251,6 +263,9 @@ namespace Sisfarma.Sincronizador.Nixfarma.Infrastructure.Repositories.Farmacia
 
                     historicos.Add(historico);
                 }
+
+                reader.Close();
+                reader.Dispose();
 
                 return historicos;
             }

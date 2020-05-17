@@ -61,8 +61,14 @@ namespace Sisfarma.Sincronizador.Nixfarma.Infrastructure.Repositories.Farmacia
                         lista.Farmacos.Add(item);
                     }
 
+                    readerDetalle.Close();
+                    readerDetalle.Dispose();
+
                     listas.Add(lista);
                 }
+
+                reader.Close();
+                reader.Dispose();
 
                 return listas;
             }

@@ -22,7 +22,12 @@ namespace Sisfarma.Sincronizador.Nixfarma.Infrastructure.Repositories.Farmacia
                 var reader = cmd.ExecuteReader();
 
                 if (!reader.HasRows)
+                {
+                    reader.Close();
+                    reader.Dispose();
                     return 1;
+                }
+                    
 
                 var count = 0;
                 while (reader.Read())
@@ -30,6 +35,8 @@ namespace Sisfarma.Sincronizador.Nixfarma.Infrastructure.Repositories.Farmacia
                     count++;
                 }
 
+                reader.Close();
+                reader.Dispose();
                 return count;
             }
             catch (Exception)

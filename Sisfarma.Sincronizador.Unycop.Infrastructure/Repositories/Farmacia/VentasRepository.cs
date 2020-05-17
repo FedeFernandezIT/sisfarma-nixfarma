@@ -75,9 +75,17 @@ namespace Sisfarma.Sincronizador.Nixfarma.Infrastructure.Repositories.Farmacia
                 var reader = cmd.ExecuteReader();
 
                 if (!reader.Read())
-                    return null;
+                {
+                    reader.Close();
+                    reader.Dispose();
 
+                    return null;
+                }
+                    
                 var tipoOperacion = Convert.ToString(reader["TIPO_OPERACION"]);
+
+                reader.Close();
+                reader.Dispose();
                 return new Venta { TipoOperacion = tipoOperacion };
             }
             catch (Exception ex)
@@ -138,7 +146,9 @@ namespace Sisfarma.Sincronizador.Nixfarma.Infrastructure.Repositories.Farmacia
                     });
                 }
 
-                conn.Close();
+                
+                reader.Close();
+                reader.Dispose();
                 return ventas;
             }
             catch (Exception ex)
@@ -200,6 +210,8 @@ namespace Sisfarma.Sincronizador.Nixfarma.Infrastructure.Repositories.Farmacia
                     });
                 }
 
+                reader.Close();
+                reader.Dispose();
                 return ventas;
             }
             catch (Exception ex)
@@ -274,6 +286,8 @@ namespace Sisfarma.Sincronizador.Nixfarma.Infrastructure.Repositories.Farmacia
                     });
                 }
 
+                reader.Close();
+                reader.Dispose();
                 return ventas;
             }
             catch (Exception ex)
@@ -378,6 +392,9 @@ namespace Sisfarma.Sincronizador.Nixfarma.Infrastructure.Repositories.Farmacia
                     detalle.Add(ventaDetalle);
                 }
 
+                reader.Close();
+                reader.Dispose();
+
                 return detalle;
             }
             catch (Exception ex)
@@ -481,6 +498,9 @@ namespace Sisfarma.Sincronizador.Nixfarma.Infrastructure.Repositories.Farmacia
                     }
                     detalle.Add(ventaDetalle);
                 }
+
+                reader.Close();
+                reader.Dispose();
 
                 return detalle;
             }

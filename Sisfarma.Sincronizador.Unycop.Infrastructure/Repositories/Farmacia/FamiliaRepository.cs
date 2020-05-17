@@ -34,6 +34,9 @@ namespace Sisfarma.Sincronizador.Nixfarma.Infrastructure.Repositories.Farmacia
                     familias.Add(new Familia { Nombre = descripcion });
                 }
 
+                reader.Close();
+                reader.Dispose();
+
                 return familias;
             }
             catch (Exception ex)
@@ -79,6 +82,9 @@ namespace Sisfarma.Sincronizador.Nixfarma.Infrastructure.Repositories.Farmacia
                     });
                 }
 
+                reader.Close();
+                reader.Dispose();
+
                 return familias;
             }
             catch (Exception ex)
@@ -108,6 +114,8 @@ namespace Sisfarma.Sincronizador.Nixfarma.Infrastructure.Repositories.Farmacia
                 if (reader.Read())
                     descripcion = Convert.ToString(reader["DESCRIPCION"]) ?? string.Empty;
 
+                reader.Close();
+                reader.Dispose();
                 return new Familia { Nombre = descripcion };
             }
             catch (Exception ex)
@@ -153,6 +161,8 @@ namespace Sisfarma.Sincronizador.Nixfarma.Infrastructure.Repositories.Farmacia
                 if (reader.Read())
                     descripcion = Convert.ToString(reader["DESCRIPCION"]) ?? string.Empty;
 
+                reader.Close();
+                reader.Dispose();
                 return new Familia { Nombre = descripcion };
             }
             catch (Exception ex)
@@ -183,6 +193,9 @@ namespace Sisfarma.Sincronizador.Nixfarma.Infrastructure.Repositories.Farmacia
                     var descripcion = Convert.ToString(reader["DESCRIPCION"]) ?? string.Empty;
                     familias.Add(new Familia { Nombre = descripcion });
                 }
+
+                reader.Close();
+                reader.Dispose();
 
                 return familias;
             }

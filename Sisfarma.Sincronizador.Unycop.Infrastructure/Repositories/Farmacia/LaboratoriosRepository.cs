@@ -40,12 +40,18 @@ namespace Sisfarma.Sincronizador.Nixfarma.Infrastructure.Repositories.Farmacia
                         : claseBot == "V" ? "V"
                         : "E";
 
+                    reader.Close();
+                    reader.Dispose();
+
                     return new Laboratorio
                     {
                         Codigo = letraLaboratorio + $"{numeroLaboratorio}".PadLeft(4, '0'),
                         Nombre = nombre
                     };
                 }
+
+                reader.Close();
+                reader.Dispose();
 
                 return new Laboratorio { Codigo = string.Empty, Nombre = LABORATORIO_DEFAULT };
             }

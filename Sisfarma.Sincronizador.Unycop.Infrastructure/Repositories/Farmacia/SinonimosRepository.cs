@@ -35,6 +35,8 @@ namespace Sisfarma.Sincronizador.Nixfarma.Infrastructure.Repositories.Farmacia
                     sinonimos.Add(new Sinonimo { CodigoBarra = rCodRelativo, CodigoNacional = rArtCodigo });
                 }
 
+                reader.Close();
+                
                 sql = $@"SELECT codigo, ean_13 FROM appul.ab_articulos where not ean_13 is null group by codigo, ean_13";
                 cmd = conn.CreateCommand();
                 cmd.CommandText = sql;
@@ -47,6 +49,8 @@ namespace Sisfarma.Sincronizador.Nixfarma.Infrastructure.Repositories.Farmacia
                     sinonimos.Add(new Sinonimo { CodigoBarra = rEan13, CodigoNacional = rCodigo });
                 }
 
+                reader.Close();
+                reader.Dispose();
                 return sinonimos;
             }
             catch (Exception ex)

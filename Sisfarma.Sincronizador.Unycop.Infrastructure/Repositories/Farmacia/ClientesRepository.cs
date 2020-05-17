@@ -115,6 +115,8 @@ namespace Sisfarma.Sincronizador.Nixfarma.Infrastructure.Repositories.Farmacia
                             var puntosAcumulados = Convert.ToDecimal(reader["PUNTOS"]);
                             cliente.Puntos = puntosAcumulados - dtoPuntosE;
                         }
+
+                        readerPuntos.Close();
                         readerPuntos.Dispose();
                     }
 
@@ -128,10 +130,15 @@ namespace Sisfarma.Sincronizador.Nixfarma.Infrastructure.Repositories.Farmacia
                         var tarjeta = Convert.ToString(reader["CODIGO_ID"]);
                         cliente.Tarjeta = !string.IsNullOrWhiteSpace(tarjeta) ? tarjeta.Trim() : string.Empty;
                     }
+
+                    readerTarjetas.Close();
                     readerTarjetas.Dispose();
 
                     clientes.Add(cliente);
                 }
+
+                reader.Close();
+                reader.Dispose();
 
                 return clientes;
             }
@@ -223,11 +230,14 @@ namespace Sisfarma.Sincronizador.Nixfarma.Infrastructure.Repositories.Farmacia
                     Puntos = 0,
                 };
 
+                reader.Close();
+
                 // cargamos puntos
                 if (cargarPuntosSisfarma)
                 {
                     sql = $@"SELECT NVL(SUM(imp_acumulado),0) as PUNTOS FROM appul.ag_reg_vta_fidel WHERE cod_cliente = {id}";
                     cmd.CommandText = sql;
+                    
                     reader = cmd.ExecuteReader();
 
                     if (reader.Read())
@@ -235,6 +245,8 @@ namespace Sisfarma.Sincronizador.Nixfarma.Infrastructure.Repositories.Farmacia
                         var puntosAcumulados = Convert.ToDecimal(reader["PUNTOS"]);
                         cliente.Puntos = puntosAcumulados - dtoPuntosE;
                     }
+
+                    reader.Close();
                 }
 
                 // buscamos tarjeta asociada
@@ -247,6 +259,10 @@ namespace Sisfarma.Sincronizador.Nixfarma.Infrastructure.Repositories.Farmacia
                     var tarjeta = Convert.ToString(reader["CODIGO_ID"]);
                     cliente.Tarjeta = !string.IsNullOrWhiteSpace(tarjeta) ? tarjeta.Trim() : string.Empty;
                 }
+
+                reader.Close();
+
+                reader.Dispose();
 
                 return cliente;
             }
@@ -283,6 +299,8 @@ namespace Sisfarma.Sincronizador.Nixfarma.Infrastructure.Repositories.Farmacia
                 if (aux.Trim().ToLower() == "farmazul")
                     return true;
 
+                reader.Close();
+
                 sql = $"SELECT DESCRIPCION FROM appul.ab_descuentos WHERE codigo = {tarifaDescuento}";
                 cmd.CommandText = sql;
                 reader = cmd.ExecuteReader();
@@ -290,6 +308,8 @@ namespace Sisfarma.Sincronizador.Nixfarma.Infrastructure.Repositories.Farmacia
                 if (reader.Read())
                     aux = Convert.ToString(reader["DESCRIPCION"]);
 
+                reader.Close();
+                reader.Dispose();
                 return aux.Trim().ToLower() == "farmazul";
             }
             catch (Exception)
@@ -316,10 +336,18 @@ namespace Sisfarma.Sincronizador.Nixfarma.Infrastructure.Repositories.Farmacia
                     cmd.CommandText = sql;
                     var reader = cmd.ExecuteReader();
                     if (!reader.Read())
+                    {
+                        reader.Close();
+                        reader.Dispose();
                         return "cliente";
+                    }
+                        
 
                     var aFiltros = filtros.Split(',');
                     var aux = Convert.ToString(reader["DESCRIPCION"]);
+
+                    reader.Close();
+                    reader.Dispose();
 
                     if (aFiltros.Contains(aux))
                         return "residencia";
@@ -337,6 +365,10 @@ namespace Sisfarma.Sincronizador.Nixfarma.Infrastructure.Repositories.Farmacia
                     var aux = string.Empty;
                     if (reader.Read())
                         aux = Convert.ToString(reader["DESCRIPCION"]);
+
+
+                    reader.Close();
+                    reader.Dispose();
 
                     if (aux.ToLower().Contains("residencias"))
                         return "residencia";

@@ -34,6 +34,9 @@ namespace Sisfarma.Sincronizador.Nixfarma.Infrastructure.Repositories.Farmacia
                     categorias.Add(new Categoria { Nombre = descripcion });
                 }
 
+                reader.Close();
+                reader.Dispose();
+
                 return categorias;
             }
             catch (Exception ex)

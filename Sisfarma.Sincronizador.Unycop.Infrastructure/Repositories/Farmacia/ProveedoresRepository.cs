@@ -40,12 +40,18 @@ namespace Sisfarma.Sincronizador.Nixfarma.Infrastructure.Repositories.Farmacia
                 {
                     var rNombreAb = Convert.ToString(reader["NOMBRE_AB"]);
 
+                    reader.Close();
+                    reader.Dispose();
+
                     return new Proveedor
                     {
                         Id = id,
                         Nombre = rNombreAb
                     };
                 }
+
+                reader.Close();
+                reader.Dispose();
 
                 return null;
             }
@@ -86,6 +92,10 @@ namespace Sisfarma.Sincronizador.Nixfarma.Infrastructure.Repositories.Farmacia
                     if (reader.Read())
                     {
                         var nombre = Convert.ToString(reader["NOMBRE_AB"]);
+                        
+                        reader.Close();
+                        reader.Dispose();
+                        
                         return new Proveedor
                         {
                             Id = id,
@@ -93,6 +103,9 @@ namespace Sisfarma.Sincronizador.Nixfarma.Infrastructure.Repositories.Farmacia
                         };
                     }
                 }
+
+                reader.Close();
+                reader.Dispose();
 
                 return new Proveedor { Nombre = string.Empty };
             }
@@ -125,6 +138,9 @@ namespace Sisfarma.Sincronizador.Nixfarma.Infrastructure.Repositories.Farmacia
                     var rNombreAb = Convert.ToString(reader["nombre_ab"]);
                     proveedores.Add(new Proveedor { Id = rCodigo, Nombre = rNombreAb });
                 }
+
+                reader.Close();
+                reader.Dispose();
 
                 return proveedores;
             }
