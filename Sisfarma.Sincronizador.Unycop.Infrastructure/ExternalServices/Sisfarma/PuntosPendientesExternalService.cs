@@ -237,7 +237,7 @@ namespace Sisfarma.Sincronizador.Nixfarma.Infrastructure.ExternalServices.Sisfar
             if (pp.idnlinea > 0)
             {
                 _restClient
-                   .Resource(_config.Puntos.Update)
+                   .Resource(_config.Puntos.Delete)
                    .SendDelete(new
                    {
                        id = pp.idventa,
@@ -247,7 +247,7 @@ namespace Sisfarma.Sincronizador.Nixfarma.Infrastructure.ExternalServices.Sisfar
             else
             {
                 _restClient
-                   .Resource(_config.Puntos.Update)
+                   .Resource(_config.Puntos.Delete)
                    .SendDelete(new
                    {
                        id = pp.idventa
