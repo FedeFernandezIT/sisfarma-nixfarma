@@ -81,7 +81,7 @@ namespace Sisfarma.Sincronizador.Nixfarma.Infrastructure.Repositories.Farmacia
             }
             catch (Exception ex)
             {
-                return new RecepcionTotales();
+                throw;
             }
             finally
             {
@@ -141,7 +141,7 @@ namespace Sisfarma.Sincronizador.Nixfarma.Infrastructure.Repositories.Farmacia
             }
             catch (Exception ex)
             {
-                return recepciones;
+                throw;
             }
             finally
             {
@@ -201,7 +201,7 @@ namespace Sisfarma.Sincronizador.Nixfarma.Infrastructure.Repositories.Farmacia
             }
             catch (Exception ex)
             {
-                return recepciones;
+                throw;
             }
             finally
             {
@@ -256,7 +256,7 @@ namespace Sisfarma.Sincronizador.Nixfarma.Infrastructure.Repositories.Farmacia
             }
             catch (Exception ex)
             {
-                return historicos;
+                throw;
             }
             finally
             {

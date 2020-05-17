@@ -137,7 +137,7 @@ namespace Sisfarma.Sincronizador.Nixfarma.Infrastructure.Repositories.Farmacia
             }
             catch (Exception ex)
             {
-                return new List<Cliente>();
+                throw;
             }
             finally
             {
@@ -252,7 +252,7 @@ namespace Sisfarma.Sincronizador.Nixfarma.Infrastructure.Repositories.Farmacia
             }
             catch (Exception ex)
             {
-                return new Cliente();
+                throw;
             }
             finally
             {
@@ -294,7 +294,7 @@ namespace Sisfarma.Sincronizador.Nixfarma.Infrastructure.Repositories.Farmacia
             }
             catch (Exception)
             {
-                return false;
+                throw;
             }
             finally
             {
@@ -346,7 +346,7 @@ namespace Sisfarma.Sincronizador.Nixfarma.Infrastructure.Repositories.Farmacia
             }
             catch (Exception)
             {
-                return "cliente";
+                throw;
             }
             finally
             {

@@ -32,7 +32,7 @@ namespace Sisfarma.Sincronizador.Nixfarma.Infrastructure.Repositories.Farmacia
             }
             catch (Exception)
             {
-                return null;
+                throw;
             }
             finally
             {

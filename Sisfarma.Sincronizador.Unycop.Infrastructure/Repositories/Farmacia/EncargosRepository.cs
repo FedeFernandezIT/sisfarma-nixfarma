@@ -117,7 +117,7 @@ namespace Sisfarma.Sincronizador.Nixfarma.Infrastructure.Repositories.Farmacia
             }
             catch (Exception ex)
             {
-                return new List<Encargo>();
+                throw;
             }
             finally
             {

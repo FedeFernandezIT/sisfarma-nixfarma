@@ -82,7 +82,7 @@ namespace Sisfarma.Sincronizador.Nixfarma.Infrastructure.Repositories.Farmacia
             }
             catch (Exception ex)
             {
-                return null;
+                throw;
             }
             finally
             {
@@ -143,7 +143,7 @@ namespace Sisfarma.Sincronizador.Nixfarma.Infrastructure.Repositories.Farmacia
             }
             catch (Exception ex)
             {
-                return new List<Venta>();
+                throw;
             }
             finally
             {
@@ -204,7 +204,7 @@ namespace Sisfarma.Sincronizador.Nixfarma.Infrastructure.Repositories.Farmacia
             }
             catch (Exception ex)
             {
-                return new List<Venta>();
+                throw;
             }
             finally
             {
@@ -278,7 +278,7 @@ namespace Sisfarma.Sincronizador.Nixfarma.Infrastructure.Repositories.Farmacia
             }
             catch (Exception ex)
             {
-                return new List<Venta>();
+                throw;
             }
             finally
             {
@@ -382,7 +382,7 @@ namespace Sisfarma.Sincronizador.Nixfarma.Infrastructure.Repositories.Farmacia
             }
             catch (Exception ex)
             {
-                return new List<VentaDetalle>();
+                throw;
             }
             finally
             {
@@ -486,7 +486,7 @@ namespace Sisfarma.Sincronizador.Nixfarma.Infrastructure.Repositories.Farmacia
             }
             catch (Exception ex)
             {
-                return new List<VentaDetalle>();
+                throw;
             }
             finally
             {

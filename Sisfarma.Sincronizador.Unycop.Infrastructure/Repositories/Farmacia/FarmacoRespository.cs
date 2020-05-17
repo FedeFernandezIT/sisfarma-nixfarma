@@ -222,7 +222,7 @@ namespace Sisfarma.Sincronizador.Nixfarma.Infrastructure.Repositories.Farmacia
             }
             catch (Exception ex)
             {
-                return farmacos;
+                throw;
             }
             finally
             {
@@ -319,7 +319,7 @@ namespace Sisfarma.Sincronizador.Nixfarma.Infrastructure.Repositories.Farmacia
             }
             catch (Exception ex)
             {
-                return farmacos;
+                throw;
             }
             finally
             {
@@ -416,7 +416,7 @@ namespace Sisfarma.Sincronizador.Nixfarma.Infrastructure.Repositories.Farmacia
             }
             catch (Exception ex)
             {
-                return farmacos;
+                throw;
             }
             finally
             {
@@ -513,7 +513,7 @@ namespace Sisfarma.Sincronizador.Nixfarma.Infrastructure.Repositories.Farmacia
             }
             catch (Exception ex)
             {
-                return farmacos;
+                throw;
             }
             finally
             {
