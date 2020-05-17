@@ -238,7 +238,7 @@ namespace Sisfarma.Sincronizador.Nixfarma.Infrastructure.ExternalServices.Sisfar
             {
                 _restClient
                    .Resource(_config.Puntos.Delete)
-                   .SendDelete(new
+                   .SendPut(new
                    {
                        id = pp.idventa,
                        linea = pp.idnlinea
@@ -248,7 +248,7 @@ namespace Sisfarma.Sincronizador.Nixfarma.Infrastructure.ExternalServices.Sisfar
             {
                 _restClient
                    .Resource(_config.Puntos.Delete)
-                   .SendDelete(new
+                   .SendPut(new
                    {
                        id = pp.idventa
                    });

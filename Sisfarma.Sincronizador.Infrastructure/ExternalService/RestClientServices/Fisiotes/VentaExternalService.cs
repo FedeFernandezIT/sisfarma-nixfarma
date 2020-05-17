@@ -41,7 +41,7 @@ namespace Sisfarma.Sincronizador.Infrastructure.ExternalService.Fisiotes
         {
             _restClient
                 .Resource(_config.Ventas.DeleteVentaPendiente)
-                .SendDelete(new
+                .SendPut(new
                 {
                     venta = new { idventa = ventaPendiente.idventa, empresa = ventaPendiente.empresa }
                 });

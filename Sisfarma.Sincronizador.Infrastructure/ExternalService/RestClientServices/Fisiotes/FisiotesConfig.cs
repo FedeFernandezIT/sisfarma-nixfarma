@@ -82,7 +82,7 @@
                     Update = "api/puntos/update",
                     Insert = "api/puntos/createUpdate",
                     InsertActualizarVenta = "api/puntos/createUpdate/actualizarVenta/1",
-                    Delete = "api/puntos/delete",
+                    Delete = "api/puntos/eliminar",
                     Exists = "api/puntos/exists/venta/{venta}"
                 },
 
@@ -190,7 +190,7 @@
                 {
                     InsertVentaPendiente = "api/venta/createUpdate",
                     GetAllPendientes = "api/venta/pendientes",
-                    DeleteVentaPendiente = "api/venta/delete",
+                    DeleteVentaPendiente = "api/venta/eliminar",
                 }
             };
         }
