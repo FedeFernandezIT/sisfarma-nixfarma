@@ -17,20 +17,22 @@ namespace Sisfarma.Sincronizador.Nixfarma.Infrastructure.ExternalServices.Sisfar
             : base(restClient, config)
         { }
 
-        public bool Exists(long venta)
+        public bool Exists(long numeroVenta)
         {
             try
             {
-                return _restClient
+                var venta = _restClient
                     .Resource(_config.Puntos.Exists
-                        .Replace("{venta}", $"{venta}"))
-                    .SendGet<bool>();
+                        .Replace("{venta}", $"{numeroVenta}"))
+                    .SendGet<ExisteVenta>();
+
+                return venta.Exists;
             }
             catch (RestClientNotFoundException)
             {
                 return false;
             }
-        }
+        }        
 
         public bool ExistsGreatThanOrEqual(DateTime fecha, string empresa)
         {
@@ -288,5 +290,13 @@ namespace Sisfarma.Sincronizador.Nixfarma.Infrastructure.ExternalServices.Sisfar
                 return false;
             }
         }
+    }
+
+
+    public class ExisteVenta
+    {
+        public string Venta { get; set; }
+
+        public bool Exists { get; set; }
     }
 }

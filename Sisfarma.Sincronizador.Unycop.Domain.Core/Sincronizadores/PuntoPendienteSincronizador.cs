@@ -285,7 +285,7 @@ namespace Sisfarma.Sincronizador.Unycop.Domain.Core.Sincronizadores
                     var puntosPendientes = GenerarPuntosPendientes(venta);
                     foreach (var puntoPendiente in puntosPendientes)
                     {
-                        _sisfarma.PuntosPendientes.Sincronizar(puntoPendiente);
+                            _sisfarma.PuntosPendientes.Sincronizar(puntoPendiente);
                     }
 
                     _timestampUltimaVenta = venta.FechaHora;

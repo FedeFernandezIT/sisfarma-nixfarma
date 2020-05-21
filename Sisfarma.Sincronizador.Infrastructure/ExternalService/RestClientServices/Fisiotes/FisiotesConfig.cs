@@ -82,7 +82,7 @@
                     Update = "api/puntos/update",
                     Insert = "api/puntos/createUpdate",
                     InsertActualizarVenta = "api/puntos/createUpdate/actualizarVenta/1",
-                    Delete = "api/puntos/eliminar",
+                    Delete = "api/puntos/eliminarVL",
                     Exists = "api/puntos/exists/venta/{venta}"
                 },
 
