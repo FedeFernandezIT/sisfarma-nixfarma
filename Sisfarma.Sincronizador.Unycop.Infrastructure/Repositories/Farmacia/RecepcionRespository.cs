@@ -103,12 +103,12 @@ namespace Sisfarma.Sincronizador.Nixfarma.Infrastructure.Repositories.Farmacia
             try
             {
                 var sqlExtra = string.Empty;
-                var sql = $@"
+                var sql = $@"SELECT * FROM (
                     SELECT FECHA_RECEPCION, EMP_CODIGO, PEDIDO, PROVEEDOR, ART_CODIGO, PVP_IVA_EUROS, PC_IVA_EUROS, LINEA, CANT_SERVIDA
                     From appul.ad_rec_linped
-                    WHERE rownum <= 999 AND
+                    WHERE 
                         to_char(fecha_recepcion, 'YYYY') >= {year} AND cant_servida <> 0
-                    Order by to_char(fecha_recepcion, 'YYYYMMDDHH24MISS'), pedido, linea ASC";
+                    Order by to_char(fecha_recepcion, 'YYYYMMDDHH24MISS'), pedido, linea ASC) WHERE rownum <= 999";
 
                 conn.Open();
                 var cmd = conn.CreateCommand();
@@ -166,12 +166,12 @@ namespace Sisfarma.Sincronizador.Nixfarma.Infrastructure.Repositories.Farmacia
             try
             {
                 var sqlExtra = string.Empty;
-                var sql = $@"
+                var sql = $@"SELECT * FROM (
                     SELECT FECHA_RECEPCION, EMP_CODIGO, PEDIDO, PROVEEDOR, ART_CODIGO, PVP_IVA_EUROS, PC_IVA_EUROS, LINEA, CANT_SERVIDA
                     From appul.ad_rec_linped
-                    WHERE rownum <= 999 AND
+                    WHERE
                         to_char(fecha_recepcion, 'YYYYMMDDHH24MISS') >= {fecha.ToString("yyyyMMddHHmmss")} AND cant_servida <> 0
-                    Order by to_char(fecha_recepcion, 'YYYYMMDDHH24MISS'), pedido, linea ASC";
+                    Order by to_char(fecha_recepcion, 'YYYYMMDDHH24MISS'), pedido, linea ASC) WHERE rownum <= 999";
 
                 conn.Open();
                 var cmd = conn.CreateCommand();

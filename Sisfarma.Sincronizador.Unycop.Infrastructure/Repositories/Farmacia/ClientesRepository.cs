@@ -27,16 +27,15 @@ namespace Sisfarma.Sincronizador.Nixfarma.Infrastructure.Repositories.Farmacia
 
             try
             {
-                var sql = $@"SELECT CODIGO,
+                var sql = $@"SELECT * FROM (SELECT CODIGO,
                                 APELLIDOS, NOMBRE, NIF, SEXO,
                                 DIRECCION, CODIGO_POSTAL, POBLACION,
                                 TEL_MOVIL, TELEFONO_1, TELEFONO_2, E_MAIL, DTO_PUNTOS_E,
                                 FECHA_ALTA, FECHA_BAJA, FECHA_NTO,
                                 OPE_APLICA, TIP_CODIGO, DES_CODIGO, AUTORIZA_COMERCIAL
                                 FROM appul.ag_clientes
-                                    WHERE ROWNUM <= 999
-                                        AND codigo > {id}
-                                ORDER BY codigo";
+                                    WHERE codigo > {id}
+                                ORDER BY codigo) WHERE ROWNUM <= 999";
 
                 conn.Open();
                 var cmd = conn.CreateCommand();

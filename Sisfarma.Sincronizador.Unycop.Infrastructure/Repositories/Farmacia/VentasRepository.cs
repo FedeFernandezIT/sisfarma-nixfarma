@@ -105,15 +105,14 @@ namespace Sisfarma.Sincronizador.Nixfarma.Infrastructure.Repositories.Farmacia
 
             try
             {
-                var sql = $@"SELECT
+                var sql = $@"SELECT * FROM (SELECT
                                 FECHA_VENTA, FECHA_FIN, CLI_CODIGO, TIPO_OPERACION, OPERACION, PUESTO, USR_CODIGO, IMPORTE_VTA_E, EMP_CODIGO
                                 FROM appul.ah_ventas
-                                WHERE ROWNUM <= 999
-                                    AND emp_codigo = '{empresa}'
+                                WHERE emp_codigo = '{empresa}'
                                     AND situacion = 'N'
                                     AND fecha_venta >= to_date('01/01/{year}', 'DD/MM/YYYY')
                                     AND fecha_venta >= to_date('01/01/{year} 00:00:00', 'DD/MM/YYYY HH24:MI:SS')
-                                    ORDER BY fecha_venta ASC";
+                                    ORDER BY fecha_venta ASC) WHERE ROWNUM <= 999";
 
                 conn.Open();
                 var cmd = conn.CreateCommand();
@@ -244,15 +243,14 @@ namespace Sisfarma.Sincronizador.Nixfarma.Infrastructure.Repositories.Farmacia
 
             try
             {
-                var sql = $@"SELECT *
+                var sql = $@"SELECT * FROM (SELECT *
                     FROM appul.ah_ventas
-                    WHERE ROWNUM <= 999
-                        AND emp_codigo = '{empresa}'
+                    WHERE emp_codigo = '{empresa}'
                         AND situacion = 'N'
                         AND operacion >= {id}
                         AND fecha_venta >= to_date('01/01/{fecha.Year}', 'DD/MM/YYYY')
                         AND fecha_venta >= to_date('{fecha.ToString("dd/MM/yyyy")}', 'DD/MM/YYYY')
-                        ORDER BY fecha_venta ASC";
+                        ORDER BY fecha_venta ASC) WHERE ROWNUM <= 999";
 
                 conn.Open();
                 var cmd = conn.CreateCommand();

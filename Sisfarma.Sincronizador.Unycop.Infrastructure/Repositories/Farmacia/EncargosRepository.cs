@@ -58,9 +58,9 @@ namespace Sisfarma.Sincronizador.Nixfarma.Infrastructure.Repositories.Farmacia
                 var rs = new List<DTO.Encargo>();
                 var sqlExtra = string.Empty;
                 var sql = $@"
-                    SELECT e.num_enc, e.fecha_enc, e.cliente, e.operador, e.observaciones, e.emp_codigo, e.alm_codigo
+                    SELECT * FROM (SELECT e.num_enc, e.fecha_enc, e.cliente, e.operador, e.observaciones, e.emp_codigo, e.alm_codigo
                     From appul.ah_encargos e
-                    WHERE rownum <= 999 AND to_char(e.fecha_enc, 'YYYY') >= {year} AND e.num_enc >= {encargo} Order by e.num_enc ASC";
+                    WHERE to_char(e.fecha_enc, 'YYYY') >= {year} AND e.num_enc >= {encargo} Order by e.num_enc ASC) WHERE rownum <= 999";
 
                 conn.Open();
                 var cmd = conn.CreateCommand();
