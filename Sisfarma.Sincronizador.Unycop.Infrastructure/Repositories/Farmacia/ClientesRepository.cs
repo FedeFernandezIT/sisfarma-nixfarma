@@ -74,7 +74,7 @@ namespace Sisfarma.Sincronizador.Nixfarma.Infrastructure.Repositories.Farmacia
                     var cliente = new Cliente
                     {
                         Id = codigo,
-                        NombreCompleto = $"{nombre} {apellidos}".Trim(),
+                        NombreCompleto = $"{apellidos} {nombre}".Trim(),
                         NumeroIdentificacion = string.IsNullOrWhiteSpace(nif) ? string.Empty : nif.Trim(),
                         Sexo = string.IsNullOrWhiteSpace(sexo) ? string.Empty
                             : sexo.ToUpper() == "H" ? "Hombre"
@@ -201,7 +201,7 @@ namespace Sisfarma.Sincronizador.Nixfarma.Infrastructure.Repositories.Farmacia
                 var cliente = new Cliente
                 {
                     Id = id,
-                    NombreCompleto = $"{nombre} {apellidos}".Trim(),
+                    NombreCompleto = $"{apellidos} {nombre}".Trim(),
                     NumeroIdentificacion = string.IsNullOrWhiteSpace(nif) ? string.Empty : nif.Trim(),
                     Sexo = string.IsNullOrWhiteSpace(sexo) ? string.Empty
                         : sexo.ToUpper() == "H" ? "Hombre"
