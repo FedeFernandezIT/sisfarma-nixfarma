@@ -111,7 +111,7 @@ namespace Sisfarma.Sincronizador.Nixfarma.Infrastructure.Repositories.Farmacia
 
                         if (readerPuntos.Read())
                         {
-                            var puntosAcumulados = Convert.ToDecimal(reader["PUNTOS"]);
+                            var puntosAcumulados = Convert.ToDecimal(readerPuntos["PUNTOS"]);
                             cliente.Puntos = puntosAcumulados - dtoPuntosE;
                         }
 
@@ -126,7 +126,7 @@ namespace Sisfarma.Sincronizador.Nixfarma.Infrastructure.Repositories.Farmacia
 
                     if (readerTarjetas.Read())
                     {
-                        var tarjeta = Convert.ToString(reader["CODIGO_ID"]);
+                        var tarjeta = Convert.ToString(readerTarjetas["CODIGO_ID"]);
                         cliente.Tarjeta = !string.IsNullOrWhiteSpace(tarjeta) ? tarjeta.Trim() : string.Empty;
                     }
 
