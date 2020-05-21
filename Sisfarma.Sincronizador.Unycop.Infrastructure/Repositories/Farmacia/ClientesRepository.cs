@@ -105,7 +105,7 @@ namespace Sisfarma.Sincronizador.Nixfarma.Infrastructure.Repositories.Farmacia
                     // cargamos puntos
                     if (cargarPuntosSisfarma)
                     {
-                        sql = $@"SELECT NVL(SUM(imp_acumulado),0) as PUNTOS FROM appul.ag_reg_vta_fidel WHERE cod_cliente = {id}";
+                        sql = $@"SELECT NVL(SUM(imp_acumulado),0) as PUNTOS FROM appul.ag_reg_vta_fidel WHERE cod_cliente = {codigo}";
                         cmd.CommandText = sql;
                         var readerPuntos = cmd.ExecuteReader();
 
@@ -120,7 +120,7 @@ namespace Sisfarma.Sincronizador.Nixfarma.Infrastructure.Repositories.Farmacia
                     }
 
                     // buscamos tarjeta asociada
-                    sql = $@"SELECT CODIGO_ID FROM appul.ag_tarjetas WHERE cod_cliente = {id}";
+                    sql = $@"SELECT CODIGO_ID FROM appul.ag_tarjetas WHERE cod_cliente = {codigo}";
                     cmd.CommandText = sql;
                     var readerTarjetas = cmd.ExecuteReader();
 
