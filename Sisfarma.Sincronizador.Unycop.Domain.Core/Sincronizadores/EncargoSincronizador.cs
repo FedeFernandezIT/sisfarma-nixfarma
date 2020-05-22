@@ -1,4 +1,5 @@
-﻿using System.Threading.Tasks;
+﻿using System.Linq;
+using System.Threading.Tasks;
 using Sisfarma.Sincronizador.Domain.Core.Services;
 using Sisfarma.Sincronizador.Domain.Entities.Fisiotes;
 
@@ -36,7 +37,7 @@ namespace Sisfarma.Sincronizador.Unycop.Domain.Core.Sincronizadores
         public override void Process()
         {
             //_ultimo se carga en PreSincronizacion()
-            var idEncargo = _ultimo?.idEncargo ?? 1;
+            var idEncargo = _ultimo?.idEncargo ?? 0;
 
             var encargos = _farmacia.Encargos.GetAllByIdGreaterOrEqual(_anioInicio, idEncargo);
             foreach (var encargo in encargos)

@@ -66,8 +66,7 @@ namespace Sisfarma.Sincronizador.Nixfarma.Infrastructure.Repositories.Farmacia
                 var cmd = conn.CreateCommand();
                 cmd.CommandText = sql;
                 var reader = cmd.ExecuteReader();
-
-                var numLinea = 0;
+                
                 while (reader.Read())
                 {
                     var rNumEnc = Convert.ToInt32(reader["num_enc"]);
@@ -87,29 +86,49 @@ namespace Sisfarma.Sincronizador.Nixfarma.Infrastructure.Repositories.Farmacia
                     cmd.CommandText = sql;
                     var readerLineaEncargo = cmd.ExecuteReader();
 
+                    var numLinea = 1;
+
                     while (readerLineaEncargo.Read())
                     {
-                        var rLinea = Convert.ToInt32(readerLineaEncargo["linea"]);
                         var rArticulo = Convert.ToString(readerLineaEncargo["articulo"]);
-                        var rUniEncargadas = !Convert.IsDBNull(readerLineaEncargo["uni_encargadas"]) ? Convert.ToInt64(readerLineaEncargo["uni_encargadas"]) : 0L;
-                        var rFechaDisponib = !Convert.IsDBNull(readerLineaEncargo["fecha_disponib"]) ? Convert.ToDateTime(readerLineaEncargo["fecha_disponib"]) : DateTime.MinValue;
-
-                        var dto = new DTO.Encargo
+                        if (string.IsNullOrEmpty(rArticulo))
                         {
-                            Id = rNumEnc,
-                            FechaHora = rFechaEnc,
-                            Cliente = rCliente,
-                            Vendedor = rOperador,
-                            Observaciones = rObservaciones,
-                            Empresa = rEmpCodigo,
-                            Almacen = rAlmCodigo,
-                            Linea = ++numLinea,
-                            Farmaco = rArticulo,
-                            Cantidad = rUniEncargadas,
-                            FechaHoraEntrega = rFechaDisponib
-                        };
+                            continue;
+                        }
 
-                        rs.Add(dto);
+
+                        var artSql = $@"select * from appul.ab_articulos where codigo='{rArticulo}'";
+                        cmd.CommandText = artSql;
+                        var readerArticulo = cmd.ExecuteReader();
+                        var hayArticulo = readerArticulo.HasRows;
+                        readerArticulo.Close();
+                        readerArticulo.Dispose();
+
+                        if (hayArticulo)
+                        {
+                            var rLinea = Convert.ToInt32(readerLineaEncargo["linea"]);
+                            var rUniEncargadas = !Convert.IsDBNull(readerLineaEncargo["uni_encargadas"]) ? Convert.ToInt64(readerLineaEncargo["uni_encargadas"]) : 0L;
+                            var rFechaDisponib = !Convert.IsDBNull(readerLineaEncargo["fecha_disponib"]) ? Convert.ToDateTime(readerLineaEncargo["fecha_disponib"]) : DateTime.MinValue;
+
+                            var dto = new DTO.Encargo
+                            {
+                                Id = rNumEnc,
+                                FechaHora = rFechaEnc,
+                                Cliente = rCliente,
+                                Vendedor = rOperador,
+                                Observaciones = rObservaciones,
+                                Empresa = rEmpCodigo,
+                                Almacen = rAlmCodigo,
+                                Linea = numLinea,
+                                Farmaco = rArticulo,
+                                Cantidad = rUniEncargadas,
+                                FechaHoraEntrega = rFechaDisponib
+                            };
+
+                            rs.Add(dto);
+                        }
+
+                        numLinea = numLinea + 1;
                     }
 
                     readerLineaEncargo.Close();
