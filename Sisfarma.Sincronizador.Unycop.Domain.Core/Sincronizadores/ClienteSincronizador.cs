@@ -43,7 +43,10 @@ namespace Sisfarma.Sincronizador.Unycop.Domain.Core.Sincronizadores
 
                 var repository = _farmacia.Clientes as ClientesRepository;
                 var localClientes = repository.GetGreatThanIdAsDTO(_ultimoClienteSincronizado, cargarPuntosSisfarma);
-                
+
+                if (!localClientes.Any())
+                    return;
+
                 var batchClientes = new List<FAR.Cliente>();
                 foreach (var cliente in localClientes)
                 {
