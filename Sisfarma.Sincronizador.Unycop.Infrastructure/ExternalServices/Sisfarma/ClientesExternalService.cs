@@ -5,6 +5,9 @@ using Sisfarma.Sincronizador.Domain.Entities.Fisiotes;
 using Sisfarma.Sincronizador.Infrastructure.Fisiotes;
 using Sisfarma.Sincronizador.Infrastructure.Fisiotes.DTO;
 using System;
+using System.Collections;
+using System.Collections.Generic;
+using System.Linq;
 using FAR = Sisfarma.Sincronizador.Domain.Entities.Farmacia;
 
 namespace Sisfarma.Sincronizador.Nixfarma.Infrastructure.ExternalServices.Sisfarma
@@ -67,10 +70,31 @@ namespace Sisfarma.Sincronizador.Nixfarma.Infrastructure.ExternalServices.Sisfar
                 .SendPut();
         }
 
-        public void Sincronizar(FAR.Cliente cliente, bool cargarPuntos = false)
+        public void Sincronizar(IEnumerable<FAR.Cliente> clientes)
         {
-            var resource = _config.Clientes.Insert.Replace("{dni}", $"{cliente.Id}");
-            Sincronizar(cliente, cargarPuntos, resource);
+            var resource = _config.Clientes.InsertBulk;
+            var bulk = clientes.Select(cc => GenerarClienteDinamico(cc));
+
+            _restClient
+            .Resource(resource)
+            .SendPost(new
+            {
+                bulk = bulk
+            });
+        }
+
+        public object GenerarClienteDinamico(FAR.Cliente cliente)
+        {
+            if (cliente.BeBlue.HasValue)
+            {
+                return cliente.DebeCargarPuntos
+                    ? GenerarAnonymousClientePuntuado(cliente, cliente.BeBlue.Value)
+                    : GenerarAnonymousClienteSinPuntuar(cliente, cliente.BeBlue.Value);
+            }
+
+            return cliente.DebeCargarPuntos
+                ? GenerarAnonymousClientePuntuado(cliente)
+                : GenerarAnonymousClienteSinPuntuar(cliente);
         }
 
         public void Sincronizar(FAR.Cliente cliente, bool beBlue, bool cargarPuntos = false)

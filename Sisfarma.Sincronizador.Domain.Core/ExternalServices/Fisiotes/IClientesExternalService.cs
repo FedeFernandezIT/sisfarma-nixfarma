@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections.Generic;
 using Sisfarma.Sincronizador.Domain.Entities.Fisiotes;
 using Sisfarma.Sincronizador.Infrastructure.Fisiotes.DTO;
 using FAR = Sisfarma.Sincronizador.Domain.Entities.Farmacia;
@@ -24,9 +25,7 @@ namespace Sisfarma.Sincronizador.Domain.Core.ExternalServices.Fisiotes
     {
         void InsertOrUpdate(Cliente cliente);
 
-        void Sincronizar(FAR.Cliente cliente, bool cargarPuntos = false);
-
-        void Sincronizar(FAR.Cliente cliente, bool beBlue, bool cargarPuntos = false);
+        void Sincronizar(IEnumerable<FAR.Cliente> clientes);        
 
         void SincronizarHueco(FAR.Cliente cliente, bool cargarPuntos = false);
 

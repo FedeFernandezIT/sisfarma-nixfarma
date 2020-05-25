@@ -54,6 +54,10 @@ namespace Sisfarma.Sincronizador.Domain.Entities.Farmacia
         public long CodigoDes { get; set; }
         public string Tipo { get; set; }
 
+        public bool? BeBlue { get; set; } = null;
+
+        public bool DebeCargarPuntos { get; set; }
+
         public bool HasTarjeta() => !string.IsNullOrWhiteSpace(Tarjeta);
     }
 }

@@ -168,15 +168,17 @@ namespace Sisfarma.Sincronizador.Unycop.Domain.Core.Sincronizadores
         private void InsertOrUpdateCliente(FAR.Cliente cliente)
         {
             var debeCargarPuntos = _puntosDeSisfarma.ToLower().Equals("no") || string.IsNullOrWhiteSpace(_puntosDeSisfarma);
+            cliente.DebeCargarPuntos = debeCargarPuntos;
 
             cliente.Tipo = _farmacia.Clientes.EsResidencia($"{cliente.CodigoCliente}", $"{cliente.CodigoDes}", _filtrosResidencia);
 
             if (_perteneceFarmazul)
             {
                 var beBlue = _farmacia.Clientes.EsBeBlue($"{cliente.CodigoCliente}", $"{cliente.CodigoDes}");
-                _sisfarma.Clientes.Sincronizar(cliente, beBlue, debeCargarPuntos);
+                cliente.BeBlue = beBlue;
             }
-            else _sisfarma.Clientes.Sincronizar(cliente, debeCargarPuntos);
+            
+            _sisfarma.Clientes.Sincronizar(new List<FAR.Cliente>() { cliente });
         }
     }
 
@@ -336,15 +338,17 @@ namespace Sisfarma.Sincronizador.Unycop.Domain.Core.Sincronizadores
         private void InsertOrUpdateCliente(FAR.Cliente cliente)
         {
             var debeCargarPuntos = _puntosDeSisfarma.ToLower().Equals("no") || string.IsNullOrWhiteSpace(_puntosDeSisfarma);
+            cliente.DebeCargarPuntos = debeCargarPuntos;
 
             cliente.Tipo = _farmacia.Clientes.EsResidencia($"{cliente.CodigoCliente}", $"{cliente.CodigoDes}", _filtrosResidencia);
 
             if (_perteneceFarmazul)
             {
                 var beBlue = _farmacia.Clientes.EsBeBlue($"{cliente.CodigoCliente}", $"{cliente.CodigoDes}");
-                _sisfarma.Clientes.Sincronizar(cliente, beBlue, debeCargarPuntos);
+                cliente.BeBlue = beBlue;
             }
-            else _sisfarma.Clientes.Sincronizar(cliente, debeCargarPuntos);
+
+            _sisfarma.Clientes.Sincronizar(new List<FAR.Cliente>() { cliente });
         }
     }
 }

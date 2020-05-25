@@ -57,6 +57,7 @@
                     GetByDni = "api/cliente/index/dni/{dni}",
                     Insert = "api/cliente/index/dni/{dni}",
                     InsertHueco = "api/cliente/index/dni/{dni}/esHueco/1",
+                    InsertBulk = "api / cliente / createUpdate",
                     Update = "api/cliente/update"
                 },
 
@@ -228,6 +229,8 @@ public class ClienteResource
     public string Update { get; set; }
 
     public string InsertHueco { get; internal set; }
+
+    public string InsertBulk { get; set; }
 }
 
 public class HuecoResource
