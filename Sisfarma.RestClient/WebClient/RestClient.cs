@@ -20,6 +20,7 @@ namespace Sisfarma.RestClient.WebClient
         public RestClient()
         {
             _restClient = new HttpClient();
+            _restClient.Timeout = TimeSpan.FromMinutes(30);
             FILE_LOG = System.Configuration.ConfigurationManager.AppSettings["Directory.Logs"] + @"RestClient.logs";
         }
 
