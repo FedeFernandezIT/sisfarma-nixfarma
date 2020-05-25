@@ -151,48 +151,54 @@ namespace Sisfarma.Sincronizador.Nixfarma.Infrastructure.ExternalServices.Sisfar
             throw new NotImplementedException();
         }
 
-        public void Sincronizar(PuntosPendientes pp, bool calcularPuntos = false)
+        public void Sincronizar(IEnumerable<PuntosPendientes> pps, bool calcularPuntos = false)
         {
-            var set = new
+            var puntos = pps.Select(pp => 
             {
-                idventa = pp.VentaId,
-                idnlinea = pp.LineaNumero,
-                cod_barras = pp.CodigoBarra,
-                cod_nacional = pp.CodigoNacional,
-                descripcion = pp.Descripcion.Strip(),
-                familia = pp.Familia,
-                cantidad = pp.Cantidad,
-                precio = pp.Precio,
-                tipoPago = pp.TipoPago,
-                fecha = pp.Fecha,
-                dni = pp.DNI,
-                cargado = pp.Cargado,
-                puesto = pp.Puesto,
-                trabajador = pp.Trabajador,
-                cod_laboratorio = pp.LaboratorioCodigo,
-                laboratorio = pp.Laboratorio,
-                proveedor = pp.Proveedor,
-                receta = pp.Receta,
-                fechaVenta = pp.FechaVenta.ToIsoString(),
-                superFamilia = pp.SuperFamilia,
-                pvp = pp.PVP,
-                puc = pp.PUC,
-                categoria = pp.Categoria,
-                subcategoria = pp.Subcategoria,
-                sistema = pp.Sistema,
-                dtoLinea = pp.LineaDescuento,
-                dtoVenta = pp.VentaDescuento,
-                actualizado = "1",           
-                ubicacion = pp.Ubicacion
-            };
+                var set = new
+                {
+                    idventa = pp.VentaId,
+                    idnlinea = pp.LineaNumero,
+                    cod_barras = pp.CodigoBarra,
+                    cod_nacional = pp.CodigoNacional,
+                    descripcion = pp.Descripcion.Strip(),
+                    familia = pp.Familia,
+                    cantidad = pp.Cantidad,
+                    precio = pp.Precio,
+                    tipoPago = pp.TipoPago,
+                    fecha = pp.Fecha,
+                    dni = pp.DNI,
+                    cargado = pp.Cargado,
+                    puesto = pp.Puesto,
+                    trabajador = pp.Trabajador,
+                    cod_laboratorio = pp.LaboratorioCodigo,
+                    laboratorio = pp.Laboratorio,
+                    proveedor = pp.Proveedor,
+                    receta = pp.Receta,
+                    fechaVenta = pp.FechaVenta.ToIsoString(),
+                    superFamilia = pp.SuperFamilia,
+                    pvp = pp.PVP,
+                    puc = pp.PUC,
+                    categoria = pp.Categoria,
+                    subcategoria = pp.Subcategoria,
+                    sistema = pp.Sistema,
+                    dtoLinea = pp.LineaDescuento,
+                    dtoVenta = pp.VentaDescuento,
+                    actualizado = "1",
+                    ubicacion = pp.Ubicacion
+                };
 
-            var where = new { idventa = pp.VentaId, idnlinea = pp.LineaNumero };
+                var where = new { idventa = pp.VentaId, idnlinea = pp.LineaNumero };
+
+                return new { set, where };
+            });
+            
 
             _restClient
                 .Resource(calcularPuntos ? _config.Puntos.InsertActualizarVenta : _config.Puntos.Insert)
                 .SendPost(new
                 {
-                    puntos = new[] { new { set, where } }
+                    puntos = puntos
                 });
         }
 

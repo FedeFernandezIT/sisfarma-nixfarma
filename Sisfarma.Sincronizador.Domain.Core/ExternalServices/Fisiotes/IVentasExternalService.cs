@@ -5,10 +5,10 @@ namespace Sisfarma.Sincronizador.Domain.Core.ExternalServices.Fisiotes
 {
     public interface IVentasExternalService
     {
-        void Sincronizar(VentaPendiente ventaPendiente);
+        void Sincronizar(IEnumerable<VentaPendiente> ventasPendientes);
 
         IEnumerable<VentaPendiente> GetAllPendientes();
 
-        void Sincronizar(DeleteVentaPendiente deleteVentaPendiente);
+        void Sincronizar(IEnumerable<DeleteVentaPendiente> deleteVentasPendientes);
     }
 }

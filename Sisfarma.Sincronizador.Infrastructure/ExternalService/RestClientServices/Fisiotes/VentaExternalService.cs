@@ -27,24 +27,30 @@ namespace Sisfarma.Sincronizador.Infrastructure.ExternalService.Fisiotes
             }
         }
 
-        public void Sincronizar(VentaPendiente ventaPendiente)
+        public void Sincronizar(IEnumerable<VentaPendiente> ventasPendientes)
         {
-            _restClient
+            foreach (var ventaPendiente in ventasPendientes)
+            {
+                _restClient
                 .Resource(_config.Ventas.InsertVentaPendiente)
                 .SendPost(new
                 {
                     venta = new { idventa = ventaPendiente.idventa, empresa = ventaPendiente.empresa }
                 });
+            }            
         }
 
-        public void Sincronizar(DeleteVentaPendiente ventaPendiente)
+        public void Sincronizar(IEnumerable<DeleteVentaPendiente> ventasPendientes)
         {
-            _restClient
+            foreach (var ventaPendiente in ventasPendientes)
+            {
+                _restClient
                 .Resource(_config.Ventas.DeleteVentaPendiente)
                 .SendPut(new
                 {
                     venta = new { idventa = ventaPendiente.idventa, empresa = ventaPendiente.empresa }
                 });
+            }                                    
         }
     }
 }

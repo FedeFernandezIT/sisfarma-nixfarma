@@ -61,6 +61,7 @@ namespace Sisfarma.Sincronizador.Unycop.Domain.Core.Sincronizadores
                     .ToIntegerOrDefault();
 
             var ventas = _farmacia.Ventas.GetAllByIdGreaterOrEqual(ventaIdConfiguracion, fechaInicial, "EMP1");
+            var batchPuntosPendientes = new List<PuntosPendientes>();
             foreach (var venta in ventas)
             {
                 Task.Delay(5).Wait();
@@ -76,11 +77,11 @@ namespace Sisfarma.Sincronizador.Unycop.Domain.Core.Sincronizadores
                     InsertOrUpdateCliente(venta.Cliente);
 
                 var puntosPendientes = GenerarPuntosPendientes(venta);
-                foreach (var puntoPendiente in puntosPendientes)
-                {
-                    _sisfarma.PuntosPendientes.Sincronizar(puntoPendiente, calcularPuntos: true);
-                }
+                batchPuntosPendientes.AddRange(puntosPendientes);                
             }
+
+            if (batchPuntosPendientes.Any()) _sisfarma.PuntosPendientes.Sincronizar(batchPuntosPendientes, calcularPuntos: true);
+
 
             _sisfarma.Configuraciones.Update(Configuracion.FIELD_POR_DONDE_VOY_VENTA_MES_ID_EMP1, "0");
             _sisfarma.Configuraciones.Update(Configuracion.FIELD_POR_DONDE_VOY_VENTA_MES_EMP1, fechaActual.ToString("yyyy-MM-dd"));
@@ -229,6 +230,7 @@ namespace Sisfarma.Sincronizador.Unycop.Domain.Core.Sincronizadores
                     .ToIntegerOrDefault();
 
             var ventas = _farmacia.Ventas.GetAllByIdGreaterOrEqual(ventaIdConfiguracion, fechaInicial, "EMP2");
+            var batchPuntosPendientes = new List<PuntosPendientes>();
             foreach (var venta in ventas)
             {
                 Task.Delay(5).Wait();
@@ -244,11 +246,10 @@ namespace Sisfarma.Sincronizador.Unycop.Domain.Core.Sincronizadores
                     InsertOrUpdateCliente(venta.Cliente);
 
                 var puntosPendientes = GenerarPuntosPendientes(venta);
-                foreach (var puntoPendiente in puntosPendientes)
-                {
-                    _sisfarma.PuntosPendientes.Sincronizar(puntoPendiente, calcularPuntos: true);
-                }
+                batchPuntosPendientes.AddRange(puntosPendientes);
             }
+
+            if (batchPuntosPendientes.Any()) _sisfarma.PuntosPendientes.Sincronizar(batchPuntosPendientes, calcularPuntos: true);
 
             _sisfarma.Configuraciones.Update(Configuracion.FIELD_POR_DONDE_VOY_VENTA_MES_ID_EMP2, "0");
             _sisfarma.Configuraciones.Update(Configuracion.FIELD_POR_DONDE_VOY_VENTA_MES_EMP2, fechaActual.ToString("yyyy-MM-dd"));

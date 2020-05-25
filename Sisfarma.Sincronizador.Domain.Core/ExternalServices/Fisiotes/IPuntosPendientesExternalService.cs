@@ -52,7 +52,7 @@ namespace Sisfarma.Sincronizador.Domain.Core.ExternalServices.Fisiotes
 
     public interface IPuntosPendientesExternalServiceNew
     {
-        void Sincronizar(PuntosPendientes punto, bool calcularPuntos = false);
+        void Sincronizar(IEnumerable<PuntosPendientes> punto, bool calcularPuntos = false);
 
         void Sincronizar(IEnumerable<PuntosPendientes> puntos);
     }

@@ -63,6 +63,8 @@ namespace Sisfarma.Sincronizador.Unycop.Domain.Core.Sincronizadores
             if (!ventas.Any())
                 return;
 
+            var batchPuntosPendientes = new List<PuntosPendientes>();
+            var batchVentasPendientes = new List<VentaPendiente>();
             foreach (var venta in ventas)
             {
                 Task.Delay(5).Wait();
@@ -79,18 +81,22 @@ namespace Sisfarma.Sincronizador.Unycop.Domain.Core.Sincronizadores
                     if (venta.HasCliente() && _debeCopiarClientes)
                         InsertOrUpdateCliente(venta.Cliente);
                     var puntosPendientes = GenerarPuntosPendientes(venta);
-                    foreach (var puntoPendiente in puntosPendientes)
-                    {
-                        _sisfarma.PuntosPendientes.Sincronizar(puntoPendiente);
-                    }
-
-                    _timestampUltimaVenta = venta.FechaHora;
+                    batchPuntosPendientes.AddRange(puntosPendientes);                                        
                 }
                 else
                 {
-                    _sisfarma.Ventas.Sincronizar(new VentaPendiente { idventa = venta.Operacion, empresa = "EMP1" });
+                    batchVentasPendientes.Add(new VentaPendiente { idventa = venta.Operacion, empresa = "EMP1" });                    
                 }
             }
+
+            if (batchPuntosPendientes.Any())
+            {
+                _sisfarma.PuntosPendientes.Sincronizar(batchPuntosPendientes);
+                _timestampUltimaVenta = ventas.Last().FechaHora;
+            }
+
+            if (batchVentasPendientes.Any()) _sisfarma.Ventas.Sincronizar(batchVentasPendientes);            
+            
         }
 
         private IEnumerable<PuntosPendientes> GenerarPuntosPendientes(Venta venta)
@@ -266,6 +272,9 @@ namespace Sisfarma.Sincronizador.Unycop.Domain.Core.Sincronizadores
             var ventas = _farmacia.Ventas.GetAllByDateTimeGreaterOrEqual(_anioInicio, _timestampUltimaVenta, "EMP2");
             if (!ventas.Any())
                 return;
+            
+            var batchPuntosPendientes = new List<PuntosPendientes>();
+            var batchVentasPendientes = new List<VentaPendiente>();
 
             foreach (var venta in ventas)
             {
@@ -283,18 +292,22 @@ namespace Sisfarma.Sincronizador.Unycop.Domain.Core.Sincronizadores
                     if (venta.HasCliente() && _debeCopiarClientes)
                         InsertOrUpdateCliente(venta.Cliente);
                     var puntosPendientes = GenerarPuntosPendientes(venta);
-                    foreach (var puntoPendiente in puntosPendientes)
-                    {
-                            _sisfarma.PuntosPendientes.Sincronizar(puntoPendiente);
-                    }
-
-                    _timestampUltimaVenta = venta.FechaHora;
+                    batchPuntosPendientes.AddRange(puntosPendientes);
+                   
                 }
                 else
                 {
-                    _sisfarma.Ventas.Sincronizar(new VentaPendiente { idventa = venta.Operacion, empresa = "EMP2" });
+                    batchVentasPendientes.Add(new VentaPendiente { idventa = venta.Operacion, empresa = "EMP2" });
                 }
             }
+
+            if (batchPuntosPendientes.Any())
+            {
+                _sisfarma.PuntosPendientes.Sincronizar(batchPuntosPendientes);
+                _timestampUltimaVenta = ventas.Last().FechaHora;
+            }
+
+            if (batchVentasPendientes.Any()) _sisfarma.Ventas.Sincronizar(batchVentasPendientes);
         }
 
         private IEnumerable<PuntosPendientes> GenerarPuntosPendientes(Venta venta)

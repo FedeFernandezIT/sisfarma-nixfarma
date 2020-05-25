@@ -66,6 +66,8 @@ namespace Sisfarma.Sincronizador.Unycop.Domain.Core.Sincronizadores
                 var numeroVenta = pendiente.idventa;
                 var empresa = pendiente.empresa;
                 var ventas = _farmacia.Ventas.GetAllByIdGreaterOrEqual(_anioInicio, numeroVenta, empresa);
+                var batchPuntosPendientes = new List<PuntosPendientes>();
+                var batchVentasPendientesDelete = new List<DeleteVentaPendiente>();
                 foreach (var venta in ventas)
                 {
                     var empresaSerial = empresa == "EMP1" ? "00001" : "00002";
@@ -84,14 +86,14 @@ namespace Sisfarma.Sincronizador.Unycop.Domain.Core.Sincronizadores
                             if (venta.HasCliente() && _debeCopiarClientes)
                                 InsertOrUpdateCliente(venta.Cliente);
                             var puntosPendientes = GenerarPuntosPendientes(venta, empresa);
-                            foreach (var puntoPendiente in puntosPendientes)
-                            {
-                                _sisfarma.PuntosPendientes.Sincronizar(puntoPendiente);
-                            }
+                            batchPuntosPendientes.AddRange(puntosPendientes);
                         }
                     }
-                    else _sisfarma.Ventas.Sincronizar(new DeleteVentaPendiente { idventa = numeroVenta, empresa = empresa });
+                    else batchVentasPendientesDelete.Add(new DeleteVentaPendiente { idventa = numeroVenta, empresa = empresa });
                 }
+
+                if (batchPuntosPendientes.Any()) _sisfarma.PuntosPendientes.Sincronizar(batchPuntosPendientes);
+                if (batchVentasPendientesDelete.Any()) _sisfarma.Ventas.Sincronizar(batchVentasPendientesDelete);
             }
         }
 
