@@ -3,6 +3,8 @@ using Sisfarma.RestClient.Exceptions;
 using Sisfarma.Sincronizador.Core.Extensions;
 using Sisfarma.Sincronizador.Domain.Core.ExternalServices.Fisiotes;
 using Sisfarma.Sincronizador.Domain.Entities.Fisiotes;
+using System.Collections.Generic;
+using System.Linq;
 
 namespace Sisfarma.Sincronizador.Infrastructure.Fisiotes
 {
@@ -46,9 +48,9 @@ namespace Sisfarma.Sincronizador.Infrastructure.Fisiotes
             }
         }
 
-        public void Sincronizar(Pedido pp)
+        public void Sincronizar(IEnumerable<Pedido> pps)
         {
-            var pedido = new
+            var bulk = pps.Select(pp => new
             {
                 idPedido = pp.idPedido,
                 fechaPedido = pp.fechaPedido.ToIsoString(),
@@ -59,13 +61,13 @@ namespace Sisfarma.Sincronizador.Infrastructure.Fisiotes
                 idProveedor = pp.idProveedor,
                 proveedor = pp.proveedor,
                 trabajador = pp.trabajador
-            };
+            }).ToArray();
 
             _restClient
                 .Resource(_config.Pedidos.Insert)
                 .SendPost(new
                 {
-                    bulk = new[] { pedido }
+                    bulk = bulk
                 });            
         }
 
@@ -92,9 +94,9 @@ namespace Sisfarma.Sincronizador.Infrastructure.Fisiotes
         }
 
 
-        public void Sincronizar(LineaPedido ll)
+        public void Sincronizar(IEnumerable<LineaPedido> lls)
         {
-            var linea = new
+            var bulk = lls.Select(ll => new
             {
                 fechaPedido = ll.fechaPedido.ToIsoString(),
                 idPedido = ll.idPedido,
@@ -107,13 +109,13 @@ namespace Sisfarma.Sincronizador.Infrastructure.Fisiotes
                 puc = ll.puc,
                 cod_laboratorio = ll.cod_laboratorio,
                 laboratorio = ll.laboratorio
-            };
+            }).ToArray();
 
             _restClient
                 .Resource(_config.Pedidos.InsertLineaDePedido)
                 .SendPost(new
                 {
-                    bulk = new[] { linea }
+                    bulk = bulk
                 });
         }
     }

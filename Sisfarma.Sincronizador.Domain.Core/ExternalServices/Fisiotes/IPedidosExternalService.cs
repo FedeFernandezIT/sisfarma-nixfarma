@@ -1,4 +1,5 @@
 ﻿using Sisfarma.Sincronizador.Domain.Entities.Fisiotes;
+using System.Collections.Generic;
 
 namespace Sisfarma.Sincronizador.Domain.Core.ExternalServices.Fisiotes
 {
@@ -8,8 +9,8 @@ namespace Sisfarma.Sincronizador.Domain.Core.ExternalServices.Fisiotes
         bool ExistsLinea(int pedido, int linea);
         Pedido Get(int pedido);
         LineaPedido GetLineaByKey(int pedido, int linea);
-        void Sincronizar(Pedido pp);
-        void Sincronizar(LineaPedido ll);
+        void Sincronizar(IEnumerable<Pedido> pps);
+        void Sincronizar(IEnumerable<LineaPedido> lls);
         Pedido LastOrDefault();
     }
 }
