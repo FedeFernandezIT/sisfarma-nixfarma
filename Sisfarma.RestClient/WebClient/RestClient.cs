@@ -156,7 +156,7 @@ namespace Sisfarma.RestClient.WebClient
             try
             {
                 _request.Content = new StringContent(Newtonsoft.Json.JsonConvert.SerializeObject(body), Encoding.UTF8, "application/json");
-                var req = _request.ToRestClientRequest(_restClient.BaseAddress);
+                    var req = _request.ToRestClientRequest(_restClient.BaseAddress);
                 //Logging.WriteToFileThreadSafe(DateTime.Now.ToString("o") + " " + req.ToString(), FILE_LOG);
                 var response = _restClient.SendAsync(_request).Result;
                 var resp = response.ToRestClientRequest();

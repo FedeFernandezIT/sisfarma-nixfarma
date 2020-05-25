@@ -73,7 +73,7 @@ namespace Sisfarma.Sincronizador.Nixfarma.Infrastructure.ExternalServices.Sisfar
         public void Sincronizar(IEnumerable<FAR.Cliente> clientes)
         {
             var resource = _config.Clientes.InsertBulk;
-            var bulk = clientes.Select(cc => GenerarClienteDinamico(cc));
+            var bulk = clientes.Select(cc => GenerarClienteDinamico(cc)).ToArray();
 
             _restClient
             .Resource(resource)
@@ -141,6 +141,7 @@ namespace Sisfarma.Sincronizador.Nixfarma.Infrastructure.ExternalServices.Sisfar
         {
             return new
             {
+                dni = cliente.Id.ToString(),
                 nombre_tra = cliente.Trabajador,
                 dni_tra = "0",
                 tarjeta = cliente.Tarjeta,
@@ -165,6 +166,7 @@ namespace Sisfarma.Sincronizador.Nixfarma.Infrastructure.ExternalServices.Sisfar
         {
             return new
             {
+                dni = cliente.Id.ToString(),
                 nombre_tra = cliente.Trabajador,
                 dni_tra = "0",
                 tarjeta = cliente.Tarjeta,
@@ -190,6 +192,7 @@ namespace Sisfarma.Sincronizador.Nixfarma.Infrastructure.ExternalServices.Sisfar
         {
             return new
             {
+                dni = cliente.Id.ToString(),    
                 nombre_tra = cliente.Trabajador,
                 dni_tra = "0",
                 tarjeta = cliente.Tarjeta,
@@ -213,6 +216,7 @@ namespace Sisfarma.Sincronizador.Nixfarma.Infrastructure.ExternalServices.Sisfar
         {
             return new
             {
+                dni = cliente.Id.ToString(),
                 nombre_tra = cliente.Trabajador,
                 dni_tra = "0",
                 tarjeta = cliente.Tarjeta,
