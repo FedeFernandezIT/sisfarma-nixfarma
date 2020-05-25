@@ -3,6 +3,8 @@ using Sisfarma.Sincronizador.Domain.Core.ExternalServices.Fisiotes;
 using Sisfarma.Sincronizador.Domain.Entities.Fisiotes;
 using Sisfarma.Sincronizador.Infrastructure.Fisiotes;
 using System;
+using System.Collections.Generic;
+using System.Linq;
 
 namespace Sisfarma.Sincronizador.Nixfarma.Infrastructure.ExternalServices.Sisfarma
 {
@@ -32,21 +34,19 @@ namespace Sisfarma.Sincronizador.Nixfarma.Infrastructure.ExternalServices.Sisfar
             throw new NotImplementedException();
         }
 
-        public void
-
-            Sincronizar(string nombre, string tipo = null)
+        public void Sincronizar(IEnumerable<Familia> familias)
         {
-            var familia = new
+            var bulk = familias.Select(ff => new
             {
-                familia = nombre,
-                tipo = tipo
-            };
+                familia = ff.familia,
+                tipo = ff.tipo
+            });
 
             _restClient
                 .Resource(_config.Familias.Insert)
                 .SendPost(new
                 {
-                    bulk = new[] { familia }
+                    bulk = bulk
                 });
         }
     }

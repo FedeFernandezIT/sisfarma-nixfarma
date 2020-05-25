@@ -2,6 +2,7 @@
 using Sisfarma.RestClient.Exceptions;
 using Sisfarma.Sincronizador.Domain.Core.ExternalServices.Fisiotes;
 using Sisfarma.Sincronizador.Domain.Entities.Fisiotes;
+using System.Collections.Generic;
 
 namespace Sisfarma.Sincronizador.Infrastructure.Fisiotes
 {
@@ -64,7 +65,7 @@ namespace Sisfarma.Sincronizador.Infrastructure.Fisiotes
             }
         }
 
-        public void Sincronizar(string nombre, string tipo = null)
+        public void Sincronizar(IEnumerable<Familia> familias)
         {
             throw new System.NotImplementedException();
         }
