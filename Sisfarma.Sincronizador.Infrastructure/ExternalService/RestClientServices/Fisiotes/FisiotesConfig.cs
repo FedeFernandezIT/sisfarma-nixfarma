@@ -57,7 +57,7 @@
                     GetByDni = "api/cliente/index/dni/{dni}",
                     Insert = "api/cliente/index/dni/{dni}",
                     InsertHueco = "api/cliente/index/dni/{dni}/esHueco/1",
-                    InsertBulk = "api / cliente / createUpdate",
+                    InsertBulk = "api/cliente/createUpdate",
                     Update = "api/cliente/update"
                 },
 

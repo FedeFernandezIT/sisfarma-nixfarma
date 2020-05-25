@@ -65,29 +65,38 @@ namespace Sisfarma.Sincronizador.Unycop.Domain.Core.Sincronizadores
 
             var batchPuntosPendientes = new List<PuntosPendientes>();
             var batchVentasPendientes = new List<VentaPendiente>();
-            foreach (var venta in ventas)
+            try
             {
-                Task.Delay(5).Wait();
-                _cancellationToken.ThrowIfCancellationRequested();
-
-                if (venta.ClienteId > 0)
-                    venta.Cliente = _farmacia.Clientes.GetOneOrDefaultById(venta.ClienteId, cargarPuntosSisfarma);
-
-                if (venta.FechaFin.HasValue)
+                foreach (var venta in ventas)
                 {
-                    //venta.VendedorNombre = _farmacia.Vendedores.GetOneOrDefaultById(venta.VendedorId)?.Nombre;
-                    venta.Detalle = _farmacia.Ventas.GetDetalleDeVentaByVentaId(venta.Operacion, "EMP1");
+                    Task.Delay(5).Wait();
+                    _cancellationToken.ThrowIfCancellationRequested();
 
-                    if (venta.HasCliente() && _debeCopiarClientes)
-                        InsertOrUpdateCliente(venta.Cliente);
-                    var puntosPendientes = GenerarPuntosPendientes(venta);
-                    batchPuntosPendientes.AddRange(puntosPendientes);                                        
-                }
-                else
-                {
-                    batchVentasPendientes.Add(new VentaPendiente { idventa = venta.Operacion, empresa = "EMP1" });                    
+                    if (venta.ClienteId > 0)
+                        venta.Cliente = _farmacia.Clientes.GetOneOrDefaultById(venta.ClienteId, cargarPuntosSisfarma);
+
+                    if (venta.FechaFin.HasValue)
+                    {
+                        //venta.VendedorNombre = _farmacia.Vendedores.GetOneOrDefaultById(venta.VendedorId)?.Nombre;
+                        venta.Detalle = _farmacia.Ventas.GetDetalleDeVentaByVentaId(venta.Operacion, "EMP1");
+
+                        if (venta.HasCliente() && _debeCopiarClientes)
+                            InsertOrUpdateCliente(venta.Cliente);
+                        var puntosPendientes = GenerarPuntosPendientes(venta);
+                        batchPuntosPendientes.AddRange(puntosPendientes);
+                    }
+                    else
+                    {
+                        batchVentasPendientes.Add(new VentaPendiente { idventa = venta.Operacion, empresa = "EMP1" });
+                    }
                 }
             }
+            catch (Exception ex)
+            {
+
+                throw;
+            }
+            
 
             if (batchPuntosPendientes.Any())
             {
