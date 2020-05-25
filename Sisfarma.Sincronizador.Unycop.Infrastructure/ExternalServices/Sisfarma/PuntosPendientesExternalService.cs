@@ -200,11 +200,7 @@ namespace Sisfarma.Sincronizador.Nixfarma.Infrastructure.ExternalServices.Sisfar
                 {
                     puntos = puntos
                 });
-        }
-
-        public void Sincronizar(IEnumerable<PuntosPendientes> pp)
-        {
-        }
+        }        
 
         public void Update(long venta)
         {
