@@ -293,7 +293,7 @@ namespace Sisfarma.Sincronizador.Infrastructure.Fisiotes
                 .SendPost(new { bulk = medicamento });            
         }
 
-        public void Sincronizar(Medicamento medicamento)
+        public void Sincronizar(IEnumerable<Medicamento> medicamentos)
         {
             throw new NotImplementedException();
         }
