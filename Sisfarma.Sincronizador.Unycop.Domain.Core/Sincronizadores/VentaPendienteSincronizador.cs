@@ -72,7 +72,7 @@ namespace Sisfarma.Sincronizador.Unycop.Domain.Core.Sincronizadores
                 {
                     var empresaSerial = empresa == "EMP1" ? "00001" : "00002";
                     var existe = _sisfarma.PuntosPendientes.Exists(long.Parse($"{numeroVenta}{empresaSerial}"));
-                    if (existe)
+                    if (!existe)
                     {
                         var detalle = _farmacia.Ventas.GetDetalleDeVentaPendienteByVentaId(numeroVenta, empresa);
                         foreach (var item in detalle)
@@ -93,7 +93,7 @@ namespace Sisfarma.Sincronizador.Unycop.Domain.Core.Sincronizadores
                 }
 
                 if (batchPuntosPendientes.Any()) _sisfarma.PuntosPendientes.Sincronizar(batchPuntosPendientes);
-                if (batchVentasPendientesDelete.Any()) _sisfarma.Ventas.Sincronizar(batchVentasPendientesDelete);
+                if (batchVentasPendientesDelete.Any()) _sisfarma.Ventas.Sincronizar(batchVentasPendientesDelete);                
             }
         }
 

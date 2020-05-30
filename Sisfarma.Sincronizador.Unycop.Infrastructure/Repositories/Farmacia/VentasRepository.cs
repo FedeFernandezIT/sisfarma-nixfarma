@@ -110,6 +110,7 @@ namespace Sisfarma.Sincronizador.Nixfarma.Infrastructure.Repositories.Farmacia
                                 FROM appul.ah_ventas
                                 WHERE emp_codigo = '{empresa}'
                                     AND situacion = 'N'
+                                    AND NOT fecha_fin IS NULL
                                     AND fecha_venta >= to_date('01/01/{year}', 'DD/MM/YYYY')
                                     AND fecha_venta >= to_date('01/01/{year} 00:00:00', 'DD/MM/YYYY HH24:MI:SS')
                                     ORDER BY fecha_venta ASC) WHERE ROWNUM <= 999";
