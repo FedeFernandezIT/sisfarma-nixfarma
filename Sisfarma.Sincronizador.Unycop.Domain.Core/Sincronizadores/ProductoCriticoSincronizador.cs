@@ -40,8 +40,8 @@ namespace Sisfarma.Sincronizador.Unycop.Domain.Core.Sincronizadores
         {
             // _falta se carga en PreSincronizacion
             var pedidos = (_falta == null)
-                ? _farmacia.Pedidos.GetAllByFechaGreaterOrEqual(new DateTime(DateTime.Now.Year - 2, 1, 1))
-                //? _farmacia.Pedidos.GetAllByFechaGreaterOrEqual(new DateTime(2013, 1, 1)) //TODO solo test
+                //? _farmacia.Pedidos.GetAllByFechaGreaterOrEqual(new DateTime(DateTime.Now.Year - 2, 1, 1))
+                ? _farmacia.Pedidos.GetAllByFechaGreaterOrEqual(new DateTime(2013, 1, 1)) //TODO solo test
                 : _farmacia.Pedidos.GetAllByIdGreaterOrEqual(long.Parse(_falta.idPedido.ToString().SubstringEnd(5)), _falta.fechaPedido);
 
             foreach (var pedido in pedidos)
