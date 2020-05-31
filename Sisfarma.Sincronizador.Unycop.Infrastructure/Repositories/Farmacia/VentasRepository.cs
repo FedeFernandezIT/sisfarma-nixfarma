@@ -81,7 +81,7 @@ namespace Sisfarma.Sincronizador.Nixfarma.Infrastructure.Repositories.Farmacia
 
                     return null;
                 }
-                    
+
                 var tipoOperacion = Convert.ToString(reader["TIPO_OPERACION"]);
 
                 reader.Close();
@@ -109,6 +109,7 @@ namespace Sisfarma.Sincronizador.Nixfarma.Infrastructure.Repositories.Farmacia
                                 FECHA_VENTA, FECHA_FIN, CLI_CODIGO, TIPO_OPERACION, OPERACION, PUESTO, USR_CODIGO, IMPORTE_VTA_E, EMP_CODIGO
                                 FROM appul.ah_ventas
                                 WHERE emp_codigo = '{empresa}'
+                                    AND operacion = {value}
                                     AND situacion = 'N'
                                     AND NOT fecha_fin IS NULL
                                     AND fecha_venta >= to_date('01/01/{year}', 'DD/MM/YYYY')
@@ -146,7 +147,6 @@ namespace Sisfarma.Sincronizador.Nixfarma.Infrastructure.Repositories.Farmacia
                     });
                 }
 
-                
                 reader.Close();
                 reader.Dispose();
                 return ventas;

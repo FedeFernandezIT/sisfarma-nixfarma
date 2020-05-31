@@ -87,7 +87,7 @@ namespace Sisfarma.Sincronizador.Nixfarma.Infrastructure.Repositories.Farmacia
             internal int Proveedor { get; set; }
         }
 
-        public IEnumerable<Pedido> GetAllByIdGreaterOrEqual(long numeroPedido, DateTime fechaPedido)
+        public IEnumerable<Pedido> GetAllByIdGreaterOrEqual(long numeroPedido)
         {
             var pedidos = new List<Pedido>();
             var conn = FarmaciaContext.GetConnection();
@@ -96,8 +96,7 @@ namespace Sisfarma.Sincronizador.Nixfarma.Infrastructure.Repositories.Farmacia
                 var sqlExtra = string.Empty;
                 var sql = $@"SELECT * FROM (
                     SELECT * From appul.ad_pedidos
-                    WHERE to_char(fecha_pedido, 'YYYYMMDD') > '{fechaPedido.ToString("yyyyMMdd")}'
-                        OR  (to_char(fecha_pedido, 'YYYYMMDD') = '{fechaPedido.ToString("yyyyMMdd")}' AND pedido > {numeroPedido})
+                    WHERE pedido >= {numeroPedido})
                     Order by pedido ASC) WHERE rownum <= 999";
 
                 conn.Open();
