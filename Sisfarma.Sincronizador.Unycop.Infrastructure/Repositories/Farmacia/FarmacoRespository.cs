@@ -349,6 +349,12 @@ namespace Sisfarma.Sincronizador.Nixfarma.Infrastructure.Repositories.Farmacia
             var conn = FarmaciaContext.GetConnection();
             try
             {
+                var sqlOrZeroCode = string.Empty;
+                if (codArticu == "0")
+                {
+                    sqlOrZeroCode = @"OR a.codigo = '000000'";
+                }
+
                 var sqlExtra = string.Empty;
                 if (_empresaRepository.Count() == 2)
                     sqlExtra = $@"WHERE emp_codigo = (
@@ -366,7 +372,7 @@ namespace Sisfarma.Sincronizador.Nixfarma.Infrastructure.Repositories.Farmacia
                                 codigo, precio_lab_euros, Pvp_euros, famsb_codigo, fam_codigo, descripcion, lab_codigo, clase, clase_bot,
                                 imp_codigo, ean_13, Fecha_Baja from appul.ab_articulos {sqlExtra}) a
                     LEFT JOIN appul.ac_existencias e ON e.art_codigo = a.codigo
-                    WHERE a.codigo >= '{codArticu.PadLeft(6, '0')}'
+                    WHERE a.codigo > '{codArticu.PadLeft(6, '0')}' {sqlOrZeroCode}
                     GROUP BY a.codigo, a.precio_lab_euros, a.Pvp_euros, a.famsb_codigo, a.fam_codigo,
                             a.descripcion, a.lab_codigo, a.clase, a.clase_bot, a.imp_codigo, a.ean_13, a.Fecha_Baja
                     HAVING NVL(sum(e.actuales),0) <= 0 ORDER BY a.codigo ASC) o
@@ -449,6 +455,12 @@ namespace Sisfarma.Sincronizador.Nixfarma.Infrastructure.Repositories.Farmacia
             var conn = FarmaciaContext.GetConnection();
             try
             {
+                var sqlOrZeroCode = string.Empty;
+                if (codArticu == "0")
+                {
+                    sqlOrZeroCode = @"OR a.codigo = '000000'";
+                }
+
                 var sqlExtra = string.Empty;
                 if (_empresaRepository.Count() == 2)
                     sqlExtra = $@"WHERE emp_codigo = (
@@ -466,7 +478,7 @@ namespace Sisfarma.Sincronizador.Nixfarma.Infrastructure.Repositories.Farmacia
                                 codigo, precio_lab_euros, Pvp_euros, famsb_codigo, fam_codigo, descripcion, lab_codigo, clase, clase_bot,
                                 imp_codigo, ean_13, Fecha_Baja from appul.ab_articulos {sqlExtra}) a
                     LEFT JOIN appul.ac_existencias e ON e.art_codigo = a.codigo
-                    WHERE a.codigo >= '{codArticu.PadLeft(6, '0')}'
+                    WHERE a.codigo > '{codArticu.PadLeft(6, '0')}' {sqlOrZeroCode}
                     GROUP BY a.codigo, a.precio_lab_euros, a.Pvp_euros, a.famsb_codigo, a.fam_codigo,
                             a.descripcion, a.lab_codigo, a.clase, a.clase_bot, a.imp_codigo, a.ean_13, a.Fecha_Baja
                     HAVING NVL(sum(e.actuales),0) > 0 ORDER BY a.codigo ASC) o
