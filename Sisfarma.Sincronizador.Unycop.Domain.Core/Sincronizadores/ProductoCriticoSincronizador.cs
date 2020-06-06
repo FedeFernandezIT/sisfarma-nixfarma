@@ -39,10 +39,12 @@ namespace Sisfarma.Sincronizador.Unycop.Domain.Core.Sincronizadores
         public override void Process()
         {
             // _falta se carga en PreSincronizacion
+            var fechaDefault = new DateTime(2013, 1, 1); // new DateTime(DateTime.Now.Year - 2, 1, 1);
             var pedidos = (_falta == null)
-                //? _farmacia.Pedidos.GetAllByFechaGreaterOrEqual(new DateTime(DateTime.Now.Year - 2, 1, 1))
-                ? _farmacia.Pedidos.GetAllByFechaGreaterOrEqual(new DateTime(2013, 1, 1)) //TODO solo test
-                : _farmacia.Pedidos.GetAllByIdGreaterOrEqual(long.Parse(_falta.idPedido.ToString().SubstringEnd(5)));
+                ? _farmacia.Pedidos.GetAllByFechaGreaterOrEqual(fechaDefault)
+                : _farmacia.Pedidos.GetAllByIdGreaterOrEqual(
+                        long.Parse(_falta.idPedido.ToString().SubstringEnd(5)),
+                        _falta.fechaPedido == DateTime.MinValue ? fechaDefault : _falta.fechaPedido);
 
             foreach (var pedido in pedidos)
             {

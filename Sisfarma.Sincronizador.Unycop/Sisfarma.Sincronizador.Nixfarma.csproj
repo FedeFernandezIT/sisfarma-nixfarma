@@ -55,10 +55,10 @@
     <StartupObject />
   </PropertyGroup>
   <PropertyGroup>
-    <ManifestCertificateThumbprint>7A80D98935DF301ED152124C882CDBE71BCCA045</ManifestCertificateThumbprint>
+    <ManifestCertificateThumbprint>65B749FE66DC4644B53E2CBA41F51723ECEB84F1</ManifestCertificateThumbprint>
   </PropertyGroup>
   <PropertyGroup>
-    <ManifestKeyFile>Sisfarma.Sincronizador.Unycop_TemporaryKey.pfx</ManifestKeyFile>
+    <ManifestKeyFile>Sisfarma.Sincronizador.Nixfarma_TemporaryKey.pfx</ManifestKeyFile>
   </PropertyGroup>
   <PropertyGroup>
     <GenerateManifests>true</GenerateManifests>
@@ -147,6 +147,7 @@
     </None>
     <None Include="packages.config" />
     <None Include="Resources\sync.ico" />
+    <None Include="Sisfarma.Sincronizador.Nixfarma_TemporaryKey.pfx" />
     <None Include="Sisfarma.Sincronizador.Unycop_TemporaryKey.pfx" />
   </ItemGroup>
   <ItemGroup>
