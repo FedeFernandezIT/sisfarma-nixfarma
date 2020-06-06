@@ -39,8 +39,25 @@ namespace Sisfarma.Sincronizador.Nixfarma.Infrastructure.Repositories.Farmacia
             try
             {
                 var sqlExtra = string.Empty;
-                var sql = $@"SELECT * FROM (
-                    SELECT * From appul.ad_pedidos WHERE to_char(fecha_pedido, 'YYYYMMDD') >= '{fecha.ToString("yyyyMMdd")}' Order by pedido ASC)
+                //var sql = $@"SELECT * FROM (
+                //    SELECT * From appul.ad_pedidos WHERE to_char(fecha_pedido, 'YYYYMMDD') >= '{fecha.ToString("yyyyMMdd")}' Order by pedido ASC)
+                //    WHERE rownum <= 999";
+
+                var sql = $@"
+                    SELECT * FROM (
+                        SELECT p.* From appul.ad_pedidos p
+                            INNER JOIN (
+                                select g.pedido, g.ejercicio, g.emp_codigo from
+                                    (select ar.codigo, NVL(stk.stock, 0) as stock, lp.* from appul.ad_linped lp
+                                        inner join appul.ab_articulos ar on ar.codigo = lp.art_codigo AND ar.emp_codigo = lp.emp_codigo
+                                        left join (select art_codigo, max(actuales) as stock from appul.ac_existencias group by art_codigo) stk on STK.ART_CODIGO = ar.codigo
+                                            where lp.ejercicio >= {fecha.Year} and (stock is null or stock = 0))  g
+                                            group by g.pedido, g.ejercicio, g.emp_codigo
+                                            order by g.emp_codigo, g.ejercicio, g.pedido
+                            ) f ON f.pedido = p.pedido AND f.ejercicio = p.ejercicio AND f.emp_codigo = p.emp_codigo
+                            WHERE to_char(p.fecha_pedido, 'YYYYMMDD') >= '{fecha.ToString("yyyyMMdd")}'
+                            Order by p.fecha_pedido, p.ejercicio, p.pedido ASC
+                    )
                     WHERE rownum <= 999";
 
                 conn.Open();
@@ -94,11 +111,30 @@ namespace Sisfarma.Sincronizador.Nixfarma.Infrastructure.Repositories.Farmacia
             try
             {
                 var sqlExtra = string.Empty;
-                var sql = $@"SELECT * FROM (
-                    SELECT * From appul.ad_pedidos
-                    WHERE to_char(fecha_pedido, 'YYYYMMDD') > '{fechaPedido.ToString("yyyyMMdd")}'
-                        OR  (to_char(fecha_pedido, 'YYYYMMDD') = '{fechaPedido.ToString("yyyyMMdd")}' AND pedido >= {numeroPedido})
-                    Order by pedido ASC) WHERE rownum <= 999";
+                //var sql = $@"SELECT * FROM (
+                //    SELECT * From appul.ad_pedidos
+                //    WHERE to_char(fecha_pedido, 'YYYYMMDD') > '{fechaPedido.ToString("yyyyMMdd")}'
+                //        OR  (to_char(fecha_pedido, 'YYYYMMDD') = '{fechaPedido.ToString("yyyyMMdd")}' AND pedido >= {numeroPedido})
+                //    Order by pedido ASC) WHERE rownum <= 999";
+
+                var sql = $@"
+                    SELECT * FROM (
+                        SELECT p.* From appul.ad_pedidos p
+                            INNER JOIN (
+                                select g.pedido, g.ejercicio, g.emp_codigo from
+                                    (select ar.codigo, NVL(stk.stock, 0) as stock, lp.* from appul.ad_linped lp
+                                        inner join appul.ab_articulos ar on ar.codigo = lp.art_codigo AND ar.emp_codigo = lp.emp_codigo
+                                        left join (select art_codigo, max(actuales) as stock from appul.ac_existencias group by art_codigo) stk on STK.ART_CODIGO = ar.codigo
+                                            where lp.ejercicio >= {fechaPedido.Year} and (stock is null or stock = 0))  g
+                                            group by g.pedido, g.ejercicio, g.emp_codigo
+                                            order by g.emp_codigo, g.ejercicio, g.pedido
+                            ) f ON f.pedido = p.pedido AND f.ejercicio = p.ejercicio AND f.emp_codigo = p.emp_codigo
+                            WHERE to_char(p.fecha_pedido, 'YYYYMMDD') >= '{fechaPedido.ToString("yyyyMMdd")}'
+                                OR  (to_char(p.fecha_pedido, 'YYYYMMDD') = '{fechaPedido.ToString("yyyyMMdd")}' AND p.pedido >= {numeroPedido})
+
+                            Order by p.fecha_pedido, p.ejercicio, p.pedido ASC
+                    )
+                    WHERE rownum <= 999";
 
                 conn.Open();
                 var cmd = conn.CreateCommand();
