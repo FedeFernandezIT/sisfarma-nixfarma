@@ -4,6 +4,8 @@ using Sisfarma.Sincronizador.Core.Extensions;
 using Sisfarma.Sincronizador.Domain.Core.ExternalServices.Fisiotes;
 using Sisfarma.Sincronizador.Domain.Entities.Fisiotes;
 using Sisfarma.Sincronizador.Infrastructure.Fisiotes;
+using System.Collections.Generic;
+using System.Linq;
 
 namespace Sisfarma.Sincronizador.Nixfarma.Infrastructure.ExternalServices.Sisfarma
 {
@@ -53,9 +55,9 @@ namespace Sisfarma.Sincronizador.Nixfarma.Infrastructure.ExternalServices.Sisfar
             }
         }
 
-        public void Sincronizar(Falta ff)
+        public void Sincronizar(IEnumerable<Falta> ffs)
         {
-            var falta = new
+            var bulk = ffs.Select(ff => new
             {
                 idPedido = ff.idPedido,
                 idLinea = ff.idLinea,
@@ -73,14 +75,14 @@ namespace Sisfarma.Sincronizador.Nixfarma.Infrastructure.ExternalServices.Sisfar
                 puc = ff.puc,
                 sistema = ff.sistema,
                 categoria = ff.categoria.Strip(),
-                subcategoria = ff.subcategoria.Strip()                
-            };
+                subcategoria = ff.subcategoria.Strip()
+            });
 
             _restClient
                 .Resource(_config.Faltas.InsertLineaDePedido)
                 .SendPost(new
                 {
-                    bulk = new[] { falta }
+                    bulk = bulk
                 });
         }
     }

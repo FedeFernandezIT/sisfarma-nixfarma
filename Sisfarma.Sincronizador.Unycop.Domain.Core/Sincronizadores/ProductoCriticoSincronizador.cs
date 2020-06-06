@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 using Sisfarma.Sincronizador.Core.Extensions;
@@ -46,6 +47,7 @@ namespace Sisfarma.Sincronizador.Unycop.Domain.Core.Sincronizadores
                         long.Parse(_falta.idPedido.ToString().SubstringEnd(5)),
                         _falta.fechaPedido == DateTime.MinValue ? fechaDefault : _falta.fechaPedido);
 
+            var faltantes = new List<Falta>();
             foreach (var pedido in pedidos)
             {
                 var empresaSerial = pedido.Empresa == "EMP1" ? "00001" : "00002";
@@ -63,14 +65,19 @@ namespace Sisfarma.Sincronizador.Unycop.Domain.Core.Sincronizadores
                     Task.Delay(1).Wait();
 
                     if (!_sisfarma.Faltas.ExistsLineaDePedido(linea.PedidoId, linea.Linea))
-                        _sisfarma.Faltas.Sincronizar(GenerarFaltante(linea));
+                        faltantes.Add(GenerarFaltante(linea));
                 }
+            }
+
+            if (faltantes.Any())
+            {
+                _sisfarma.Faltas.Sincronizar(faltantes);
 
                 if (_falta == null)
                     _falta = new Falta();
 
-                _falta.idPedido = pedido.Id;
-                _falta.fechaPedido = pedido.Fecha;
+                _falta.idPedido = faltantes.Last().idPedido;
+                _falta.fechaPedido = faltantes.Last().fechaPedido;
             }
         }
 
