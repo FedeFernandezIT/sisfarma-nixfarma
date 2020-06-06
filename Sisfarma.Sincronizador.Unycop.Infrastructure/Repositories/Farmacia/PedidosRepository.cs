@@ -146,10 +146,16 @@ namespace Sisfarma.Sincronizador.Nixfarma.Infrastructure.Repositories.Farmacia
                 var sqlExtra = string.Empty;
                 var sql = $@"
                     select * from appul.ad_linped where pedido='{numero}' AND emp_codigo ='{empresa}' and ejercicio = {anio}";
+                var sql1 = $@"
+                    select ar.codigo, NVL(stk.stock, 0) as stock, lp.* from appul.ad_linped lp
+                        inner join appul.ab_articulos ar on ar.codigo = lp.art_codigo AND ar.emp_codigo = lp.emp_codigo
+                        left join (select art_codigo, max(actuales) as stock from appul.ac_existencias group by art_codigo) stk on STK.ART_CODIGO = ar.codigo
+                        where lp.pedido='{numero}' AND lp.emp_codigo ='{empresa}'  lp.ejercicio = {anio} and (stock is null or stock = 0);
+                ";
 
                 conn.Open();
                 var cmd = conn.CreateCommand();
-                cmd.CommandText = sql;
+                cmd.CommandText = sql1;
                 var reader = cmd.ExecuteReader();
 
                 while (reader.Read())
@@ -167,10 +173,10 @@ namespace Sisfarma.Sincronizador.Nixfarma.Infrastructure.Repositories.Farmacia
                     Farmaco farmacoPedido = null;
                     if (farmaco != null)
                     {
-                        sql = $@"select max(actuales) as stock from appul.ac_existencias where art_codigo = '{rArtCodigo}' group by art_codigo";
-                        cmd.CommandText = sql;
-                        var readerStock = cmd.ExecuteReader();
-                        var stock = readerStock.Read() ? Convert.ToInt64(readerStock["stock"]) : 0L;
+                        //sql = $@"select max(actuales) as stock from appul.ac_existencias where art_codigo = '{rArtCodigo}' group by art_codigo";
+                        //cmd.CommandText = sql;
+                        //var readerStock = cmd.ExecuteReader();
+                        var stock = Convert.ToInt64(reader["stock"]);
                         farmaco.Stock = stock;
 
                         var proveedor = _proveedorRepository.GetOneOrDefaultByCodigoNacional(rArtCodigo);
