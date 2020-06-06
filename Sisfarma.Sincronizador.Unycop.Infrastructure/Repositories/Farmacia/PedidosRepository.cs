@@ -206,7 +206,7 @@ namespace Sisfarma.Sincronizador.Nixfarma.Infrastructure.Repositories.Farmacia
                             Laboratorio = laboratorio,
                             Denominacion = farmaco.Denominacion,
                             Precio = farmaco.PrecioMedio,
-                            Stock = farmaco.Existencias ?? 0
+                            Stock = farmaco.Stock
                         };
                     }
 
