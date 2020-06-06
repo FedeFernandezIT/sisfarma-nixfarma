@@ -150,8 +150,7 @@ namespace Sisfarma.Sincronizador.Nixfarma.Infrastructure.Repositories.Farmacia
                     select ar.codigo, NVL(stk.stock, 0) as stock, lp.* from appul.ad_linped lp
                         inner join appul.ab_articulos ar on ar.codigo = lp.art_codigo AND ar.emp_codigo = lp.emp_codigo
                         left join (select art_codigo, max(actuales) as stock from appul.ac_existencias group by art_codigo) stk on STK.ART_CODIGO = ar.codigo
-                        where lp.pedido='{numero}' AND lp.emp_codigo ='{empresa}'  lp.ejercicio = {anio} and (stock is null or stock = 0);
-                ";
+                        where lp.pedido='{numero}' AND lp.emp_codigo ='{empresa}' AND lp.ejercicio = {anio} and (stock is null or stock = 0)";
 
                 conn.Open();
                 var cmd = conn.CreateCommand();
