@@ -68,7 +68,7 @@ namespace Sisfarma.Sincronizador.Unycop.Domain.Core.Sincronizadores
                     linea.PedidoId = pedido.Id;
                     Task.Delay(1).Wait();
 
-                    if (!_sisfarma.Faltas.ExistsLineaDePedido(linea.PedidoId, linea.Linea))
+                    //if (!_sisfarma.Faltas.ExistsLineaDePedido(linea.PedidoId, linea.Linea))
                         faltantes.Add(GenerarFaltante(linea));
                 }
             }
