@@ -80,7 +80,7 @@ namespace Sisfarma.Sincronizador.Unycop
             .AddSincronizador(new Domain.Core.Sincronizadores.ProductoCriticoSincronizador(
                     farmacia: FarmaciaFactory.Create(),
                     fisiotes: SisfarmaFactory.Create()),
-                    delay: 1000)//SincronizadorTaskManager.DelayProductosCriticos)
+                    delay: SincronizadorTaskManager.DelayProductosCriticos)
             .AddSincronizador(new Domain.Core.Sincronizadores.EncargoSincronizador(
                     farmacia: FarmaciaFactory.Create(),
                     fisiotes: SisfarmaFactory.Create()),
