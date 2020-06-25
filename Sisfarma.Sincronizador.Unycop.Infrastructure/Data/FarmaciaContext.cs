@@ -46,9 +46,19 @@ namespace Sisfarma.Sincronizador.Nixfarma.Infrastructure.Data
 
         public static OracleConnection GetConnection()
         {
+            //string connectionString = $@"User Id=""{_user.ToUpper()}""; Password=""{_password}""; Enlist=false; Pooling=true;" +
+            //    @"Data Source=(DESCRIPTION=(ADDRESS_LIST=(ADDRESS=(PROTOCOL=IPC)(KEY=DP9))" +
+            //        $@"(ADDRESS=(PROTOCOL=TCP)(HOST={_localServer})(PORT=1521)))(CONNECT_DATA=(INSTANCE_NAME=DP9)(SERVICE_NAME=ORACLE9)))";
+
+            
+            // si falla probar con _localServer = SERVERDATOS
             string connectionString = $@"User Id=""{_user.ToUpper()}""; Password=""{_password}""; Enlist=false; Pooling=true;" +
-                @"Data Source=(DESCRIPTION=(ADDRESS_LIST=(ADDRESS=(PROTOCOL=IPC)(KEY=DP9))" +
-                    $@"(ADDRESS=(PROTOCOL=TCP)(HOST={_localServer})(PORT=1521)))(CONNECT_DATA=(INSTANCE_NAME=DP9)(SERVICE_NAME=ORACLE9)))";
+                @"Data Source=(DESCRIPTION=(ADDRESS_LIST=(ADDRESS=(PROTOCOL=IPC)(KEY=DP11))" +
+                    $@"(ADDRESS=(PROTOCOL=TCP)(HOST={_localServer})(PORT=1521)))(CONNECT_DATA=(DEDICATED)(INSTANCE_NAME=DP11)(SERVICE_NAME=ORACLE11)))";
+
+            // connection string VB
+            // si falla probar con _localServer = SERVERDATOS
+            //string connectionString = $@"Driver={{Microsoft ODBC for Oracle}};Server={_localServer};Uid={_user.ToUpper()};Pwd={_password};";
 
             var conn = new OracleConnection(connectionString);
             return conn;
