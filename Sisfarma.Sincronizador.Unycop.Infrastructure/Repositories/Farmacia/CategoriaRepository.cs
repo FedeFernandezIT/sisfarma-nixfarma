@@ -1,5 +1,5 @@
 ﻿using System;
-using Oracle.DataAccess.Client;
+//using Oracle.DataAccess.Client;
 using Sisfarma.Sincronizador.Core.Config;
 using Sisfarma.Sincronizador.Domain.Entities.Farmacia;
 using Sisfarma.Sincronizador.Nixfarma.Infrastructure.Data;

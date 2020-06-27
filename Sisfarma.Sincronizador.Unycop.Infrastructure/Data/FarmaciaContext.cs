@@ -1,4 +1,6 @@
-﻿using Oracle.DataAccess.Client;
+﻿//using Oracle.DataAccess.Client;
+using Oracle.DataAccess.Client;
+//using Oracle.ManagedDataAccess.Client;
 using Sisfarma.Sincronizador.Core.Config;
 using System;
 using System.Data.Entity;
@@ -50,15 +52,23 @@ namespace Sisfarma.Sincronizador.Nixfarma.Infrastructure.Data
             //    @"Data Source=(DESCRIPTION=(ADDRESS_LIST=(ADDRESS=(PROTOCOL=IPC)(KEY=DP9))" +
             //        $@"(ADDRESS=(PROTOCOL=TCP)(HOST={_localServer})(PORT=1521)))(CONNECT_DATA=(INSTANCE_NAME=DP9)(SERVICE_NAME=ORACLE9)))";
 
-            
+            //ORA-12504: TNS:el listener no ha recibido el SERVICE_NAME en CONNECT_DATA
+            //string connectionString = $@"User Id=""{_user.ToUpper()}""; Password=""{_password}""; Enlist=false; Pooling=true;" +
+            //    $@"Data Source={_localServer.ToUpper()};Min Pool Size=10;Connection Lifetime=120;Connection Timeout=60;Incr Pool Size=5;Decr Pool Size=2;";
+
             // si falla probar con _localServer = SERVERDATOS
-            string connectionString = $@"User Id=""{_user.ToUpper()}""; Password=""{_password}""; Enlist=false; Pooling=true;" +
-                @"Data Source=(DESCRIPTION=(ADDRESS_LIST=(ADDRESS=(PROTOCOL=IPC)(KEY=DP11))" +
-                    $@"(ADDRESS=(PROTOCOL=TCP)(HOST={_localServer})(PORT=1521)))(CONNECT_DATA=(DEDICATED)(INSTANCE_NAME=DP11)(SERVICE_NAME=ORACLE11)))";
+            // ORA-12514: TNS:el listener no conoce actualmente el servicio solicitado en el descriptor de conexión
+            // ORA-12545: La conexión ha fallado porque el host destino o el objeto no existen
+            //string connectionString = $@"User Id=""{_user.ToUpper()}""; Password=""{_password}""; Enlist=false; Pooling=true;" +
+            //    @"Data Source=(DESCRIPTION=(ADDRESS_LIST=(ADDRESS=(PROTOCOL=IPC)(KEY=DP11))" +
+            //        $@"(ADDRESS=(PROTOCOL=TCP)(HOST=SERVERDATOS)(PORT=1521)))(CONNECT_DATA=(DEDICATED)(INSTANCE_NAME=DP11)(SERVICE_NAME=ORACLE11)))";
 
             // connection string VB
             // si falla probar con _localServer = SERVERDATOS
+            // 'Driver' es un atributo de cadena de conexión no válido
             //string connectionString = $@"Driver={{Microsoft ODBC for Oracle}};Server={_localServer};Uid={_user.ToUpper()};Pwd={_password};";
+
+            string connectionString = $@"Data Source={_localServer};User ID={_user.ToUpper()};Password={_password};";
 
             var conn = new OracleConnection(connectionString);
             return conn;

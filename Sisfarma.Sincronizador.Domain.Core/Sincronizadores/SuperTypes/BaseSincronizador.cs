@@ -44,7 +44,7 @@ namespace Sisfarma.Sincronizador.Domain.Core.Sincronizadores.SuperTypes
                 catch (Exception ex)
                 {
                     var error = ex.ToLogErrorMessage();
-                    //MessageBox.Show(error);
+                    MessageBox.Show(error);
 
                     LogError(error);
                 }
